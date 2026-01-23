@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  frontend:
+    image: rmd09/canteen-frontend:latest
+    environment:
+      - NEXT_PUBLIC_API_URL=https://canteen1502.ru/api
+    networks:
+      - app-network
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+
+  backend:
+    image: rmd09/canteen-backend:latest
+    volumes:
+      - sqlite-data:/app/instance  # монтируем том в /app/instance внутри контейнера
+    environment:
+      - FLASK_APP=app.py
+      - FLASK_ENV=development
+    networks:
+      - app-network
+    ports:
+      - "5000:5000"
+
+volumes:
+  sqlite-data:  # именованный том для хранения canteen.db
+    external: true  # ← это говорит: "том уже существует, не создавай новый"
+
+networks:
+  app-network:
+    driver: bridge
