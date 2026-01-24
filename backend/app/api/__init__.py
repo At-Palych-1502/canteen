@@ -1,5 +1,5 @@
 from flask import Blueprint
 from .auth import bp as auth_bp
 
-api = Blueprint('api', __name__, url_prefix='/api')
+api = Blueprint('api', __name__, url_prefix='/api/auth')
 api.register_blueprint(auth_bp)

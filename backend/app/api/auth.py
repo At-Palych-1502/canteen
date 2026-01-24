@@ -4,7 +4,7 @@ from ..models import User
 from .. import db
 from flask import jsonify
 
-bp = Blueprint('auth', __name__, '/api')
+bp = Blueprint('auth', __name__)
 
 
 @bp.route('/login', methods=['POST'])
@@ -18,10 +18,11 @@ def login():
     if user and user.check_password(password):
         access_token = create_access_token(
             identity=user.id,
-            additional_claims={"role": user.role}
+            additional_claims=user.to_dict()
         )
-        return jsonify(access_token=access_token), 200
+        return jsonify(access_token=access_token, user=user.to_dict()), 200
     return jsonify({"error": "Invalid credentials"}), 401
+
 
 @bp.route('/users')
 def users():
