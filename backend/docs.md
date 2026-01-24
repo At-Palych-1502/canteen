@@ -17,3 +17,17 @@
     [401] {
     "error": "Invalid credentials"
     }
+
+    user [GET]
+    формат запроса: {
+        "id": id
+    }
+    формат ответа:
+    [200] {"user": {
+        "email": email,
+        "id": id,
+        "role": role,
+        "username": username}
+    }
+    [404] {"error": "Not found"}
+    

@@ -23,7 +23,10 @@ def login():
         return jsonify(access_token=access_token, user=user.to_dict()), 200
     return jsonify({"error": "Invalid credentials"}), 401
 
-
-@bp.route('/users')
-def users():
-    return jsonify([{"id": 1, "name": "Сосать всё работает финальный тест сука"}])
+@bp.route('/user', methods=['GET'])
+def user():
+    data = request.get_json()
+    user = User.query.get_or_404(data.get("id"))
+    if not user:
+        return jsonify({"error": "Not found"}), 404
+    return jsonify(user=user.to_dict()), 200
