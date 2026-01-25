@@ -2,7 +2,8 @@
 
 **auth**:
 
-    login [POST]
+_login [POST]_
+
     формат запроса: {
       "username": username,
       "password": password
@@ -18,16 +19,18 @@
     "error": "Invalid credentials"
     }
 
-    user [GET]
-    формат запроса: {
-        "id": id
-    }
+
+_user [GET]_
+
+    формат запроса: headers: {
+        "Authorization": "Bearer " + jwt_token
+        }
     формат ответа:
     [200] {"user": {
         "email": email,
         "id": id,
         "role": role,
-        "username": username}
-    }
+        "username": username}}
     [404] {"error": "Not found"}
+    [422] any other troubles
     
