@@ -33,12 +33,13 @@ class User(Base):
     def __repr__(self):
         return f"User('{self.username}', '{self.email}', '{self.role}')"
 
-class Dish(Base):
-    __tablename__='dishes'
 
-    id=Column(Integer, primary_key=True, autoincrement=True)
+class Dish(Base):
+    __tablename__ = 'dishes'
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String(80), nullable=False)
     weight = Column(Integer, nullable=False)
-    cost= Column(Integer, nullable=False)
+    cost = Column(Integer, nullable=False)
+    meal = Column(String(20), nullable=False)
     created_at = Column(DateTime, nullable=False, default=datetime.datetime.now())
-    characteristics = Column(JSON, nullable=False)
