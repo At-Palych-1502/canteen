@@ -1,6 +1,6 @@
 from flask import Flask
-from app.extensions import db, jwt, cors
-from app.api.__init__ import api
+from .extensions import db, jwt, cors
+from .api.__init__ import api
 from flask_migrate import Migrate
 
 def create_app():

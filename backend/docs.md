@@ -5,8 +5,9 @@
 _login [POST]_
 
     формат запроса: {
-      "username": username,
-      "password": password
+      "username": String,
+      "password": String,
+      "remember_me": Boolean
     }
     формат ответа:
     [200] {"access_token": acces_token,
