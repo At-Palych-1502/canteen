@@ -2,13 +2,14 @@
 
 import Image from "next/image";
 import { useEffect, useState } from "react";
+import { endpoints } from "./config/endpoints"
 
 export default function Home() {
   const [test, setTest] = useState("");
 
   useEffect(() => {
     console.log("test");
-    fetch("/api/api/login", {
+    fetch(endpoints.auth.login, {
       body: JSON.stringify({username: "admin", password: "password"}),
       headers: {
         "Content-Type": "application/json"
