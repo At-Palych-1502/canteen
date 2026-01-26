@@ -9,7 +9,7 @@ interface Props {
 }
 
 export function AuthForm(props: Props) {
-    const [responseInfo, setResponseInfo] = useState({ text: "sdscsdcsdcsdc", ok: false});
+    const [responseInfo, setResponseInfo] = useState({ text: "", ok: false});
     const [authInfo, setAuthInfo] = useState({ username: "", password: "" });
   
     const onSubmitHandler = async(event: FormEvent<HTMLFormElement>) => {
