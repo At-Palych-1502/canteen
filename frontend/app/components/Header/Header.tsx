@@ -14,7 +14,7 @@ export function Header() {
                     <li><button className={Styles["button"]}>Отзывы</button></li>
                     <li><button className={Styles["button"]}>Контакты</button></li>
                 </ul>
-                <button className={Styles["auth"]}>Войти</button>
+                <button className={Styles["auth_button"]}>Войти</button>
             </div>
         </header>
     )

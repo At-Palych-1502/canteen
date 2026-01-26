@@ -3,6 +3,7 @@
     justify-content: space-between;
     align-items: center;
     height: 8vh;
+    padding-bottom: 0.7vh;
 
     box-shadow: 3px 1px 20px rgb(0, 0, 0, 0.3);
 }
@@ -17,6 +18,7 @@
 
 .main_title{
     font-size: 29px;
+    font-weight: 700;
     color: #4338ca;
 }
 
@@ -38,7 +40,7 @@
     cursor: pointer;
 }
 
-.auth {
+.auth_button {
     font-size: 19px;
     padding: 8px 12px;
     border-radius: 10px;
@@ -46,6 +48,7 @@
     color: white;
     height: 100%;
 }
-.auth:hover{
+
+.auth_button:hover{
     cursor: pointer;
 }
