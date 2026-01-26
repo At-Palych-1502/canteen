@@ -18,11 +18,13 @@
 }
 
 .title_section__title{
+    text-align: center;
     font-size: 36px;
     font-weight: 700;
     color: #4338ca;
 }
 .title_section__description{
+    width: 100% !important;
     font-size: 19px;
     width: 500px;
     text-align: center;
