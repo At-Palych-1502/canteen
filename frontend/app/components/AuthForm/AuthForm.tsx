@@ -30,7 +30,7 @@ export function AuthForm() {
             <h3>Введите имя пользователя</h3>
             <input onBlur={inputHandler} type="text" name="username" />
             <h3>Введите пароль</h3>
-            <input onBlur={inputHandler} type="text" name="password"/>
+            <input onBlur={inputHandler} type="password" name="password" />
             <button type="submit">Авторизоваться</button>
     
             {
