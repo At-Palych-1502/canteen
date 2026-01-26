@@ -38,7 +38,7 @@ def dish(id):
         return jsonify({"message": "Dish updated"}), 200
 
 
-@bp.route('/add_dish', methods=['POST'])
+@bp.route('/dish', methods=['POST'])
 @jwt_required()
 @role_required(["admin", "cook"])
 def add_dish():
@@ -46,7 +46,6 @@ def add_dish():
     f = data.get
     name = f("name")
     weight = f("weight")
-    cost = f("cost")
     meal = f("meal")
     quantity = f("quantity")
     dish = Dish(
