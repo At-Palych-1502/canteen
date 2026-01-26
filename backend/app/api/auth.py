@@ -11,13 +11,11 @@ def login():
     data = request.get_json()
     username = data.get('username')
     password = data.get('password')
-    print(username, password)
     remember_me = data.get('remember_me') or False
     if not username or not password:
         return jsonify({"error": "Invalid credentials"}), 401
 
     user = User.query.filter_by(username=username).first()
-    print(user)
 
     if user and user.check_password(password):
         if remember_me:
