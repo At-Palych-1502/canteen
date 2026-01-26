@@ -17,7 +17,7 @@ services:
     volumes:
       - sqlite-data:/app/instance  # монтируем том в /app/instance внутри контейнера
     environment:
-      - FLASK_APP=app.py
+      - FLASK_APP=backend.app
       - FLASK_ENV=development
     networks:
       - app-network
