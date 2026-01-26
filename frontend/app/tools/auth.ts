@@ -2,18 +2,28 @@ import { endpoints } from "../config/endpoints"
 import { User } from "./types/user"
 import { setJWT } from "./jwt";
 
-export async function loginUser(username: string, password: string) {
+interface AuthInfo {
+    username: string,
+    password: string
+}
+
+export async function loginUser(authInfo: AuthInfo) {
     const response = await fetch(endpoints.auth.login, { 
         headers: {
             "Content-Type": "application/json"
         },
         method: "POST",
-        body: JSON.stringify({ username, password })
+        body: JSON.stringify(authInfo)
     });
-    const json = await response.json();
-    const user: User = json.user;
 
-    setJWT(json.access_token);
+    if (response.ok) {
+        const json = await response.json();
+        const user: User = json.user;
 
-    return user;
+        setJWT(json.access_token);
+
+        return { ok: true, user};
+    }
+    
+    return {ok: false, error: `${response.status}: ${response.statusText}`};
 }
