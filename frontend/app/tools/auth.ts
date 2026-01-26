@@ -1,5 +1,5 @@
 import { endpoints } from "../config/endpoints"
-import { User } from "./classes/user"
+import { User } from "./types/user"
 import { setJWT } from "./jwt";
 
 export async function loginUser(username: string, password: string) {
