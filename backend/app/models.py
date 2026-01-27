@@ -54,13 +54,14 @@ class Dish(Base):
             "quantity": self.quantity
         }
 
+
 class Ingredient(Base):
     __tablename__ = 'ingredients'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String(80), nullable=False)
 
-    dish_ingredients = relationship('DishIngredient', back_populates='dish')
+    dish_ingredients = relationship('DishIngredient', back_populates='ingredient')  # ← ИСПРАВЛЕНО
 
 
 class DishIngredient(Base):
@@ -69,6 +70,6 @@ class DishIngredient(Base):
     ingredient_id = Column(Integer, ForeignKey('ingredients.id'), primary_key=True)
 
     dish = relationship("Dish", back_populates='dish_ingredients')
-    ingredient = relationship('Ingredient', back_populates='dish_Ingredients')
+    ingredient = relationship('Ingredient', back_populates='dish_ingredients')
 
 
