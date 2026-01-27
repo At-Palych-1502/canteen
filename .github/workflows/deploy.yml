@@ -3,9 +3,6 @@ name: Deploy to Production
 on:
   push:
     branches: [main]
-  pull_request:
-    branches: [main]
-    types: [closed]
 
 env:
   FRONTEND_IMAGE: rmd09/canteen-frontend
@@ -13,9 +10,6 @@ env:
 
 jobs:
   build-and-push:
-    if: |
-      github.event_name == 'push' ||
-      (github.event_name == 'pull_request' && github.event.pull_request.merged == true)
     
     runs-on: ubuntu-latest
     
@@ -65,6 +59,7 @@ jobs:
             cd /root  
             ./pull_repo.sh
             cd /root/canteen
+            find ./ -type f -name '.*env*' -delete
             docker compose -f docker-compose.prod.yml pull
             docker compose down -f
             docker compose -f docker-compose.prod.yml up -d

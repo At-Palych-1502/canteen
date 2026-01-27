@@ -72,4 +72,4 @@ class DishIngredient(Base):
     dish = relationship("Dish", back_populates='dish_ingredients')
     ingredient = relationship('Ingredient', back_populates='dish_ingredients')
 
-
+    
