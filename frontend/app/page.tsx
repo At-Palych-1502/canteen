@@ -13,8 +13,30 @@ import { loginUser } from './tools/auth';
 import { AuthForm } from './components/AuthForm/AuthForm';
 import { Header } from './components/Header/Header';
 import Styles from './page.module.css';
+import { useGetDishesQuery } from './tools/redux/dishes';
+import { useGetUserQuery, useLoginMutation } from './tools/redux/auth';
+import { getAccessToken } from './utils/auth';
 
 export default function Home() {
+	// const { data, error, isLoading } = useGetDishesQuery();
+
+	// console.log(data, error, isLoading);
+
+	// const [login] = useLoginMutation();
+	// const { data, error, isLoading } = useGetUserQuery();
+
+	// console.log(data, error, isLoading);
+	// console.log(getAccessToken());
+
+	// useEffect(() => {
+	// 	const a = async () => {
+	// 		const res = await login({ username: 'user1', password: 'passwd' });
+
+	// 		console.log(res);
+	// 	};
+	// 	a();
+	// }, [login]);
+
 	return (
 		<>
 			<section className={Styles['section']}>

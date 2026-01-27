@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 import './globals.css';
 import { Header } from './components/Header/Header';
+import ReduxLayout from './components/ReduxLayout/ReduxLayout';
 
 export const metadata: Metadata = {
 	title: 'Create Next App',
@@ -14,8 +15,10 @@ export default function RootLayout({
 	return (
 		<html lang='en'>
 			<body>
-				<Header />
-				{children}
+				<ReduxLayout>
+					<Header />
+					{children}
+				</ReduxLayout>
 			</body>
 		</html>
 	);

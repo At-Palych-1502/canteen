@@ -1,5 +1,5 @@
 import { endpoints } from '../config/endpoints';
-import { User } from './types/user';
+import { IUser } from './types/user.d';
 import { setJWT } from './jwt';
 
 interface AuthInfo {
@@ -19,7 +19,7 @@ export async function loginUser(authInfo: AuthInfo) {
 
 		if (response.ok) {
 			const json = await response.json();
-			const user: User = json.user;
+			const user: IUser = json.user;
 
 			setJWT(json.access_token);
 
