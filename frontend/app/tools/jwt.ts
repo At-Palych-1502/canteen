@@ -1,11 +1,11 @@
 export function setJWT(jwt: string) {
-    localStorage.setItem("jwt", jwt);
+	localStorage.setItem('jwt', jwt);
 }
 
 export function getJWT(): string | null {
-    return localStorage.getItem("jwt");
+	return localStorage.getItem('jwt');
 }
 
 export function deleteJWT() {
-    localStorage.removeItem("jwt");
+	localStorage.removeItem('jwt');
 }
