@@ -44,6 +44,8 @@ class Dish(Base):
     quantity = Column(Integer, nullable=False)
     created_at = Column(DateTime, nullable=False, default=datetime.datetime.now())
 
+    dish_ingredients = relationship("DishIngredient", back_populates="dish")
+
     def to_dict(self):
         return {
             "id": self.id,
@@ -51,3 +53,22 @@ class Dish(Base):
             "weight": self.weight,
             "quantity": self.quantity
         }
+
+class Ingredient(Base):
+    __tablename__ = 'ingredients'
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    name = Column(String(80), nullable=False)
+
+    dish_ingredients = relationship('DishIngredient', back_populates='dish')
+
+
+class DishIngredient(Base):
+    __tablename__ = 'dish_ingredient'
+    dish_id = Column(Integer, ForeignKey('dishes.id'), primary_key=True)
+    ingredient_id = Column(Integer, ForeignKey('ingredients.id'), primary_key=True)
+
+    dish = relationship("Dish", back_populates='dish_ingredients')
+    ingredient = relationship('Ingredient', back_populates='dish_Ingredients')
+
+
