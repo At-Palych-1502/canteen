@@ -3,8 +3,6 @@ version: '3.8'
 services:
   frontend:
     image: rmd09/canteen-frontend:latest
-    environment:
-      - NEXT_PUBLIC_BASE_URL=/api
     networks:
       - app-network
     ports:
