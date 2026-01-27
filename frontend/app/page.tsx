@@ -9,22 +9,6 @@ import { Header } from "./components/Header/Header";
 import Styles from "./page.module.css";
 
 export default function Home() {
-  const [test, setTest] = useState("");
-
-  useEffect(() => {
-    console.log("test");
-    fetch("/api/api/login", {
-      body: JSON.stringify({username: "admin", password: "password"}),
-      headers: {
-        "Content-Type": "application/json"
-      },
-      method: "POST"
-    }).then(async(value) => {
-      const json = await value.json();
-      console.log(json);
-      setTest(json.access_token);
-    });
-  }, [])
 
   return (
     <>
