@@ -61,7 +61,17 @@ class Ingredient(Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String(80), nullable=False)
 
-    dish_ingredients = relationship('DishIngredient', back_populates='ingredient')  # ← ИСПРАВЛЕНО
+    dish_ingredients = relationship('DishIngredient', back_populates='ingredient', cascade='all, delete-orphan')
+
+    def __repr__(self):
+        return f'Ingredient {self.name}'
+
+    def to_dict(self):
+        sl = []
+        for dish in self.dish_ingredients:
+            dish = Dish.query.get(dish.dish_id)
+            sl.append(dish.to_dict())
+        return {'id': self.id, 'name': self.name, 'dishes': sl}
 
 
 class DishIngredient(Base):
