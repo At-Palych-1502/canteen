@@ -47,11 +47,14 @@ class Dish(Base):
     dish_ingredients = relationship("DishIngredient", back_populates="dish")
 
     def to_dict(self):
+        sl = []
+
         return {
             "id": self.id,
             "name": self.name,
             "weight": self.weight,
-            "quantity": self.quantity
+            "quantity": self.quantity,
+            "ingredients": sl
         }
 
 
