@@ -56,7 +56,7 @@ def add_dish():
     )
     db.session.add(dish)
     db.session.commit()
-    
+
     return jsonify({"id": dish.to_dict()}), 201
 
 @bp.route('/dishes', methods=['GET'])
