@@ -52,4 +52,3 @@ def ingredients():
     for ingredient in ingredients:
         sl[ingredient.id] = ingredient.to_dict()
     return jsonify({'data': sl})
-
