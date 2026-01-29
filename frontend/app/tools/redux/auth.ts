@@ -1,18 +1,24 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { endpoints } from '@/app/config/endpoints';
 import type { ILoginArgs, ILoginRes, IUser } from '../types/user';
-import { getAccessToken, setAccessToken } from '@/app/utils/auth';
+import { getAccessToken, setAccessToken } from '@/app/tools/utils/auth';
 
 export const authApi = createApi({
 	reducerPath: 'authApi',
-	baseQuery: fetchBaseQuery({ baseUrl: endpoints.base }),
+	baseQuery: fetchBaseQuery({
+		baseUrl: endpoints.base,
+		prepareHeaders: headers => {
+			const token = getAccessToken();
+
+			if (token) headers.set('authorization', `Bearer ${token}`);
+
+			return headers;
+		},
+	}),
 	endpoints: build => ({
 		login: build.mutation<ILoginRes, ILoginArgs>({
 			query: (data: ILoginArgs) => ({
-				url: '/login',
-				// как по мне было бы удобнее
-				// endpoints.auth = {base: ..., login: '/login', register: '/register'}
-				// url: endpoints.auth.login,
+				url: endpoints.auth.login,
 				method: 'POST',
 				body: data,
 			}),
@@ -20,7 +26,7 @@ export const authApi = createApi({
 				try {
 					const { data } = await queryFulfilled;
 
-					setAccessToken(data.token);
+					setAccessToken(data.access_token);
 				} catch (error) {
 					console.warn(error);
 				}
@@ -44,13 +50,7 @@ export const authApi = createApi({
 		// }),
 		getUser: build.query<IUser, void>({
 			query: () => ({
-				url: '/user',
-
-				headers: getAccessToken()
-					? {
-							Authorization: `Bearer ${getAccessToken()}`,
-						}
-					: {},
+				url: endpoints.auth.user,
 			}),
 		}),
 	}),

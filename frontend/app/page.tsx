@@ -13,29 +13,47 @@ import { loginUser } from './tools/auth';
 import { AuthForm } from './components/AuthForm/AuthForm';
 import { Header } from './components/Header/Header';
 import Styles from './page.module.css';
-import { useGetDishesQuery } from './tools/redux/dishes';
 import { useGetUserQuery, useLoginMutation } from './tools/redux/auth';
-import { getAccessToken } from './utils/auth';
+import { getAccessToken } from './tools/utils/auth';
+import {
+	useCreateDishMutation,
+	useDeleteDishMutation,
+	useGetAllDishesQuery,
+	useGetDishByIdQuery,
+	useUpdateDishMutation,
+} from './tools/redux/dishes';
 
 export default function Home() {
-	// const { data, error, isLoading } = useGetDishesQuery();
+	// const { data, error, isLoading } = useGetDishByIdQuery(123);
+	const { data, error, isLoading } = useGetAllDishesQuery();
 
-	// console.log(data, error, isLoading);
+	console.log(data, error, isLoading);
 
-	// const [login] = useLoginMutation();
+	const [login] = useLoginMutation();
+	const [removeDish] = useDeleteDishMutation();
+	const [updateDish] = useUpdateDishMutation();
+	const [createDish] = useCreateDishMutation();
+
 	// const { data, error, isLoading } = useGetUserQuery();
 
-	// console.log(data, error, isLoading);
-	// console.log(getAccessToken());
+	console.log(data, error, isLoading);
+	console.log(getAccessToken());
 
-	// useEffect(() => {
-	// 	const a = async () => {
-	// 		const res = await login({ username: 'user1', password: 'passwd' });
+	useEffect(() => {
+		const a = async () => {
+			const res = await login({ username: 'admin', password: 'password' });
+			// const res = await updateDish({ id: 1, data: { name: 'омлет' } });
+			// const res = await createDish({
+			// 	name: 'омлет2',
+			// 	quantity: 100,
+			// 	weight: 50,
+			// }); // не работает
+			// const res = await removeDish(1); // не работает
 
-	// 		console.log(res);
-	// 	};
-	// 	a();
-	// }, [login]);
+			console.log(res);
+		};
+		a();
+	}, [login]);
 
 	return (
 		<>

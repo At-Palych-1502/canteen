@@ -14,6 +14,6 @@ export interface ILoginArgs {
 }
 
 export interface ILoginRes {
-	token: string;
+	access_token: string;
 	user: IUser;
 }

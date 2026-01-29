@@ -1,8 +1,18 @@
-export interface IDish {
-	id: number;
+export interface IDishArg {
 	name: string;
 	weight: number;
-	meal: string;
 	quantity: number;
-	created_at: string;
+}
+
+export interface IDishRes extends IDishArg {
+	id: number;
+}
+
+export interface IDishUpdate {
+	id: number;
+	data: Partial<IDishArg>;
+}
+
+export interface IDish extends IDishArg {
+	id: number;
 }
