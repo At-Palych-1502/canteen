@@ -14,7 +14,7 @@ def create_app():
     db.init_app(app)
     jwt.init_app(app)
     if app.config.get('DEBUG'):
-        cors.init_app(app, origins='*')
+        cors.init_app(app, resources={r"/api/*": {"origins": "*"}})
     else:
         cors.init_app(app)
     app.register_blueprint(api)
