@@ -56,4 +56,36 @@ def add_dish():
     )
     db.session.add(dish)
     db.session.commit()
-    return jsonify({"id": dish.id}), 200
+    
+    return jsonify({"id": dish.to_dict()}), 201
+
+@bp.route('dishes', methods=['GET'])
+@jwt_required()
+@role_required(["admin", "cook"])
+def dishes():
+    dishes = Dish.query.all()
+    sl = []
+    for dish in dishes:
+        sl.append(dish.to_dict())
+    return jsonify({"data": sl}), 200
+
+@bp.route('/dish/<int:dish_id>/add_ingredient/<int:ingredient_id>', methods=['POST'])
+@jwt_required()
+@role_required(["admin", "cook"])
+def add_ingredient_to_dish(dish_id, ingredient_id):
+    dish = Dish.query.get_or_404(dish_id)
+    ingredient = Ingredient.query.get_or_404(ingredient_id)
+    existing = db.session.query(DishIngredient).filter_by(
+        ingredient_id=ingredient.id,
+        dish_id=dish.id
+    ).first()
+    if existing:
+        return jsonify({"error": "Ingredient-dish relation already exists"}), 208
+    dish_ing = DishIngredient(
+        ingredient_id=ingredient.id,
+        dish_id=dish.id
+    )
+    db.session.add(dish_ing)
+    db.session.commit()
+    return jsonify({"message": "Ingredient added to dish"}), 201
+
