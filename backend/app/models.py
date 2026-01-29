@@ -46,15 +46,24 @@ class Dish(Base):
 
     dish_ingredients = relationship("DishIngredient", back_populates="dish")
 
-    def to_dict(self):
+    def to_dict(self, include_ingredients=False):
         sl = []
-
+        if include_ingredients:
+            for ingredient in self.dish_ingredients:
+                ingr = Ingredient.query.get(ingredient.ingredient_id)
+                sl.append(ingr.to_dict())
+            return {
+                "id": self.id,
+                "name": self.name,
+                "weight": self.weight,
+                "quantity": self.quantity,
+                "ingredients": sl
+            }
         return {
             "id": self.id,
             "name": self.name,
             "weight": self.weight,
-            "quantity": self.quantity,
-            "ingredients": sl
+            "quantity": self.quantity
         }
 
 
@@ -69,12 +78,14 @@ class Ingredient(Base):
     def __repr__(self):
         return f'Ingredient {self.name}'
 
-    def to_dict(self):
+    def to_dict(self, include_dishes=False):
         sl = []
-        for dish in self.dish_ingredients:
-            dish = Dish.query.get(dish.dish_id)
-            sl.append(dish.to_dict())
-        return {'id': self.id, 'name': self.name, 'dishes': sl}
+        if include_dishes:
+            for dish in self.dish_ingredients:
+                dish = Dish.query.get(dish.dish_id)
+                sl.append(dish.to_dict())
+            return {'id': self.id, 'name': self.name, 'dishes': sl}
+        return {'id': self.id, 'name': self.name}
 
 
 class DishIngredient(Base):

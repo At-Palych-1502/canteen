@@ -15,7 +15,7 @@ def ingredient(id):
     if not ingredient:
         return jsonify({'error': 'Not found'}), 404
     if request.method == 'GET':
-        return jsonify({'ingredient': ingredient.to_dict()})
+        return jsonify({'ingredient': ingredient.to_dict(include_dishes=True)})
     elif request.method == 'DELETE':
         db.session.delete(ingredient)
         db.session.commit()

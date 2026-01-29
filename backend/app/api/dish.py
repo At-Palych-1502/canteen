@@ -22,7 +22,7 @@ def dish(id):
     if request.method == 'GET':
         if not dish:
             return jsonify({"error": "Dish not found"}), 404
-        return jsonify({"data": dish.to_dict()}), 200
+        return jsonify({"data": dish.to_dict(include_ingredients=True)}), 200
     elif request.method == 'DELETE':
         db.session.delete(dish)
         db.session.commit()
