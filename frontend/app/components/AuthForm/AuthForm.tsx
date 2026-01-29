@@ -48,9 +48,9 @@ export function AuthForm(props: Props) {
         <h1 className={Styles["title"]}>Авторизация</h1>
         <form className={Styles["form"]} onSubmit={onSubmitHandler}>
           <h3>Введите имя пользователя</h3>
-          <input className={Styles["input"]} onBlur={inputHandler} type="text" name="username" />
+          <input className={Styles["input"]} onChange={inputHandler} type="text" name="username" />
           <h3>Введите пароль</h3>
-          <input className={Styles["input"]} onBlur={inputHandler} type="password" name="password" />
+          <input className={Styles["input"]} onChange={inputHandler} type="password" name="password" />
           <button className={Styles["auth_button"]} type="submit">Авторизоваться</button>
   
           {responseInfo.text && (
