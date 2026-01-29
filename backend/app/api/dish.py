@@ -59,6 +59,16 @@ def add_dish():
     
     return jsonify({"id": dish.to_dict()}), 201
 
+@bp.route('dishes', methods=['GET'])
+@jwt_required()
+@role_required(["admin", "cook"])
+def dishes():
+    dishes = Dish.query.all()
+    sl = []
+    for dish in dishes:
+        sl.append(dish.to_dict())
+    return jsonify({"data": sl}), 200
+
 @bp.route('/dish/<int:dish_id>/add_ingredient/<int:ingredient_id>', methods=['POST'])
 @jwt_required()
 @role_required(["admin", "cook"])
