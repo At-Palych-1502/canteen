@@ -56,10 +56,4 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            cd /root  
-            ./pull_repo.sh
-            cd /root/canteen
-            find ./ -type f -name '.*env*' -delete
-            docker compose -f docker-compose.prod.yml pull
-            docker compose down -f
-            docker compose -f docker-compose.prod.yml up -d
+            /root/scripts/run_docker_compose.sh

@@ -59,6 +59,7 @@ class Dish(Base):
                 "quantity": self.quantity,
                 "ingredients": sl
             }
+        
         return {
             "id": self.id,
             "name": self.name,
