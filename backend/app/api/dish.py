@@ -7,7 +7,7 @@ bp = Blueprint('dish', __name__)
 
 
 
-@bp.route('/dish/<int:id>', methods=["GET", "DELETE", "PUT"])
+@bp.route('/dishes/<int:id>', methods=["GET", "DELETE", "PUT"])
 @jwt_required()
 @role_required(["admin", "cook"])
 def dish(id):
@@ -38,7 +38,7 @@ def dish(id):
         return jsonify({"message": "Dish updated"}), 200
 
 
-@bp.route('/dish', methods=['POST'])
+@bp.route('/dishes', methods=['POST'])
 @jwt_required()
 @role_required(["admin", "cook"])
 def add_dish():
@@ -59,7 +59,7 @@ def add_dish():
     
     return jsonify({"id": dish.to_dict()}), 201
 
-@bp.route('dishes', methods=['GET'])
+@bp.route('/dishes', methods=['GET'])
 @jwt_required()
 @role_required(["admin", "cook"])
 def dishes():
