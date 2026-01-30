@@ -16,14 +16,19 @@ import Styles from './page.module.css';
 import { useGetUserQuery, useLoginMutation } from './tools/redux/api/auth';
 import { getAccessToken } from './tools/utils/auth';
 import {
-  useAddIngredientMutation,
+	useAddIngredientMutation,
 	useCreateDishMutation,
 	useDeleteDishMutation,
 	useGetAllDishesQuery,
 	useGetDishByIdQuery,
 	useUpdateDishMutation,
 } from './tools/redux/api/dishes';
-import { useCreateIngredientMutation, useDeleteIngredientMutation, useGetAllIngredientsQuery, useUpdateIngredientMutation } from './tools/redux/api/ingredients';
+import {
+	useCreateIngredientMutation,
+	useDeleteIngredientMutation,
+	useGetAllIngredientsQuery,
+	useUpdateIngredientMutation,
+} from './tools/redux/api/ingredients';
 
 export default function Home() {
 	const [login] = useLoginMutation();
@@ -31,31 +36,31 @@ export default function Home() {
 	// const { data, error, isLoading } = useGetUserQuery();
 
 	// console.log(data, error, isLoading);
-	
-  // const { data, error, isLoading } = useGetDishByIdQuery(123);
-	const { data, error, isLoading } = useGetAllDishesQuery();
 
-	const [removeDish] = useDeleteDishMutation();
-	const [updateDish] = useUpdateDishMutation();
-	const [createDish] = useCreateDishMutation();
-	const [addIngredient] = useAddIngredientMutation();
+	// const { data, error, isLoading } = useGetDishByIdQuery(123);
+	// const { data, error, isLoading } = useGetAllDishesQuery();
 
-	useEffect(() => {
-		const a = async () => {
-			// const res = await login({ username: 'admin', password: 'password' });
-			// const res = await updateDish({ id: 1, data: { name: 'омлет' } });
-			// const res = await createDish({
-			// 	name: 'омлет2',
-			// 	quantity: 100,
-			// 	weight: 50,
-			// }); // не работает
-			// const res = await removeDish(1); // не работает
-			const res = await addIngredient(1, 6); // не работает
+	// const [removeDish] = useDeleteDishMutation();
+	// const [updateDish] = useUpdateDishMutation();
+	// const [createDish] = useCreateDishMutation();
+	// const [addIngredient] = useAddIngredientMutation();
 
-			console.log(res);
-		};
-		a();
-	}, [login]);
+	// useEffect(() => {
+	// 	const a = async () => {
+	// 		// const res = await login({ username: 'admin', password: 'password' });
+	// 		// const res = await updateDish({ id: 1, data: { name: 'омлет' } });
+	// 		// const res = await createDish({
+	// 		// 	name: 'омлет2',
+	// 		// 	quantity: 100,
+	// 		// 	weight: 50,
+	// 		// }); // не работает
+	// 		// const res = await removeDish(1); // не работает
+	// 		const res = await addIngredient(1, 6); // не работает
+
+	// 		console.log(res);
+	// 	};
+	// 	a();
+	// }, []);
 
 	// const { data, error, isLoading } = useGetAllIngredientsQuery();
 
