@@ -1,6 +1,6 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { endpoints } from '@/app/config/endpoints';
-import type { ILoginArgs, ILoginRes, IUser } from '../types/user';
+import type { ILoginArgs, ILoginRes, IUser } from '../../types/user';
 import { getAccessToken, setAccessToken } from '@/app/tools/utils/auth';
 
 export const authApi = createApi({

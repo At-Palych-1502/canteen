@@ -13,35 +13,36 @@ import { loginUser } from './tools/auth';
 import { AuthForm } from './components/AuthForm/AuthForm';
 import { Header } from './components/Header/Header';
 import Styles from './page.module.css';
-import { useGetUserQuery, useLoginMutation } from './tools/redux/auth';
+import { useGetUserQuery, useLoginMutation } from './tools/redux/api/auth';
 import { getAccessToken } from './tools/utils/auth';
 import {
+  useAddIngredientMutation,
 	useCreateDishMutation,
 	useDeleteDishMutation,
 	useGetAllDishesQuery,
 	useGetDishByIdQuery,
 	useUpdateDishMutation,
-} from './tools/redux/dishes';
+} from './tools/redux/api/dishes';
+import { useCreateIngredientMutation, useDeleteIngredientMutation, useGetAllIngredientsQuery, useUpdateIngredientMutation } from './tools/redux/api/ingredients';
 
 export default function Home() {
-	// const { data, error, isLoading } = useGetDishByIdQuery(123);
-	const { data, error, isLoading } = useGetAllDishesQuery();
-
-	console.log(data, error, isLoading);
-
 	const [login] = useLoginMutation();
-	const [removeDish] = useDeleteDishMutation();
-	const [updateDish] = useUpdateDishMutation();
-	const [createDish] = useCreateDishMutation();
 
 	// const { data, error, isLoading } = useGetUserQuery();
 
-	console.log(data, error, isLoading);
-	console.log(getAccessToken());
+	// console.log(data, error, isLoading);
+	
+  // const { data, error, isLoading } = useGetDishByIdQuery(123);
+	const { data, error, isLoading } = useGetAllDishesQuery();
+
+	const [removeDish] = useDeleteDishMutation();
+	const [updateDish] = useUpdateDishMutation();
+	const [createDish] = useCreateDishMutation();
+	const [addIngredient] = useAddIngredientMutation();
 
 	useEffect(() => {
 		const a = async () => {
-			const res = await login({ username: 'admin', password: 'password' });
+			// const res = await login({ username: 'admin', password: 'password' });
 			// const res = await updateDish({ id: 1, data: { name: 'омлет' } });
 			// const res = await createDish({
 			// 	name: 'омлет2',
@@ -49,11 +50,38 @@ export default function Home() {
 			// 	weight: 50,
 			// }); // не работает
 			// const res = await removeDish(1); // не работает
+			const res = await addIngredient(1, 6); // не работает
 
 			console.log(res);
 		};
 		a();
 	}, [login]);
+
+	// const { data, error, isLoading } = useGetAllIngredientsQuery();
+
+	// console.log(data, error, isLoading);
+
+	// const [removeIngredient] = useDeleteIngredientMutation();
+	// const [updateIngredient] = useUpdateIngredientMutation();
+	// const [createIngredient] = useCreateIngredientMutation();
+
+	// const { data, error, isLoading } = useGetUserQuery();
+
+	// console.log(data, error, isLoading);
+
+	// useEffect(() => {
+	// 	const a = async () => {
+	// 		const res = await login({ username: 'admin', password: 'password' });
+	// 		// const res = await updateIngredient({ id: 6, data: { name: 'морковь3' } });
+	// 		// const res = await createIngredient({
+	// 		// 	name: 'морковь2',
+	// 		// });
+	// 		// const res = await removeIngredient(7);
+
+	// 		console.log(res);
+	// 	};
+	// 	a();
+	// }, []);
 
 	return (
 		<>

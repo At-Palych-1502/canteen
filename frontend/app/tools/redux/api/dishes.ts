@@ -1,7 +1,12 @@
 import { endpoints } from '@/app/config/endpoints';
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import type { IDishArg, IDishRes, IDishUpdate } from '../types/dishes';
-import { getAccessToken } from '../utils/auth';
+import type {
+	IAddIngredientArg,
+	IDishArg,
+	IDishRes,
+	IDishUpdate,
+} from '../../types/dishes';
+import { getAccessToken } from '../../utils/auth';
 
 export const dishesApi = createApi({
 	reducerPath: 'dishesApi',
@@ -29,17 +34,24 @@ export const dishesApi = createApi({
 			}),
 		}),
 		updateDish: builder.mutation<void, IDishUpdate>({
-			query: ({ id, data }) => ({
+			query: ({ id, data }: IDishUpdate) => ({
 				url: `/${id}`,
 				method: 'PUT',
 				body: data,
 			}),
 		}),
 		createDish: builder.mutation<number, IDishArg>({
-			query: data => ({
+			query: (data: IDishArg) => ({
 				url: '',
 				method: 'POST',
 				body: data,
+			}),
+		}),
+		addIngredient: builder.mutation<void, IAddIngredientArg>({
+			query: ({ dishId, ingredientId }: IAddIngredientArg) => ({
+				url: `${dishId}/add-ingredient/${ingredientId}`,
+				method: 'POST',
+				body: {},
 			}),
 		}),
 	}),
@@ -51,4 +63,5 @@ export const {
 	useDeleteDishMutation,
 	useUpdateDishMutation,
 	useCreateDishMutation,
+	useAddIngredientMutation,
 } = dishesApi;

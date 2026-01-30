@@ -16,3 +16,8 @@ export interface IDishUpdate {
 export interface IDish extends IDishArg {
 	id: number;
 }
+
+export interface IAddIngredientArg {
+	dishId: number;
+	ingredientId: number;
+}

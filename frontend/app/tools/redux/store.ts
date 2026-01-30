@@ -1,15 +1,21 @@
 import { configureStore } from '@reduxjs/toolkit';
-import { dishesApi } from './dishes';
-import { authApi } from './auth';
+import { dishesApi } from './api/dishes';
+import { authApi } from './api/auth';
+import { ingredientsApi } from './api/ingredients';
 
 export const store = configureStore({
 	reducer: {
 		[dishesApi.reducerPath]: dishesApi.reducer,
 		[authApi.reducerPath]: authApi.reducer,
+		[ingredientsApi.reducerPath]: ingredientsApi.reducer,
 	},
 
 	middleware: getDefaultMiddleware =>
-		getDefaultMiddleware().concat(dishesApi.middleware, authApi.middleware),
+		getDefaultMiddleware().concat(
+			dishesApi.middleware,
+			authApi.middleware,
+			ingredientsApi.middleware,
+		),
 });
 
 export type RootState = ReturnType<typeof store.getState>;

@@ -13,5 +13,9 @@ export const endpoints = {
 	},
 	dishes: {
 		base: `${BASE_URL}/dishes`,
+		addIngredient: '/add-ingredient',
+	},
+	ingredients: {
+		base: `${BASE_URL}/ingredients`,
 	},
 };
