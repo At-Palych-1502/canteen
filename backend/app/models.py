@@ -6,9 +6,12 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 Base = db.Model
 
-User_Allergies = db.Table('user_allergies',
-                          Column('user_id', Integer, ForeignKey('users.id'), primary_key=True),
-                          Column('ingredient_id', Integer, ForeignKey('ingredients.id'), primary_key=True))
+
+class UserAllergies(Base):
+    __tablename__ = 'user_allergies'
+
+    user_id = Column(Integer, ForeignKey("users.id"), primary_key=True)
+    ingredient_id = Column(Integer, ForeignKey("ingredients.id"), primary_key=True)
 
 
 class User(Base):
@@ -20,7 +23,7 @@ class User(Base):
     role = Column(String(20), nullable=False, default='student')
     password_hash = Column(String(200), nullable=False)
 
-    # allergies = relationship("User_Allergies", secondary=User_Allergies, back_populates="allergic_users")
+    allergies = relationship("Ingredient", secondary="user_allergies", back_populates="allergic_users")
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
@@ -80,7 +83,7 @@ class Ingredient(Base):
     name = Column(String(80), nullable=False)
 
     dish_ingredients = relationship('DishIngredient', back_populates='ingredient', cascade='all, delete-orphan')
-    # allergic_users = relationship("Users", back_populates='allergies', cascade='all, delete-orphan')
+    allergic_users = relationship("User", secondary="user_allergies", back_populates="allergies")
 
     def __repr__(self):
         return f'Ingredient {self.name}'
@@ -102,5 +105,6 @@ class DishIngredient(Base):
 
     dish = relationship("Dish", back_populates='dish_ingredients')
     ingredient = relationship('Ingredient', back_populates='dish_ingredients')
+
 
 

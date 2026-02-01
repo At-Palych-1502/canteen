@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify, request
 from flask_jwt_extended import jwt_required, get_jwt_identity
-from ..models import User, Dish, Ingredient
+from ..models import User, Dish, Ingredient, UserAllergies
 from ..utils import role_required
 from .. import db
 
@@ -53,3 +53,20 @@ def ingredients():
         sl[ingredient.id] = ingredient.to_dict()
     return jsonify({'data': sl})
 
+
+@bp.route('add_allergic_ingredient/<int:id>', methods=['POST'])
+@role_required(['student'])
+@jwt_required()
+def add_allergic_ingredient(id):
+    ingredient = Ingredient.query.get_or_404(id)
+    user = User.query.get_or_404(get_jwt_identity())
+    existing = UserAllergies.query.filter_by(user_id=user.id, ingredient_id=ingredient.id).first()
+    if existing:
+        return jsonify({'error': 'Ingredient already added'}), 208
+    allergy = UserAllergies(
+        user_id=user.id,
+        ingredient_id=ingredient.id,
+    )
+    db.session.add(allergy)
+    db.session.commit()
+    return jsonify({'message': 'successfully added allergy'}), 200
