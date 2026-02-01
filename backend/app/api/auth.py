@@ -44,6 +44,13 @@ def user():
         return jsonify({"error": "Not valid json token"}), 404
     return jsonify(user=user.to_dict()), 200
 
+@bp.route('/user/<int:id>', methods=['GET'])
+@jwt_required()
+@role_required(['cook', 'admin'])
+def users(id):
+    user = User.query.get_or_404(id)
+    return jsonify(user=user.to_dict()), 200
+
 @bp.route('auth/register', methods=['POST'])
 def register():
     data = request.get_json()
