@@ -46,7 +46,6 @@ class Dish(Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String(80), nullable=False)
     weight = Column(Integer, nullable=False)
-    meal = Column(String(20), nullable=False)
     quantity = Column(Integer, nullable=False)
     created_at = Column(DateTime, nullable=False, default=datetime.datetime.now())
 

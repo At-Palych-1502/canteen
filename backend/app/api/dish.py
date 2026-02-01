@@ -46,18 +46,16 @@ def add_dish():
     f = data.get
     name = f("name")
     weight = f("weight")
-    meal = f("meal")
     quantity = f("quantity")
     dish = Dish(
         name=name,
         weight=weight,
-        meal=meal,
         quantity=quantity
     )
     db.session.add(dish)
     db.session.commit()
 
-    return jsonify({"id": dish.to_dict()}), 201
+    return jsonify({"data": dish.to_dict()}), 201
 
 @bp.route('/dishes', methods=['GET'])
 @jwt_required()
