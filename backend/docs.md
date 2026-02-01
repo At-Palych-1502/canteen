@@ -1,4 +1,4 @@
-Все запросы выполняются по /api + название группы + название ручки!
+Все запросы выполняются по /api + название ручки!
 
 **auth**:
 
@@ -93,11 +93,10 @@ _dish [POST]_
     Формат запроса: {
         "name": String,
         "weight": Integer,
-        "meal": String,
         "quantity": Integer
     }
     Формат ответа:
-    [201] {"id":{
+    [201] {"data":{
         "id": id,
         "name": name,
         "weight": weight,
