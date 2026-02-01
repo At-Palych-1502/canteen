@@ -2,6 +2,8 @@ from flask import Blueprint, request, jsonify
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 from ..models import User
 from datetime import timedelta
+from .. import db
+from ..utils import role_required
 
 bp = Blueprint('auth', __name__)
 
@@ -40,4 +42,39 @@ def user():
     user = User.query.get_or_404(user_id)
     if not user:
         return jsonify({"error": "Not valid json token"}), 404
+    return jsonify(user=user.to_dict()), 200
+
+@bp.route('auth/register', methods=['POST'])
+def register():
+    data = request.get_json()
+    username = data.get('username')
+    email = data.get('email')
+
+    if User.query.filter_by(username=username).first():
+        return jsonify({"error": "Username already exists"}), 400
+    if User.query.filter_by(email=email).first():
+        return jsonify({"error": "Email already exists"}), 400
+    password = data.get('password')
+
+    user = User(
+        username=username,
+        email=email,
+        role='student'
+    )
+    user.set_password(password)
+    db.session.add(user)
+    db.session.commit()
+    return jsonify(user=user.to_dict()), 200
+
+
+@bp.route('/change_role/<int:id>', methods=['PUT'])
+@jwt_required()
+@role_required(['admin'])
+def change_role(id):
+    user = User.query.get_or_404(id)
+    data = request.get_json()
+    if data['role'] not in ['student', 'admin', 'cook']:
+        return jsonify({"error": "Invalid role"}), 400
+    user.role = data["role"]
+    db.session.commit()
     return jsonify(user=user.to_dict()), 200
