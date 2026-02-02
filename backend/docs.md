@@ -61,6 +61,17 @@ _user/<int:user_id> [GET]_
     [404] {"error": "Not found"}
     [422] любые иные ошибки
 
+_users [GET]_
+(получение информации о всех пользователях админом)
+
+    формат запроса: headers: {
+        "Authorization": "Bearer " + jwt_token}
+    формат ответа:
+    [200] {"data": [{
+        "email": email,
+        "id": id,
+        "role": role,
+        "username": username}]}
 
 **dish**:
 

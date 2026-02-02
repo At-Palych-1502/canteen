@@ -44,10 +44,19 @@ def user():
         return jsonify({"error": "Not valid json token"}), 404
     return jsonify(user=user.to_dict()), 200
 
+@bp.route('/users', methods=['GET'])
+@jwt_required()
+@role_required(['admin'])
+def users():
+    Users = User.query.all()
+    print(Users)
+    return jsonify({"data": [user.to_dict() for user in Users]}), 200
+
+
 @bp.route('/user/<int:id>', methods=['GET'])
 @jwt_required()
 @role_required(['cook', 'admin'])
-def users(id):
+def user_id(id):
     user = User.query.get_or_404(id)
     return jsonify(user=user.to_dict()), 200
 
