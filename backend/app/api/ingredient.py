@@ -62,7 +62,7 @@ def add_allergic_ingredient(id):
     user = User.query.get_or_404(get_jwt_identity())
     existing = UserAllergies.query.filter_by(user_id=user.id, ingredient_id=ingredient.id).first()
     if existing:
-        return jsonify({'error': 'Ingredient already added'}), 208
+        return jsonify({'error': 'Ingredient-allergy relationship already exists'}), 208
     allergy = UserAllergies(
         user_id=user.id,
         ingredient_id=ingredient.id,

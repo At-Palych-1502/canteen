@@ -2,6 +2,18 @@
 
 **auth**:
 
+_register [POST]_
+
+    формат запроса: {
+        "username": String,
+        "password": String,
+        "email": String,
+    }
+    форма ответа: 
+    [200] {"message": "User added"}
+    [400] email or username already exists
+
+
 _login [POST]_
 
     формат запроса: {
@@ -22,10 +34,10 @@ _login [POST]_
 
 
 _user [GET]_
+(получение пользователем информации о самом себе)
 
     формат запроса: headers: {
-        "Authorization": "Bearer " + jwt_token
-        }
+        "Authorization": "Bearer " + jwt_token}
     формат ответа:
     [200] {"user": {
         "email": email,
@@ -33,7 +45,21 @@ _user [GET]_
         "role": role,
         "username": username}}
     [404] {"error": "Not found"}
-    [422] any other troubles
+    [422] любые иные ошибки
+
+_user/<int:user_id> [GET]_
+(получение информации о пользователе админом или поваром)    
+
+    формат запроса: headers: {
+        "Authorization": "Bearer " + jwt_token}
+    формат ответа:
+    [200] {"user": {
+        "email": email,
+        "id": id,
+        "role": role,
+        "username": username}}
+    [404] {"error": "Not found"}
+    [422] любые иные ошибки
 
 
 **dish**:
@@ -73,8 +99,9 @@ _/dish/<int:id>  [DELETE]_
 _/dish/<int:id>  [PUT]_
 
     Требуемая роль: "admin", "cook"
-    Формат запроса: headers: {
-        "Authorization": "Bearer " + jwt_token
+    Headers: {
+        "Authorization": "Bearer " + jwt_token}
+    Формат запроса: {
         "name": String,
         "weight": Integer,
         "meal": String,
@@ -87,7 +114,7 @@ _/dish/<int:id>  [PUT]_
 
 
 
-_dish [POST]_
+_/dish [POST]_
 
     Требуемая роль: "admin", "cook"
     Формат запроса: {
@@ -108,12 +135,35 @@ _dish [POST]_
             }]}
 
 
-_POST /dish/<int:dish_id>/add_ingredient/<int:ingredient_id> [POST]_
+/dish/<int:dish_id>/add_ingredient/<int:ingredient_id> [POST]_
 
     Требуемая роль: "admin", "cook"
-    Формат запроса:{
+    Headers:{
         "Authorization": "Bearer " + jwt_token
     }
     Формат ответа: 
     [201] {"message":"Ingredient added to dish"}
     [208] {"error":"Ingredient-dish relation already exists"}
+
+
+**ingredients**
+
+_crud логика (/ingredients)_: аналогично для dish, параметры:
+
+    требуемые роли: admin, cook
+    Headers: {
+        "Authorization": "Bearer " + jwt_token
+    }
+    Формат запроса: {
+        name: String}
+
+/add_allergic_ingredient/<int:ingredient_id> [POST]
+
+    требуемые роли: student
+    требуемые роли: admin, cook
+    Headers: {
+        "Authorization": "Bearer " + jwt_token
+    }
+    Формат ответа: 
+    [200] {'message': 'successfully added allergy'}
+    [208] {'error': 'Ingredient-allergy relationship already exists'}
