@@ -7,7 +7,7 @@ from .. import db
 
 bp = Blueprint('ingredient', __name__)
 
-@bp.route('ingredient/<int:id>', methods=['GET', 'DELETE', 'PUT'])
+@bp.route('ingredients/<int:id>', methods=['GET', 'DELETE', 'PUT'])
 @jwt_required()
 @role_required(['admin', 'cook'])
 def ingredient(id):
@@ -30,7 +30,7 @@ def ingredient(id):
         db.session.commit()
         return jsonify({'message': 'ingredient updated'}), 200
 
-@bp.route('ingredient', methods=['POST'])
+@bp.route('ingredients', methods=['POST'])
 @jwt_required()
 @role_required(['admin', 'cook'])
 def add_ingredient():

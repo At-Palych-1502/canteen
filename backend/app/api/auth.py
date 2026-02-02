@@ -71,7 +71,7 @@ def register():
     user.set_password(password)
     db.session.add(user)
     db.session.commit()
-    return jsonify(user=user.to_dict()), 200
+    return jsonify({"message": "User added"}), 200
 
 
 @bp.route('/change_role/<int:id>', methods=['PUT'])
