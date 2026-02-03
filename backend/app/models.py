@@ -7,13 +7,6 @@ from werkzeug.security import generate_password_hash, check_password_hash
 Base = db.Model
 
 
-class UserAllergies(Base):
-    __tablename__ = 'user_allergies'
-
-    user_id = Column(Integer, ForeignKey("users.id"), primary_key=True)
-    ingredient_id = Column(Integer, ForeignKey("ingredients.id"), primary_key=True)
-
-
 class User(Base):
     __tablename__ = 'users'
 
@@ -61,7 +54,8 @@ class Dish(Base):
     created_at = Column(DateTime, nullable=False, default=datetime.datetime.now())
 
     dish_ingredients = relationship("DishIngredient", back_populates="dish")
-
+    meal = relationship("Meal", secondary="meal_ingredients", back_populates="dish"
+                        )
     def to_dict(self, include_ingredients=False):
         sl = []
         if include_ingredients:
@@ -125,3 +119,28 @@ class Transaction(Base):
     created_at = Column(DateTime, nullable=False, default=datetime.datetime.now())
 
     user = relationship("User", back_populates="transactions")
+
+
+class UserAllergies(Base):
+    __tablename__ = 'user_allergies'
+
+    user_id = Column(Integer, ForeignKey("users.id"), primary_key=True)
+    ingredient_id = Column(Integer, ForeignKey("ingredients.id"), primary_key=True)
+
+
+class Meal(Base):
+    __tablename__ = 'meals'
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    name = Column(String(80), nullable=False)
+    price = Column(Float, nullable=False)
+
+    dish = relationship("Dish", secondary="meal_ingredients", back_populates="meal")
+
+
+class MealDish(Base):
+    __tablename__ = 'meal_ingredients'
+
+    meal_id = Column(Integer, ForeignKey('meals.id'), primary_key=True)
+    dish_id = Column(Integer, ForeignKey('dishes.id'), primary_key=True)
+
