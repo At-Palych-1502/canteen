@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, ForeignKey, DateTime, JSON
+from sqlalchemy import Column, Integer, String, ForeignKey, DateTime, JSON, Float
 from sqlalchemy.orm import relationship
 from .extensions import db
 import datetime
@@ -19,11 +19,16 @@ class User(Base):
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     username = Column(String(80), unique=True, nullable=False)
+    name = Column(String(80), nullable=False)
+    surname = Column(String(80), nullable=False)
+    patronymic = Column(String(80), nullable=False)
+    balance = Column(Float, nullable=False, default=0)
     email = Column(String(120), unique=True, nullable=False)
     role = Column(String(20), nullable=False, default='student')
     password_hash = Column(String(200), nullable=False)
 
     allergies = relationship("Ingredient", secondary="user_allergies", back_populates="allergic_users")
+    transactions = relationship("Transaction", back_populates="user")
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
@@ -35,6 +40,9 @@ class User(Base):
         return {
             "id": self.id,
             "username": self.username,
+            "name": self.name,
+            "surname": self.surname,
+            "patronymic": self.patronymic,
             "email": self.email,
             "role": self.role
         }
@@ -108,3 +116,12 @@ class DishIngredient(Base):
 
 
 
+class Transaction(Base):
+    __tablename__ = 'transactions'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
+    amount = Column(Float, nullable=False)
+    description = Column(String(200), nullable=False)
+    created_at = Column(DateTime, nullable=False, default=datetime.datetime.now())
+
+    user = relationship("User", back_populates="transactions")
