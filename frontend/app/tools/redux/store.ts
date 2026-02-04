@@ -2,12 +2,14 @@ import { configureStore } from '@reduxjs/toolkit';
 import { dishesApi } from './api/dishes';
 import { authApi } from './api/auth';
 import { ingredientsApi } from './api/ingredients';
+import { userSlice } from './user';
 
 export const store = configureStore({
 	reducer: {
 		[dishesApi.reducerPath]: dishesApi.reducer,
 		[authApi.reducerPath]: authApi.reducer,
 		[ingredientsApi.reducerPath]: ingredientsApi.reducer,
+		[userSlice.name]: userSlice.reducer,
 	},
 
 	middleware: getDefaultMiddleware =>

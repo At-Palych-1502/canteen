@@ -49,7 +49,7 @@ export const dishesApi = createApi({
 		}),
 		addIngredient: builder.mutation<void, IAddIngredientArg>({
 			query: ({ dishId, ingredientId }: IAddIngredientArg) => ({
-				url: `${dishId}/add-ingredient/${ingredientId}`,
+				url: `${dishId}/add_ingredient/${ingredientId}`,
 				method: 'POST',
 				body: {},
 			}),
