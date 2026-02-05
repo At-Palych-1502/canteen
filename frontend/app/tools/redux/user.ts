@@ -1,8 +1,8 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { IUser } from '../types/user';
+import { IUser } from '../types/user.d';
 import { RootState } from './store';
 
-export type UserState = IUser | { user: null };
+export type UserState = { user: IUser | null };
 
 const initialState: UserState = { user: null };
 
@@ -17,6 +17,6 @@ export const userSlice = createSlice({
 });
 
 export const { setUser } = userSlice.actions;
-export const selectUser = (state: RootState) => state.user.user;
+export const selectUser = (state: RootState): IUser | null => state.user.user;
 
 export default userSlice.reducer;
