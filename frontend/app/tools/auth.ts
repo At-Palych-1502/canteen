@@ -30,5 +30,5 @@ export async function loginUser(authInfo: AuthInfo) {
     } catch (error) {
         return {ok: false, error: `Неизвестная ошибка`};
     }
-    
+
 }

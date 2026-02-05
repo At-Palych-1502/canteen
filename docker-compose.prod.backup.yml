@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   frontend:
-    image: rmd09/canteen-frontend:latest
+    image: rmd09/canteen-frontend:backup
     networks:
       - app-network
     ports:
@@ -11,7 +11,7 @@ services:
       - backend
 
   backend:
-    image: rmd09/canteen-backend:latest
+    image: rmd09/canteen-backend:backup
     volumes:
       - sqlite-data:/app/db  # монтируем том в /app/instance внутри контейнера
     environment:
