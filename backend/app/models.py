@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, ForeignKey, DateTime, JSON
+from sqlalchemy import Column, Integer, String, ForeignKey, DateTime, JSON, Float
 from sqlalchemy.orm import relationship
 from .extensions import db
 import datetime
@@ -6,21 +6,22 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 Base = db.Model
 
-User_Allergies = db.Table('user_allergies',
-                          Column('user_id', Integer, ForeignKey('users.id'), primary_key=True),
-                          Column('ingredient_id', Integer, ForeignKey('ingredients.id'), primary_key=True))
-
 
 class User(Base):
     __tablename__ = 'users'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     username = Column(String(80), unique=True, nullable=False)
+    name = Column(String(80), nullable=False)
+    surname = Column(String(80), nullable=False)
+    patronymic = Column(String(80), nullable=False)
+    balance = Column(Float, nullable=False, default=0)
     email = Column(String(120), unique=True, nullable=False)
     role = Column(String(20), nullable=False, default='student')
     password_hash = Column(String(200), nullable=False)
 
-    # allergies = relationship("User_Allergies", secondary=User_Allergies, back_populates="allergic_users")
+    allergies = relationship("Ingredient", secondary="user_allergies", back_populates="allergic_users")
+    transactions = relationship("Transaction", back_populates="user")
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
@@ -32,6 +33,9 @@ class User(Base):
         return {
             "id": self.id,
             "username": self.username,
+            "name": self.name,
+            "surname": self.surname,
+            "patronymic": self.patronymic,
             "email": self.email,
             "role": self.role
         }
@@ -50,7 +54,8 @@ class Dish(Base):
     created_at = Column(DateTime, nullable=False, default=datetime.datetime.now())
 
     dish_ingredients = relationship("DishIngredient", back_populates="dish")
-
+    meal = relationship("Meal", secondary="meal_ingredients", back_populates="dish"
+                        )
     def to_dict(self, include_ingredients=False):
         sl = []
         if include_ingredients:
@@ -80,7 +85,7 @@ class Ingredient(Base):
     name = Column(String(80), nullable=False)
 
     dish_ingredients = relationship('DishIngredient', back_populates='ingredient', cascade='all, delete-orphan')
-    # allergic_users = relationship("Users", back_populates='allergies', cascade='all, delete-orphan')
+    allergic_users = relationship("User", secondary="user_allergies", back_populates="allergies")
 
     def __repr__(self):
         return f'Ingredient {self.name}'
@@ -103,4 +108,39 @@ class DishIngredient(Base):
     dish = relationship("Dish", back_populates='dish_ingredients')
     ingredient = relationship('Ingredient', back_populates='dish_ingredients')
 
+
+
+class Transaction(Base):
+    __tablename__ = 'transactions'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
+    amount = Column(Float, nullable=False)
+    description = Column(String(200), nullable=False)
+    created_at = Column(DateTime, nullable=False, default=datetime.datetime.now())
+
+    user = relationship("User", back_populates="transactions")
+
+
+class UserAllergies(Base):
+    __tablename__ = 'user_allergies'
+
+    user_id = Column(Integer, ForeignKey("users.id"), primary_key=True)
+    ingredient_id = Column(Integer, ForeignKey("ingredients.id"), primary_key=True)
+
+
+class Meal(Base):
+    __tablename__ = 'meals'
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    name = Column(String(80), nullable=False)
+    price = Column(Float, nullable=False)
+
+    dish = relationship("Dish", secondary="meal_ingredients", back_populates="meal")
+
+
+class MealDish(Base):
+    __tablename__ = 'meal_ingredients'
+
+    meal_id = Column(Integer, ForeignKey('meals.id'), primary_key=True)
+    dish_id = Column(Integer, ForeignKey('dishes.id'), primary_key=True)
 

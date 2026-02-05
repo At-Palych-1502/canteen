@@ -1,13 +1,13 @@
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
-from ..models import User, Dish
+from ..models import User, Dish, Ingredient, DishIngredient
 from ..utils import role_required
 from .. import db
 bp = Blueprint('dish', __name__)
 
 
 
-@bp.route('/dish/<int:id>', methods=["GET", "DELETE", "PUT"])
+@bp.route('/dishes/<int:id>', methods=["GET", "DELETE", "PUT"])
 @jwt_required()
 @role_required(["admin", "cook"])
 def dish(id):
@@ -22,7 +22,7 @@ def dish(id):
     if request.method == 'GET':
         if not dish:
             return jsonify({"error": "Dish not found"}), 404
-        return jsonify({"data": dish.to_dict()}), 200
+        return jsonify({"data": dish.to_dict(include_ingredients=True)}), 200
     elif request.method == 'DELETE':
         db.session.delete(dish)
         db.session.commit()
@@ -38,7 +38,7 @@ def dish(id):
         return jsonify({"message": "Dish updated"}), 200
 
 
-@bp.route('/dish', methods=['POST'])
+@bp.route('/dishes', methods=['POST'])
 @jwt_required()
 @role_required(["admin", "cook"])
 def add_dish():
@@ -46,20 +46,18 @@ def add_dish():
     f = data.get
     name = f("name")
     weight = f("weight")
-    meal = f("meal")
     quantity = f("quantity")
     dish = Dish(
         name=name,
         weight=weight,
-        meal=meal,
         quantity=quantity
     )
     db.session.add(dish)
     db.session.commit()
-    
-    return jsonify({"id": dish.to_dict()}), 201
 
-@bp.route('dishes', methods=['GET'])
+    return jsonify({"data": dish.to_dict()}), 201
+
+@bp.route('/dishes', methods=['GET'])
 @jwt_required()
 @role_required(["admin", "cook"])
 def dishes():
@@ -69,7 +67,7 @@ def dishes():
         sl.append(dish.to_dict())
     return jsonify({"data": sl}), 200
 
-@bp.route('/dish/<int:dish_id>/add_ingredient/<int:ingredient_id>', methods=['POST'])
+@bp.route('/dishes/<int:dish_id>/add_ingredient/<int:ingredient_id>', methods=['POST'])
 @jwt_required()
 @role_required(["admin", "cook"])
 def add_ingredient_to_dish(dish_id, ingredient_id):

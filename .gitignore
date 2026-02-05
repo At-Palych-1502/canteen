@@ -44,6 +44,3 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 .idea/
-.idea/workspace.xml
-/.idea
-.idea/workspace.xml
