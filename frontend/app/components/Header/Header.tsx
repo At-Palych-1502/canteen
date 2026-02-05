@@ -10,7 +10,8 @@ import { selectUser, UserState } from '@/app/tools/redux/user';
 
 export function Header() {
 	const User: UserState | null = useSelector(selectUser);
-	const [isPopup, setIsPopup] = useState(false);
+	const [isLoginPopup, setIsLoginPopup] = useState(false);
+	const [isRegisterPopup, setIsRegisterPopup] = useState(false);
 
 	return (
 		<>
@@ -20,7 +21,7 @@ export function Header() {
 						<h1 className={Styles['main_title']}>Умная столовая</h1>
 					</Link>
 					<ul className={Styles['button_list']}>
-						{User && User.user.role === 'admin' && (
+						{User && User.role === 'admin' && (
 							<>
 								<li>
 									<Link href={'/stats'} className={Styles['button']}>
@@ -40,18 +41,41 @@ export function Header() {
 							</>
 						)}
 					</ul>
-					<button
-						onClick={() => setIsPopup(true)}
-						className={Styles['auth_button']}
-					>
-						Войти
-					</button>
+					{!User && (
+						<>
+							<button
+								onClick={() => setIsRegisterPopup(true)}
+								className={Styles['auth_button']}
+							>
+								Зарегистрироваться
+							</button>
+							<button
+								onClick={() => setIsLoginPopup(true)}
+								className={Styles['auth_button']}
+							>
+								Войти
+							</button>
+						</>
+					)}
 				</div>
 			</header>
 
-			{isPopup && (
-				<Popup closePopup={() => setIsPopup(false)}>
-					<AuthForm closePopup={() => setIsPopup(false)} />
+			{isLoginPopup && (
+				<Popup closePopup={() => setIsLoginPopup(false)}>
+					<AuthForm
+						isLogin={true}
+						closePopup={() => setIsLoginPopup(false)}
+						openLoginPopup={() => setIsLoginPopup(true)}
+					/>
+				</Popup>
+			)}
+			{isRegisterPopup && (
+				<Popup closePopup={() => setIsRegisterPopup(false)}>
+					<AuthForm
+						isLogin={false}
+						closePopup={() => setIsRegisterPopup(false)}
+						openLoginPopup={() => setIsLoginPopup(true)}
+					/>
 				</Popup>
 			)}
 		</>
