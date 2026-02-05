@@ -5,7 +5,7 @@ import type {
 	ILoginRes,
 	IRegisterArgs,
 	IUser,
-} from '../../types/user';
+} from '../../types/user.d';
 import { getAccessToken, setAccessToken } from '@/app/tools/utils/auth';
 
 export const authApi = createApi({
@@ -60,7 +60,7 @@ export const authApi = createApi({
 		// 		}
 		// 	},
 		// }),
-		getUser: build.query<IUser, void>({
+		getUser: build.query<{ user: IUser }, void>({
 			query: () => ({
 				url: endpoints.auth.user,
 			}),

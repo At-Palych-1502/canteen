@@ -16,11 +16,7 @@ interface Props {
 	openLoginPopup: VoidFunction;
 }
 
-interface LoginInputs {
-	username: string;
-	password: string;
-}
-interface RegisterInputs {
+interface Inputs {
 	email: string;
 	username: string;
 	password: string;
@@ -32,12 +28,6 @@ interface RegisterInputs {
 export function AuthForm({ closePopup, isLogin, openLoginPopup }: Props) {
 	const User = useSelector(selectUser);
 	const dispatch = useDispatch();
-
-	if (isLogin) {
-		type Inputs = LoginInputs;
-	} else {
-		type Inputs = RegisterInputs;
-	}
 
 	const {
 		register,
@@ -56,8 +46,6 @@ export function AuthForm({ closePopup, isLogin, openLoginPopup }: Props) {
 
 		if (error) return;
 
-		console.log(data);
-
 		dispatch(setUser(data.user));
 
 		closePopup();
@@ -66,13 +54,9 @@ export function AuthForm({ closePopup, isLogin, openLoginPopup }: Props) {
 	};
 
 	const registerHandler = async (inputs: Inputs) => {
-		const { data, error } = await Register(inputs);
+		const { error } = await Register(inputs);
 
 		if (error) return;
-
-		console.log(data);
-
-		dispatch(setUser(data.user));
 
 		closePopup();
 		openLoginPopup();
@@ -214,7 +198,7 @@ export function AuthForm({ closePopup, isLogin, openLoginPopup }: Props) {
 
 					{loginError && (
 						<h5 className={`${Styles['response']} ${Styles[`response_bad`]}`}>
-							{getLoginErrorMessage(loginError)}
+							{getLoginErrorMessage(registerError)}
 						</h5>
 					)}
 				</form>

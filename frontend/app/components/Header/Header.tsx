@@ -3,15 +3,23 @@
 import Link from 'next/link';
 import Styles from './Header.module.css';
 import { Popup } from '../Popup/Popup';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { AuthForm } from '../AuthForm/AuthForm';
-import { useSelector } from 'react-redux';
-import { selectUser, UserState } from '@/app/tools/redux/user';
+import { useDispatch, useSelector } from 'react-redux';
+import { selectUser, setUser } from '@/app/tools/redux/user';
+import { IUser } from '@/app/tools/types/user.d';
+import { removeAccessToken } from '@/app/tools/utils/auth';
 
 export function Header() {
-	const User: UserState | null = useSelector(selectUser);
+	const dispatch = useDispatch();
+	const User: IUser | null = useSelector(selectUser);
 	const [isLoginPopup, setIsLoginPopup] = useState(false);
 	const [isRegisterPopup, setIsRegisterPopup] = useState(false);
+
+	const logout = () => {
+		dispatch(setUser(null));
+		removeAccessToken();
+	};
 
 	return (
 		<>
@@ -41,7 +49,7 @@ export function Header() {
 							</>
 						)}
 					</ul>
-					{!User && (
+					{!User ? (
 						<>
 							<button
 								onClick={() => setIsRegisterPopup(true)}
@@ -56,6 +64,15 @@ export function Header() {
 								Войти
 							</button>
 						</>
+					) : (
+						<div>
+							<span>{User.username} </span>
+							<span>
+								<button onClick={logout} className={Styles['auth_button']}>
+									Выйти
+								</button>
+							</span>
+						</div>
 					)}
 				</div>
 			</header>
