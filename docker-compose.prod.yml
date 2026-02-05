@@ -3,6 +3,8 @@ version: '3.8'
 services:
   frontend:
     image: rmd09/canteen-frontend:latest
+    environment:
+      - NEXT_PUBLIC_BASE_URL=/api
     networks:
       - app-network
     ports:
@@ -13,7 +15,7 @@ services:
   backend:
     image: rmd09/canteen-backend:latest
     volumes:
-      - sqlite-data:/app/db  # монтируем том в /app/instance внутри контейнера
+      - sqlite-data:/app/instance  # монтируем том в /app/instance внутри контейнера
     environment:
       - FLASK_APP=backend.app
       - FLASK_ENV=development
