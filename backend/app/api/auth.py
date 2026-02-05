@@ -60,7 +60,7 @@ def user_id(id):
     user = User.query.get_or_404(id)
     return jsonify(user=user.to_dict()), 200
 
-@bp.route('auth/register', methods=['POST'])
+@bp.route('/auth/register', methods=['POST'])
 def register():
     data = request.get_json()
     username = data.get('username')
