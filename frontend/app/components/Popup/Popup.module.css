@@ -11,19 +11,22 @@
 
 .main {
     width: 500px;
-    height: 350px;
     padding: 32px 24px;
     box-sizing: border-box;
     border-radius: 20px;
-
+    
     position: absolute;
-    top: calc((100% - 300px) / 2);
-    left: calc((100% - 500px) / 2);
+    left: 50%;
+    top: 50%;
 
     display: flex;
     flex-direction: column;
     align-items: center;
-
     background-color: white;
 
+    transform: translateX(-50%) translateY(-50%);
+    -webkit-transform: translateX(-50%) translateY(-50%);
+    -moz-transform: translateX(-50%) translateY(-50%);
+    -ms-transform: translateX(-50%) translateY(-50%);
+    -o-transform: translateX(-50%) translateY(-50%);
 }

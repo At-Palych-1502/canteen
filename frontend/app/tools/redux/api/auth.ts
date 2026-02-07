@@ -1,6 +1,11 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { endpoints } from '@/app/config/endpoints';
-import type { ILoginArgs, ILoginRes, IUser } from '../../types/user';
+import type {
+	ILoginArgs,
+	ILoginRes,
+	IRegisterArgs,
+	IUser,
+} from '../../types/user.d';
 import { getAccessToken, setAccessToken } from '@/app/tools/utils/auth';
 
 export const authApi = createApi({
@@ -32,6 +37,13 @@ export const authApi = createApi({
 				}
 			},
 		}),
+		register: build.mutation<void, IRegisterArgs>({
+			query: (data: IRegisterArgs) => ({
+				url: endpoints.auth.register,
+				method: 'POST',
+				body: data,
+			}),
+		}),
 		// такого эндпоинта пока нету
 		// logout: build.mutation<ILogoutRes, void>({
 		// 	query: () => ({
@@ -48,7 +60,7 @@ export const authApi = createApi({
 		// 		}
 		// 	},
 		// }),
-		getUser: build.query<IUser, void>({
+		getUser: build.query<{ user: IUser }, void>({
 			query: () => ({
 				url: endpoints.auth.user,
 			}),
@@ -56,4 +68,5 @@ export const authApi = createApi({
 	}),
 });
 
-export const { useLoginMutation, useGetUserQuery } = authApi;
+export const { useLoginMutation, useRegisterMutation, useGetUserQuery } =
+	authApi;

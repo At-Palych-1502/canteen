@@ -13,7 +13,7 @@ export default function Home() {
 
 	useEffect(() => {
 		if (data) {
-			dispatch(setUser(data));
+			dispatch(setUser(data.user));
 		}
 	}, [data, dispatch]);
 

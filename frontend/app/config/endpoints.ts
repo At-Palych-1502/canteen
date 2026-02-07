@@ -9,6 +9,7 @@ export const endpoints = {
 	auth: {
 		base: BASE_URL,
 		login: '/auth/login',
+		register: '/auth/register',
 		user: '/user',
 	},
 	dishes: {
