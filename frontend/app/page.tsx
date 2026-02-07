@@ -7,7 +7,7 @@ import { useGetUserQuery } from './tools/redux/api/auth';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectUser, setUser } from './tools/redux/user';
 import { IUser } from './tools/types/user';
-import Menu from './components/Menu/Menu';
+import Menu from './components/Menu/Menu/Menu';
 
 export default function Home() {
 	const { data, isLoading } = useGetUserQuery();
@@ -28,7 +28,7 @@ export default function Home() {
 				) : User ? (
 					User.role === 'student' && <Menu />
 				) : (
-					<>
+					<div className={Styles['title-wrapper']}>
 						<div className={Styles['title_section']}>
 							<h1 className={Styles['title_section__title']}>
 								Школьная столовая
@@ -47,7 +47,7 @@ export default function Home() {
 								<h3>Отзывы о питании</h3>
 							</div>
 						</div>
-					</>
+					</div>
 				)}
 			</section>
 		</>

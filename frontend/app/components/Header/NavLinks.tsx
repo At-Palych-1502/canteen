@@ -4,9 +4,10 @@ import Styles from './Header.module.css';
 
 interface IProps {
 	role: 'admin' | 'cook' | 'student';
+	orderCount?: number;
 }
 
-const NavLinks = ({ role }: IProps) => {
+const NavLinks = ({ role, orderCount = 0 }: IProps) => {
 	if (role === 'admin') {
 		return (
 			<>
@@ -48,6 +49,9 @@ const NavLinks = ({ role }: IProps) => {
 				<li>
 					<Link href={'/buy'} className={Styles['button']}>
 						Покупка питания
+						{orderCount > 0 && (
+							<span className={Styles['order-badge']}>{orderCount}</span>
+						)}
 					</Link>
 				</li>
 				<li>

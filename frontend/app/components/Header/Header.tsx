@@ -2,24 +2,40 @@
 
 import Link from 'next/link';
 import Styles from './Header.module.css';
-import { Popup } from '../Popup/Popup';
-import { useState } from 'react';
-import { AuthForm } from '../AuthForm/AuthForm';
+import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { selectUser, setUser } from '@/app/tools/redux/user';
+import { selectUser, SetOrderCount, setUser } from '@/app/tools/redux/user';
+import { RootState } from '@/app/tools/redux/store';
 import { IUser } from '@/app/tools/types/user.d';
-import { removeAccessToken } from '@/app/tools/utils/auth';
-import NavLinks from './NavLinks';
+import {
+	removeAccessToken,
+	removeUserLocalStorage,
+} from '@/app/tools/utils/auth';
+import { AuthButtons } from './AuthButtons';
+import { UserMenu } from './UserMenu';
+import { AuthPopups } from './AuthPopups';
 
-export function Header() {
-	const dispatch = useDispatch();
+export const Header = () => {
 	const User: IUser | null = useSelector(selectUser);
+	const dispatch = useDispatch();
 	const [isLoginPopup, setIsLoginPopup] = useState(false);
 	const [isRegisterPopup, setIsRegisterPopup] = useState(false);
+	const orderCount = useSelector((state: RootState) => state.user.orderCount);
+
+	const [isMounted, setIsMounted] = useState(false);
+
+	useEffect(() => {
+		setIsMounted(true);
+	}, []);
+	if (!isMounted) {
+		return null;
+	}
 
 	const logout = () => {
 		dispatch(setUser(null));
 		removeAccessToken();
+		removeUserLocalStorage();
+		dispatch(SetOrderCount(0));
 	};
 
 	return (
@@ -32,56 +48,27 @@ export function Header() {
 						</h1>
 					</Link>
 					{!User ? (
-						<div className={Styles['auth-buttons']}>
-							<button
-								onClick={() => setIsRegisterPopup(true)}
-								className={Styles['auth_button']}
-							>
-								Зарегистрироваться
-							</button>
-							<button
-								onClick={() => setIsLoginPopup(true)}
-								className={Styles['auth_button']}
-							>
-								Войти
-							</button>
-						</div>
+						<AuthButtons
+							onLoginClick={() => setIsLoginPopup(true)}
+							onRegisterClick={() => setIsRegisterPopup(true)}
+						/>
 					) : (
-						<>
-							<ul className={Styles['button_list'] + ' color-primary'}>
-								<NavLinks role={User.role} />
-							</ul>
-							<div>
-								<span>{User.username} </span>
-								<span>
-									<button onClick={logout} className={Styles['auth_button']}>
-										Выйти
-									</button>
-								</span>
-							</div>
-						</>
+						<UserMenu
+							username={User.username}
+							onLogout={logout}
+							orderCount={orderCount}
+						/>
 					)}
 				</div>
 			</header>
 
-			{isLoginPopup && (
-				<Popup closePopup={() => setIsLoginPopup(false)}>
-					<AuthForm
-						isLogin={true}
-						closePopup={() => setIsLoginPopup(false)}
-						openLoginPopup={() => setIsLoginPopup(true)}
-					/>
-				</Popup>
-			)}
-			{isRegisterPopup && (
-				<Popup closePopup={() => setIsRegisterPopup(false)}>
-					<AuthForm
-						isLogin={false}
-						closePopup={() => setIsRegisterPopup(false)}
-						openLoginPopup={() => setIsLoginPopup(true)}
-					/>
-				</Popup>
-			)}
+			<AuthPopups
+				isLoginPopup={isLoginPopup}
+				isRegisterPopup={isRegisterPopup}
+				onCloseLoginPopup={() => setIsLoginPopup(false)}
+				onCloseRegisterPopup={() => setIsRegisterPopup(false)}
+				onOpenLoginPopup={() => setIsLoginPopup(true)}
+			/>
 		</>
 	);
-}
+};

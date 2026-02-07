@@ -1,4 +1,5 @@
 import { AuthInputs } from '../types/user';
+import { IUser } from '../types/user';
 
 export const setAccessToken = (token: string) => {
 	if (typeof window === 'undefined') return;
@@ -45,4 +46,30 @@ export const setAuthData = (data: AuthInputs) => {
 	if (typeof window === 'undefined') return;
 
 	return localStorage.setItem('authData', JSON.stringify(data));
+};
+
+// Сохранить пользователя в localStorage
+export const setUserLocalStorage = (user: IUser): void => {
+	if (typeof window === 'undefined') return;
+	localStorage.setItem('user', JSON.stringify(user));
+};
+
+// Получить пользователя из localStorage
+export const getUserLocalStorage = (): IUser | null => {
+	if (typeof window === 'undefined') return null;
+	const userData = localStorage.getItem('user');
+	if (!userData) return null;
+
+	try {
+		return JSON.parse(userData) as IUser;
+	} catch (error) {
+		console.error('Error parsing user from localStorage:', error);
+		return null;
+	}
+};
+
+// Удалить пользователя из localStorage
+export const removeUserLocalStorage = (): void => {
+	if (typeof window === 'undefined') return;
+	localStorage.removeItem('user');
 };

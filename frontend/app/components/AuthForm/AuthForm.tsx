@@ -1,6 +1,6 @@
 'use client';
 
-import Styles from './AuthFrom.module.css';
+import Styles from './AuthForm.module.css';
 import { useForm } from 'react-hook-form';
 import {
 	useLoginMutation,
@@ -34,7 +34,7 @@ export function AuthForm({ closePopup, isLogin, openLoginPopup }: Props) {
 
 	const values = watch();
 
-	useEffect(() => setAuthData(values), [values]);
+	useEffect(() => setAuthData({ ...values, password: '' }), [values]);
 
 	const [login, { error: loginError }]: ReturnType<typeof useLoginMutation> =
 		useLoginMutation();
