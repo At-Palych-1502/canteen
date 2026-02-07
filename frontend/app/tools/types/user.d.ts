@@ -26,3 +26,12 @@ export interface ILoginRes {
 	access_token: string;
 	user: IUser;
 }
+
+export interface AuthInputs {
+	email: string;
+	username: string;
+	password: string;
+	name: string;
+	surname: string;
+	patronymic: string;
+}

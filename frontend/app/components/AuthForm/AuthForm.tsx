@@ -6,9 +6,17 @@ import {
 	useLoginMutation,
 	useRegisterMutation,
 } from '@/app/tools/redux/api/auth';
-import { getLoginErrorMessage } from '@/app/tools/utils/auth';
-import { selectUser, setUser } from '@/app/tools/redux/user';
-import { useDispatch, useSelector } from 'react-redux';
+
+import {
+	getAuthData,
+	getAuthErrorMessage,
+	setAuthData,
+} from '@/app/tools/utils/auth';
+import { setUser } from '@/app/tools/redux/user';
+import { useDispatch } from 'react-redux';
+import { AuthInputs } from '@/app/tools/types/user';
+import { useEffect } from 'react';
+
 
 interface Props {
 	closePopup: VoidFunction;
@@ -16,24 +24,19 @@ interface Props {
 	openLoginPopup: VoidFunction;
 }
 
-interface Inputs {
-	email: string;
-	username: string;
-	password: string;
-	name: string;
-	surname: string;
-	patronymic: string;
-}
-
 export function AuthForm({ closePopup, isLogin, openLoginPopup }: Props) {
-	const User = useSelector(selectUser);
 	const dispatch = useDispatch();
 
 	const {
 		register,
 		handleSubmit,
+		watch,
 		formState: { errors, isSubmitting },
-	} = useForm<Inputs>();
+	} = useForm<AuthInputs>({ defaultValues: getAuthData() });
+
+	const values = watch();
+
+	useEffect(() => setAuthData(values), [values]);
 
 	const [login, { error: loginError }]: ReturnType<typeof useLoginMutation> =
 		useLoginMutation();
@@ -41,7 +44,7 @@ export function AuthForm({ closePopup, isLogin, openLoginPopup }: Props) {
 		typeof useRegisterMutation
 	> = useRegisterMutation();
 
-	const loginHandler = async (inputs: Inputs) => {
+	const loginHandler = async (inputs: AuthInputs) => {
 		const { data, error } = await login(inputs);
 
 		if (error) return;
@@ -53,7 +56,7 @@ export function AuthForm({ closePopup, isLogin, openLoginPopup }: Props) {
 		return;
 	};
 
-	const registerHandler = async (inputs: Inputs) => {
+	const registerHandler = async (inputs: AuthInputs) => {
 		const { error } = await Register(inputs);
 
 		if (error) return;
@@ -64,15 +67,13 @@ export function AuthForm({ closePopup, isLogin, openLoginPopup }: Props) {
 		return;
 	};
 
-	console.log(User);
-
 	return (
 		<div>
 			<h1 className={Styles['title']}>Авторизация</h1>
 			{isLogin ? (
 				<form className={Styles['form']} onSubmit={handleSubmit(loginHandler)}>
 					<label htmlFor='username'>
-						<h3>Введите имя пользователя</h3>
+						<h3>Имя пользователя</h3>
 						<input
 							className={Styles['input']}
 							type='text'
@@ -86,7 +87,7 @@ export function AuthForm({ closePopup, isLogin, openLoginPopup }: Props) {
 						)}
 					</label>
 					<label htmlFor='password'>
-						<h3>Введите пароль</h3>
+						<h3>Пароль</h3>
 						<input
 							className={Styles['input']}
 							type='password'
@@ -106,7 +107,7 @@ export function AuthForm({ closePopup, isLogin, openLoginPopup }: Props) {
 
 					{loginError && (
 						<h5 className={`${Styles['response']} ${Styles[`response_bad`]}`}>
-							{getLoginErrorMessage(loginError)}
+							{getAuthErrorMessage(loginError)}
 						</h5>
 					)}
 				</form>
@@ -116,19 +117,19 @@ export function AuthForm({ closePopup, isLogin, openLoginPopup }: Props) {
 					onSubmit={handleSubmit(registerHandler)}
 				>
 					<label htmlFor='email'>
-						<h3>Введите почту</h3>
+						<h3>Почта</h3>
 						<input
 							className={Styles['input']}
 							type='email'
 							id='email'
 							{...register('email', { required: true })}
 						/>
-						{errors?.password?.type === 'required' && (
-							<h5 className={`${Styles['response_bad']}`}>Введите пароль</h5>
+						{errors?.email?.type === 'required' && (
+							<h5 className={`${Styles['response_bad']}`}>Введите почту</h5>
 						)}
 					</label>
 					<label htmlFor='username'>
-						<h3>Введите имя пользователя</h3>
+						<h3>Имя пользователя</h3>
 						<input
 							className={Styles['input']}
 							type='text'
@@ -154,51 +155,55 @@ export function AuthForm({ closePopup, isLogin, openLoginPopup }: Props) {
 						)}
 					</label>
 					<label htmlFor='name'>
-						<h3>Введите ваше имя</h3>
+						<h3>Имя</h3>
 						<input
 							className={Styles['input']}
 							type='text'
 							id='name'
 							{...register('name', { required: true })}
 						/>
-						{errors?.password?.type === 'required' && (
-							<h5 className={`${Styles['response_bad']}`}>Введите пароль</h5>
+						{errors?.name?.type === 'required' && (
+							<h5 className={`${Styles['response_bad']}`}>Введите ваше имя</h5>
 						)}
 					</label>
 					<label htmlFor='surname'>
-						<h3>Введите ваше имя</h3>
+						<h3>Фамилия</h3>
 						<input
 							className={Styles['input']}
 							type='text'
 							id='surname'
 							{...register('surname', { required: true })}
 						/>
-						{errors?.password?.type === 'required' && (
-							<h5 className={`${Styles['response_bad']}`}>Введите пароль</h5>
+						{errors?.surname?.type === 'required' && (
+							<h5 className={`${Styles['response_bad']}`}>
+								Введите вашу фамилию
+							</h5>
 						)}
 					</label>
 					<label htmlFor='patronymic'>
-						<h3>Введите ваше имя</h3>
+						<h3>Отчество</h3>
 						<input
 							className={Styles['input']}
 							type='text'
 							id='patronymic'
 							{...register('patronymic', { required: true })}
 						/>
-						{errors?.password?.type === 'required' && (
-							<h5 className={`${Styles['response_bad']}`}>Введите пароль</h5>
+						{errors?.patronymic?.type === 'required' && (
+							<h5 className={`${Styles['response_bad']}`}>
+								Введите ваше отчество
+							</h5>
 						)}
 					</label>
 					<button
 						className={`${Styles['auth_button']} ${isSubmitting ? Styles['auth_button_disabled'] : ''}`}
 						type='submit'
 					>
-						Авторизоваться
+						Зарегистрироваться
 					</button>
 
-					{loginError && (
+					{registerError && (
 						<h5 className={`${Styles['response']} ${Styles[`response_bad`]}`}>
-							{getLoginErrorMessage(registerError)}
+							{getAuthErrorMessage(registerError)}
 						</h5>
 					)}
 				</form>
