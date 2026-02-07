@@ -36,34 +36,20 @@
     align-items: center;
     margin-top: 80px;
 }
+
 .ability_section__title{
-    font-size: 36px;
-    font-weight: 600;
+  font-size: 36px;
+  font-weight: 600;
 }
-.ability_ul{
-    display: flex;
-    margin-top: 40px;
-    gap: 50px;
-}
-.ability_li {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
 
-    width: 250px;
-    height: 280px;
+.container {
+  margin-top: 52px;
+  display: flex;
+  gap: 80px;
 
-    padding: 25px 30px;
-
-    box-shadow: 3px 1px 20px rgb(0, 0, 0, 0.3);
-    border-radius: 20px;
-}
-.ability_li h4{
-    font-size: 26px;
-}
-.ability_li p{
-    font-size: 20px;
-}
-.ability_img{
-    width: 80px;
+  h3 {
+    color: var(--color-primary);
+    font-size: 28px;
+    font-weight: 700;
+  }
 }

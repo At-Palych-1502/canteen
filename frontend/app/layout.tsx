@@ -16,7 +16,7 @@ export default function RootLayout({
 			<body>
 				<ReduxLayout>
 					<Header />
-					{children}
+					<main className='main-container'>{children}</main>
 				</ReduxLayout>
 			</body>
 		</html>

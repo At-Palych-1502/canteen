@@ -9,6 +9,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { selectUser, setUser } from '@/app/tools/redux/user';
 import { IUser } from '@/app/tools/types/user.d';
 import { removeAccessToken } from '@/app/tools/utils/auth';
+import NavLinks from './NavLinks';
 
 export function Header() {
 	const dispatch = useDispatch();
@@ -26,31 +27,12 @@ export function Header() {
 			<header className={Styles['header']}>
 				<div className={Styles['header_container']}>
 					<Link href='/'>
-						<h1 className={Styles['main_title']}>Умная столовая</h1>
+						<h1 className={Styles['main_title'] + ' color-primary'}>
+							Умная столовая
+						</h1>
 					</Link>
-					<ul className={Styles['button_list']}>
-						{User && User.role === 'admin' && (
-							<>
-								<li>
-									<Link href={'/stats'} className={Styles['button']}>
-										Статистика
-									</Link>
-								</li>
-								<li>
-									<Link href={'/buys'} className={Styles['button']}>
-										Заявки на покупки
-									</Link>
-								</li>
-								<li>
-									<Link href={'/create-report'} className={Styles['button']}>
-										Создать отчет
-									</Link>
-								</li>
-							</>
-						)}
-					</ul>
 					{!User ? (
-						<>
+						<div className={Styles['auth-buttons']}>
 							<button
 								onClick={() => setIsRegisterPopup(true)}
 								className={Styles['auth_button']}
@@ -63,16 +45,21 @@ export function Header() {
 							>
 								Войти
 							</button>
-						</>
-					) : (
-						<div>
-							<span>{User.username} </span>
-							<span>
-								<button onClick={logout} className={Styles['auth_button']}>
-									Выйти
-								</button>
-							</span>
 						</div>
+					) : (
+						<>
+							<ul className={Styles['button_list'] + ' color-primary'}>
+								<NavLinks role={User.role} />
+							</ul>
+							<div>
+								<span>{User.username} </span>
+								<span>
+									<button onClick={logout} className={Styles['auth_button']}>
+										Выйти
+									</button>
+								</span>
+							</div>
+						</>
 					)}
 				</div>
 			</header>
