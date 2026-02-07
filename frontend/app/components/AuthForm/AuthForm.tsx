@@ -6,6 +6,7 @@ import {
 	useLoginMutation,
 	useRegisterMutation,
 } from '@/app/tools/redux/api/auth';
+
 import {
 	getAuthData,
 	getAuthErrorMessage,
@@ -15,6 +16,7 @@ import { setUser } from '@/app/tools/redux/user';
 import { useDispatch } from 'react-redux';
 import { AuthInputs } from '@/app/tools/types/user';
 import { useEffect } from 'react';
+
 
 interface Props {
 	closePopup: VoidFunction;
