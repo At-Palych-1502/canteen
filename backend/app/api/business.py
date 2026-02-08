@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify
-from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
-from ..models import User, Transaction, Meal
+from flask_jwt_extended import jwt_required, get_jwt_identity
+from ..models import User, Transaction, Meal, Order
 import datetime
 from .. import db
 from ..utils import role_required

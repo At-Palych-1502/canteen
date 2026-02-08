@@ -4,12 +4,16 @@ import { useEffect } from 'react';
 import Styles from './page.module.css';
 import { useGetUserQuery } from './tools/redux/api/auth';
 
-import { useDispatch } from 'react-redux';
-import { setUser } from './tools/redux/user';
+import { useDispatch, useSelector } from 'react-redux';
+import { selectUser, setUser } from './tools/redux/user';
+import { IUser } from './tools/types/user';
+import CurrentOrders from './components/student/CurrentOrder/CurrentOrders';
+import UsersTable from './components/admin/UsersTable/UsersTable/UsersTable';
 
 export default function Home() {
-	const { data, error: _, isLoading: __ } = useGetUserQuery();
+	const { data, isLoading } = useGetUserQuery();
 	const dispatch = useDispatch();
+	const User: IUser | null = useSelector(selectUser);
 
 	useEffect(() => {
 		if (data) {
@@ -20,57 +24,38 @@ export default function Home() {
 	return (
 		<>
 			<section className={Styles['section']}>
-				<div className={Styles['title_section']}>
-					<h1 className={Styles['title_section__title']}>Школьная столовая</h1>
-					<h4 className={Styles['title_section__description']}>
-						Удобный контроль питания для учеников, поваров и администрации
-					</h4>
-				</div>
-			</section>
-
-			<section className={Styles['section']}>
-				<div className={Styles['ability_section']}>
-					<h2 className={Styles['ability_section__title']}>
-						Возможности сервиса
-					</h2>
-					<ul className={Styles['ability_ul']}>
-						<li className={Styles['ability_li']}>
-							<img
-								src='/student.png'
-								alt='Ученик'
-								className={Styles['ability_img']}
-							/>
-							<h4>Для учеников</h4>
-							<p>
-								Просмотр меню, оплата питания, отметка о получении и
-								индивидуальный план с учётом аллергии
-							</p>
-						</li>
-						<li className={Styles['ability_li']}>
-							<img
-								src='/cook.png'
-								alt='Повар'
-								className={Styles['ability_img']}
-							/>
-							<h4>Для поваров</h4>
-							<p>
-								Учет выданных блюд, контроль остатков и заявки на закупку
-								продуктов
-							</p>
-						</li>
-						<li className={Styles['ability_li']}>
-							<img
-								src='/admin.png'
-								alt='Техник'
-								className={Styles['ability_img']}
-							/>
-							<h4>Для администрации</h4>
-							<p>
-								Статистика оплат, согласование закупок и формирование отчетов
-							</p>
-						</li>
-					</ul>
-				</div>
+				{isLoading ? (
+					<h3>Загрузка...</h3>
+				) : User ? (
+					User.role === 'student' ? (
+						<CurrentOrders />
+					) : User.role === 'admin' ? (
+						<UsersTable />
+					) : (
+						<p>a</p>
+					)
+				) : (
+					<div className={Styles['title-wrapper']}>
+						<div className={Styles['title_section']}>
+							<h1 className={Styles['title_section__title']}>
+								Школьная столовая
+							</h1>
+							<h4 className={Styles['title_section__description']}>
+								Удобный контроль питания для учеников и администрации
+							</h4>
+						</div>
+						<div className={Styles['ability_section']}>
+							<h2 className={Styles['ability_section__title']}>
+								Возможности сервиса
+							</h2>
+							<div className={Styles['container']}>
+								<h3>Покупать питание</h3>
+								<h3>Удобный просмотр меню</h3>
+								<h3>Отзывы о питании</h3>
+							</div>
+						</div>
+					</div>
+				)}
 			</section>
 		</>
 	);

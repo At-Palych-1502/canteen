@@ -164,6 +164,15 @@ class Order(Base):
     user = relationship("User", back_populates="orders")
     meals = relationship("Meal", secondary='orders_meals', back_populates="orders")
 
+    def to_dict(self):
+        sl = [meal.to_dict() for meal in self.meals]
+        return {
+            "id": self.id,
+            "user_id": self.uesr_id,
+            "date": self.date,
+            "meals": sl
+        }
+
 
 class OrderMeal(Base):
     __tablename__ = 'orders_meals'

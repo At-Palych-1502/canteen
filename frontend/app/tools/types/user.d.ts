@@ -3,7 +3,7 @@ type UserRole = 'student' | 'cook' | 'admin';
 export interface IUser {
 	email: string;
 	username: string;
-	id: string;
+	id: number;
 	role: UserRole;
 }
 

@@ -1,0 +1,277 @@
+.overlay {
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background: rgba(0, 0, 0, 0.5);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	z-index: 1000;
+}
+
+.modal {
+	background: #fff;
+	border-radius: 12px;
+	width: 98%;
+	max-width: 1200px;
+	overflow-y: auto;
+  overflow-x: hidden;
+	box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+}
+
+.header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 20px;
+	border-bottom: 1px solid #e5e7eb;
+}
+
+.header h2 {
+	margin: 0;
+	font-size: 20px;
+	font-weight: 600;
+	color: #1a1a1a;
+}
+
+.closeBtn {
+	background: none;
+	border: none;
+	font-size: 28px;
+	cursor: pointer;
+	color: #6b7280;
+	padding: 0;
+	width: 32px;
+	height: 32px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: 4px;
+	transition: background 0.2s;
+}
+
+.closeBtn:hover {
+	background: #f3f4f6;
+}
+
+.form {
+	padding: 20px;
+}
+
+.section {
+	margin-bottom: 24px;
+	padding-bottom: 20px;
+	border-bottom: 1px solid #e5e7eb;
+}
+
+.section:last-child {
+	border-bottom: none;
+	margin-bottom: 0;
+	padding-bottom: 0;
+}
+
+.sectionHeader {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 16px;
+}
+
+.sectionTitle {
+	margin: 0;
+	font-size: 16px;
+	font-weight: 600;
+	color: #374151;
+}
+
+.addDishBtn {
+	padding: 6px 12px;
+	background: #3b82f6;
+	color: #fff;
+	border: none;
+	border-radius: 6px;
+	font-size: 13px;
+	font-weight: 500;
+	cursor: pointer;
+	transition: background 0.2s;
+}
+
+.addDishBtn:hover {
+	background: #2563eb;
+}
+
+.row {
+	display: flex;
+	gap: 12px;
+}
+
+.field {
+	margin-bottom: 12px;
+	flex: 1;
+}
+
+.field label {
+	display: block;
+	margin-bottom: 4px;
+	font-size: 14px;
+	font-weight: 500;
+	color: #4b5563;
+}
+
+.field input {
+	width: 100%;
+	padding: 8px 12px;
+	border: 1px solid #d1d5db;
+	border-radius: 6px;
+	font-size: 14px;
+	transition: border-color 0.2s;
+}
+
+.field input:focus {
+	outline: none;
+	border-color: #3b82f6;
+}
+
+.dishesList {
+	margin-top: 16px;
+}
+
+.dishesList label {
+	display: block;
+	margin-bottom: 8px;
+	font-size: 14px;
+	font-weight: 500;
+	color: #4b5563;
+}
+
+.dishItem {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 8px 12px;
+	background: #f9fafb;
+	border-radius: 6px;
+	margin-bottom: 6px;
+}
+
+.dishItem span {
+	font-size: 14px;
+	color: #374151;
+}
+
+.removeDishBtn {
+	background: none;
+	border: none;
+	color: #ef4444;
+	cursor: pointer;
+	font-size: 20px;
+	padding: 0;
+	width: 24px;
+	height: 24px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: 4px;
+	transition: background 0.2s;
+}
+
+.removeDishBtn:hover {
+	background: #fee2e2;
+}
+
+.dishSelector {
+	margin-top: 16px;
+	padding: 16px;
+	background: #f3f4f6;
+	border-radius: 8px;
+}
+
+.searchInput {
+	width: 100%;
+	padding: 10px 12px;
+	border: 1px solid #d1d5db;
+	border-radius: 6px;
+	font-size: 14px;
+	margin-bottom: 12px;
+}
+
+.searchInput:focus {
+	outline: none;
+	border-color: #3b82f6;
+}
+
+.dishOptions {
+	max-height: 200px;
+	overflow-y: auto;
+	background: #fff;
+	border-radius: 6px;
+	border: 1px solid #e5e7eb;
+	margin-bottom: 12px;
+}
+
+.dishOption {
+	padding: 10px 12px;
+	cursor: pointer;
+	transition: background 0.2s;
+	font-size: 14px;
+	color: #374151;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.dishOption:hover:not(.dishOptionDisabled) {
+	background: #f3f4f6;
+}
+
+.dishOptionDisabled {
+	opacity: 0.6;
+	cursor: not-allowed;
+	background: #f9fafb;
+}
+
+.addedBadge {
+	color: #10b981;
+	font-weight: bold;
+	font-size: 16px;
+}
+
+.actions {
+	display: flex;
+	justify-content: flex-end;
+	gap: 12px;
+	margin-top: 24px;
+}
+
+.cancelBtn,
+.saveBtn {
+	padding: 10px 20px;
+	border-radius: 6px;
+	font-size: 14px;
+	font-weight: 500;
+	cursor: pointer;
+	transition: all 0.2s;
+}
+
+.cancelBtn {
+	background: #fff;
+	border: 1px solid #d1d5db;
+	color: #374151;
+}
+
+.cancelBtn:hover {
+	background: #f9fafb;
+	border-color: #9ca3af;
+}
+
+.saveBtn {
+	background: #3b82f6;
+	border: none;
+	color: #fff;
+}
+
+.saveBtn:hover {
+	background: #2563eb;
+}

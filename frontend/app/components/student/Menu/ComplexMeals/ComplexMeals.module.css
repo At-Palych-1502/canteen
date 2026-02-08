@@ -1,0 +1,123 @@
+.complex-meals-container {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+	padding: 20px 0;
+}
+
+.complex-meal-card {
+	background-color: var(--bg-primary);
+	border-radius: 12px;
+	padding: 20px;
+	cursor: pointer;
+	transition: all 0.2s ease;
+	border: 2px solid transparent;
+}
+
+.complex-meal-card:hover {
+	transform: translateY(-2px);
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.complex-meal-card.selected {
+	border-color: var(--color-primary);
+	background-color: var(--bg-secondary);
+}
+
+.meal-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 12px;
+}
+
+.meal-name {
+	font-size: 20px;
+	font-weight: 600;
+	color: var(--color-secondary);
+}
+
+.meal-price {
+	font-size: 18px;
+	font-weight: 700;
+	color: var(--color-primary);
+}
+
+.meal-description {
+	font-size: 16px;
+	color: var(--color-secondary);
+	margin-bottom: 16px;
+	line-height: 1.4;
+}
+
+.meal-dishes {
+	margin-bottom: 16px;
+}
+
+.dishes-title {
+	font-size: 14px;
+	font-weight: 600;
+	color: var(--color-secondary);
+	margin-bottom: 8px;
+}
+
+.dishes-list {
+	list-style: none;
+	padding: 0;
+	margin: 0;
+}
+
+.dish-item {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 8px 0;
+	border-bottom: 1px solid var(--bg-secondary);
+}
+
+.dish-item:last-child {
+	border-bottom: none;
+}
+
+.dish-name {
+	font-size: 15px;
+	color: var(--color-secondary);
+}
+
+.dish-weight {
+	font-size: 14px;
+	color: var(--color-highlight);
+}
+
+.meal-meta {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	margin-bottom: 16px;
+}
+
+.meal-calories {
+	font-size: 14px;
+	color: var(--color-secondary);
+}
+
+.select-button {
+	width: 100%;
+	padding: 12px;
+	background-color: var(--color-primary);
+	color: var(--bg-primary);
+	border: none;
+	border-radius: 8px;
+	font-size: 16px;
+	font-weight: 600;
+	cursor: pointer;
+	transition: all 0.2s ease;
+}
+
+.select-button:hover {
+	background-color: var(--color-highlight);
+}
+
+.complex-meal-card.selected .select-button {
+	background-color: var(--color-highlight);
+}

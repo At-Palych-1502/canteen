@@ -1,0 +1,47 @@
+.container {
+	flex: 1;
+	padding: 12px;
+	background: #fff;
+	border-radius: 8px;
+	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.title {
+	margin: 0 0 12px 0;
+	font-size: 16px;
+	font-weight: 600;
+	color: #1a1a1a;
+}
+
+.table {
+	width: 100%;
+	border-collapse: collapse;
+}
+
+.table th,
+.table td {
+	padding: 8px;
+	text-align: left;
+	border-bottom: 1px solid #e5e7eb;
+}
+
+.table th {
+	font-size: 12px;
+	font-weight: 600;
+	color: #6b7280;
+	text-transform: uppercase;
+}
+
+.table td {
+	font-size: 14px;
+	color: #374151;
+}
+
+.row {
+	cursor: pointer;
+	transition: background 0.2s;
+}
+
+.row:hover {
+	background: #f9fafb;
+}

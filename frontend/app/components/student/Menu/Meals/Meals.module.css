@@ -1,0 +1,164 @@
+.meals-container {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+	width: calc(33.33% - 24px);
+	padding: 20px;
+	background-color: var(--bg-secondary);
+	border-radius: 15px;
+	box-shadow: 3px 1px 20px rgb(0, 0, 0, 0.1);
+	overflow: hidden;
+}
+
+.meals-header {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding-bottom: 16px;
+	border-bottom: 2px solid var(--color-primary);
+	position: relative;
+	z-index: 10;
+
+	h3 {
+		font-size: 28px;
+		color: var(--color-primary);
+		font-weight: 600;
+		margin: 0;
+	}
+}
+
+.meals-list {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+	max-height: calc(100vh - 300px);
+	overflow-y: auto;
+	position: relative;
+	z-index: 1;
+	padding-right: 4px;
+
+	&::-webkit-scrollbar {
+		width: 8px;
+	}
+
+	&::-webkit-scrollbar-track {
+		background: var(--bg-primary);
+		border-radius: 4px;
+	}
+
+	&::-webkit-scrollbar-thumb {
+		background: var(--color-primary);
+		border-radius: 4px;
+	}
+}
+
+.dish-card {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	padding: 16px;
+	background-color: var(--bg-primary);
+	border-radius: 12px;
+	border: 2px solid transparent;
+	transition: all 0.2s ease;
+	position: relative;
+	z-index: 1;
+
+	&:hover {
+		border-color: var(--color-highlight);
+		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+	}
+
+	&.unavailable {
+		opacity: 0.6;
+		background-color: hsl(0, 0%, 90%);
+	}
+}
+
+.dish-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: flex-start;
+	gap: 8px;
+}
+
+.dish-name {
+	font-size: 18px;
+	font-weight: 600;
+	color: var(--color-secondary);
+	flex: 1;
+}
+
+.dish-price {
+	font-size: 16px;
+	font-weight: 700;
+	color: var(--color-primary);
+	white-space: nowrap;
+}
+
+.dish-description {
+	font-size: 14px;
+	color: var(--color-secondary);
+	line-height: 1.4;
+}
+
+.dish-meta {
+	display: flex;
+	gap: 16px;
+	font-size: 14px;
+	color: var(--color-secondary);
+}
+
+.dish-meta-item {
+	display: flex;
+	align-items: center;
+	gap: 4px;
+}
+
+.unavailable-badge {
+	display: inline-block;
+	padding: 4px 8px;
+	background-color: hsl(0, 70%, 60%);
+	color: white;
+	border-radius: 4px;
+	font-size: 12px;
+	font-weight: 600;
+	align-self: flex-start;
+}
+
+.available-badge {
+	display: inline-block;
+	padding: 4px 8px;
+	background-color: hsl(120, 60%, 40%);
+	color: white;
+	border-radius: 4px;
+	font-size: 12px;
+	font-weight: 600;
+	align-self: flex-start;
+}
+
+.add-to-order-btn {
+	width: 100%;
+	padding: 10px 16px;
+	background-color: var(--color-primary);
+	color: var(--bg-primary);
+	border: none;
+	border-radius: 8px;
+	font-size: 14px;
+	font-weight: 600;
+	cursor: pointer;
+	transition: all 0.2s ease;
+	margin-top: 8px;
+
+	&:hover {
+		background-color: var(--color-highlight);
+		transform: translateY(-2px);
+	}
+}
+
+.empty-state {
+	text-align: center;
+	padding: 40px 20px;
+	color: var(--color-secondary);
+	font-size: 16px;
+}
