@@ -13,17 +13,8 @@ import {
 } from '@/app/tools/utils/order';
 import ComplexMeals from '../components/student/Menu/ComplexMeals/ComplexMeals';
 import DaySelector from '../components/student/Menu/DaySelector/DaySelector';
-import { useProtectedPage } from '../tools/hooks/auth';
 
-type SubscriptionType =
-	| 'breakfast'
-	| 'lunch'
-	| 'dinner'
-	| 'breakfast-lunch'
-	| 'breakfast-lunch-dinner'
-	| 'breakfast-dinner'
-	| 'lunch-dinner'
-	| 'full';
+type SubscriptionType = 'breakfast' | 'lunch' | 'breakfast-lunch';
 
 export default function BuyPage() {
 	// const status useProtectedPage('student');
@@ -50,7 +41,7 @@ export default function BuyPage() {
 		if (complexOrder?.items && complexOrder.items.length > 0) {
 			// Загружаем обеды из текущего заказа
 			const dailyMeals = getDailyMeals(complexOrder.items[0].day);
-			const meals = [dailyMeals.breakfast, dailyMeals.lunch, dailyMeals.dinner];
+			const meals = [dailyMeals.breakfast, dailyMeals.lunch];
 			const selectedMealsFromOrder = complexOrder.items
 				.map(item => meals.find(m => m.id === item.mealId))
 				.filter((m): m is IComplexMeal => m !== undefined);
@@ -66,11 +57,7 @@ export default function BuyPage() {
 			if (complexOrder?.items && complexOrder.items.length > 0) {
 				// Загружаем обеды из текущего заказа
 				const dailyMeals = getDailyMeals(complexOrder.items[0].day);
-				const meals = [
-					dailyMeals.breakfast,
-					dailyMeals.lunch,
-					dailyMeals.dinner,
-				];
+				const meals = [dailyMeals.breakfast, dailyMeals.lunch];
 				const selectedMealsFromOrder = complexOrder.items
 					.map(item => meals.find(m => m.id === item.mealId))
 					.filter((m): m is IComplexMeal => m !== undefined);
@@ -90,7 +77,7 @@ export default function BuyPage() {
 
 	const handleMealSelect = (mealId: string) => {
 		const dailyMeals = getDailyMeals(selectedDay);
-		const meals = [dailyMeals.breakfast, dailyMeals.lunch, dailyMeals.dinner];
+		const meals = [dailyMeals.breakfast, dailyMeals.lunch];
 		const meal = meals.find(m => m.id === mealId);
 
 		if (meal) {
@@ -171,7 +158,7 @@ export default function BuyPage() {
 
 	const totalPrice = getTotalPrice();
 	const dailyMeals = getDailyMeals(selectedDay);
-	const meals = [dailyMeals.breakfast, dailyMeals.lunch, dailyMeals.dinner];
+	const meals = [dailyMeals.breakfast, dailyMeals.lunch];
 
 	return (
 		<div className={Styles['buy-container']}>

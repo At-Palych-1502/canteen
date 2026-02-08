@@ -1,15 +1,7 @@
 import React from 'react';
 import Styles from '../page.module.css';
 
-type SubscriptionType =
-	| 'breakfast'
-	| 'lunch'
-	| 'dinner'
-	| 'breakfast-lunch'
-	| 'breakfast-lunch-dinner'
-	| 'breakfast-dinner'
-	| 'lunch-dinner'
-	| 'full';
+type SubscriptionType = 'breakfast' | 'lunch' | 'breakfast-lunch';
 
 interface Props {
 	subscriptionType: SubscriptionType;
@@ -42,14 +34,6 @@ export const SubscriptionTypeSelector: React.FC<Props> = ({
 					onClick={() => onSubscriptionTypeChange('breakfast-lunch')}
 				>
 					Завтрак и обед
-				</button>
-				<button
-					className={`${Styles['subscription-type-button']} ${
-						subscriptionType === 'breakfast-lunch-dinner' ? Styles.selected : ''
-					}`}
-					onClick={() => onSubscriptionTypeChange('breakfast-lunch-dinner')}
-				>
-					Завтрак, обед и полдник
 				</button>
 			</div>
 		</div>
