@@ -22,10 +22,8 @@ const ReduxLayout = ({ children }: IProps) => {
 
 	return (
 		<Provider store={store}>
-			<AuthLayout>
-				<Header />
-				{children}
-			</AuthLayout>
+			<Header />
+			<AuthLayout>{children}</AuthLayout>
 		</Provider>
 	);
 };

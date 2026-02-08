@@ -5,7 +5,9 @@ import {
 	IBuyOption,
 	IDailyMeals,
 	IOrder,
+	IBuyRequest,
 } from './types/mock';
+import { IUser, UserRole } from '@/app/tools/types/user.d';
 
 // Моковые данные блюд
 export const mockDishes: IDishExtended[] = [
@@ -615,3 +617,341 @@ export const getCurrentOrders = (): IOrder[] => [
 		],
 	},
 ];
+
+// Моковые данные пользователей
+const mockUsers: IUser[] = [
+	{
+		id: 1,
+		username: 'admin',
+		role: 'admin',
+		email: 'admin@school.ru',
+	},
+	{
+		id: 2,
+		username: 'ivanov',
+		role: 'student',
+		email: 'ivanov@school.ru',
+	},
+	{
+		id: 3,
+		username: 'petrov',
+		role: 'student',
+		email: 'petrov@school.ru',
+	},
+	{
+		id: 4,
+		username: 'sidorov',
+		role: 'cook',
+		email: 'sidorov@school.ru',
+	},
+	{
+		id: 5,
+		username: 'kozlova',
+		role: 'student',
+		email: 'kozlova@school.ru',
+	},
+	{
+		id: 6,
+		username: 'morozov',
+		role: 'student',
+		email: 'morozov@school.ru',
+	},
+	{
+		id: 7,
+		username: 'volkov',
+		role: 'student',
+		email: 'volkov@school.ru',
+	},
+	{
+		id: 8,
+		username: 'novikov',
+		role: 'student',
+		email: 'novikov@school.ru',
+	},
+	{
+		id: 9,
+		username: 'lebedev',
+		role: 'cook',
+		email: 'lebedev@school.ru',
+	},
+	{
+		id: 10,
+		username: 'kozlov',
+		role: 'student',
+		email: 'kozlov@school.ru',
+	},
+	{
+		id: 11,
+		username: 'ivanova',
+		role: 'student',
+		email: 'ivanova@school.ru',
+	},
+	{
+		id: 12,
+		username: 'petrova',
+		role: 'student',
+		email: 'petrova@school.ru',
+	},
+	{
+		id: 13,
+		username: 'smirnov',
+		role: 'student',
+		email: 'smirnov@school.ru',
+	},
+	{
+		id: 14,
+		username: 'popov',
+		role: 'student',
+		email: 'popov@school.ru',
+	},
+	{
+		id: 15,
+		username: 'vasilev',
+		role: 'student',
+		email: 'vasilev@school.ru',
+	},
+	{
+		id: 16,
+		username: 'mikhailov',
+		role: 'student',
+		email: 'mikhailov@school.ru',
+	},
+	{
+		id: 17,
+		username: 'fedorov',
+		role: 'student',
+		email: 'fedorov@school.ru',
+	},
+	{
+		id: 18,
+		username: 'alexeev',
+		role: 'student',
+		email: 'alexeev@school.ru',
+	},
+	{
+		id: 19,
+		username: 'andreev',
+		role: 'student',
+		email: 'andreev@school.ru',
+	},
+	{
+		id: 20,
+		username: 'sergeev',
+		role: 'student',
+		email: 'sergeev@school.ru',
+	},
+];
+
+export const getUsers = (): IUser[] => {
+	return [...mockUsers];
+};
+
+export const changeRole = (userId: number, newRole: UserRole): boolean => {
+	const userIndex = mockUsers.findIndex(u => u.id === userId);
+	if (userIndex === -1) {
+		return false;
+	}
+	mockUsers[userIndex].role = newRole;
+	return true;
+};
+
+export const deleteUser = (userId: number): boolean => {
+	const userIndex = mockUsers.findIndex(u => u.id === userId);
+	if (userIndex === -1) {
+		return false;
+	}
+	mockUsers.splice(userIndex, 1);
+	return true;
+};
+
+export const getFeedback = () => [
+	{
+		text: 'text1',
+		date: '1770689169000',
+	},
+	{
+		text: 'text2',
+		date: '1770689169000',
+	},
+];
+
+// Моковые данные заявок на покупки
+const mockBuyRequests: IBuyRequest[] = [
+	{
+		id: 1,
+		author: {
+			username: 'sidorov',
+			fullName: 'Сидоров Иван Петрович',
+			id: 4,
+		},
+		ingredient: {
+			id: 1,
+			name: 'Морковь',
+		},
+		requestedQuantity: 15,
+		currentStock: 3,
+		unit: 'кг',
+		status: 'pending',
+		createdAt: '2026-02-08T10:30:00Z',
+	},
+	{
+		id: 2,
+		author: {
+			username: 'lebedev',
+			fullName: 'Лебедев Алексей Сергеевич',
+			id: 9,
+		},
+		ingredient: {
+			id: 2,
+			name: 'Картофель',
+		},
+		requestedQuantity: 25,
+		currentStock: 8,
+		unit: 'кг',
+		status: 'approved',
+		createdAt: '2026-02-07T14:20:00Z',
+		updatedAt: '2026-02-07T15:45:00Z',
+	},
+	{
+		id: 3,
+		author: {
+			username: 'sidorov',
+			fullName: 'Сидоров Иван Петрович',
+			id: 4,
+		},
+		ingredient: {
+			id: 3,
+			name: 'Лук репчатый',
+		},
+		requestedQuantity: 10,
+		currentStock: 5,
+		unit: 'кг',
+		status: 'rejected',
+		createdAt: '2026-02-07T09:15:00Z',
+		updatedAt: '2026-02-07T11:30:00Z',
+	},
+	{
+		id: 4,
+		author: {
+			username: 'lebedev',
+			fullName: 'Лебедев Алексей Сергеевич',
+			id: 9,
+		},
+		ingredient: {
+			id: 4,
+			name: 'Мука пшеничная',
+		},
+		requestedQuantity: 50,
+		currentStock: 12,
+		unit: 'кг',
+		status: 'pending',
+		createdAt: '2026-02-08T08:45:00Z',
+	},
+	{
+		id: 5,
+		author: {
+			username: 'sidorov',
+			fullName: 'Сидоров Иван Петрович',
+			id: 4,
+		},
+		ingredient: {
+			id: 5,
+			name: 'Сахар',
+		},
+		requestedQuantity: 20,
+		currentStock: 7,
+		unit: 'кг',
+		status: 'pending',
+		createdAt: '2026-02-08T11:00:00Z',
+	},
+	{
+		id: 6,
+		author: {
+			username: 'lebedev',
+			fullName: 'Лебедев Алексей Сергеевич',
+			id: 9,
+		},
+		ingredient: {
+			id: 6,
+			name: 'Масло подсолнечное',
+		},
+		requestedQuantity: 10,
+		currentStock: 2,
+		unit: 'л',
+		status: 'approved',
+		createdAt: '2026-02-06T16:30:00Z',
+		updatedAt: '2026-02-06T17:15:00Z',
+	},
+	{
+		id: 7,
+		author: {
+			username: 'sidorov',
+			fullName: 'Сидоров Иван Петрович',
+			id: 4,
+		},
+		ingredient: {
+			id: 7,
+			name: 'Яйца',
+		},
+		requestedQuantity: 100,
+		currentStock: 30,
+		unit: 'шт',
+		status: 'pending',
+		createdAt: '2026-02-08T12:15:00Z',
+	},
+	{
+		id: 8,
+		author: {
+			username: 'lebedev',
+			fullName: 'Лебедев Алексей Сергеевич',
+			id: 9,
+		},
+		ingredient: {
+			id: 8,
+			name: 'Молоко',
+		},
+		requestedQuantity: 30,
+		currentStock: 15,
+		unit: 'л',
+		status: 'rejected',
+		createdAt: '2026-02-05T13:00:00Z',
+		updatedAt: '2026-02-05T14:20:00Z',
+	},
+];
+
+export const getBuyRequests = (): IBuyRequest[] => {
+	return [...mockBuyRequests];
+};
+
+export const approveBuyRequest = (requestId: number): boolean => {
+	const requestIndex = mockBuyRequests.findIndex(r => r.id === requestId);
+	if (requestIndex === -1) {
+		return false;
+	}
+	mockBuyRequests[requestIndex].status = 'approved';
+	mockBuyRequests[requestIndex].updatedAt = new Date().toISOString();
+	return true;
+};
+
+export const rejectBuyRequest = (requestId: number): boolean => {
+	const requestIndex = mockBuyRequests.findIndex(r => r.id === requestId);
+	if (requestIndex === -1) {
+		return false;
+	}
+	mockBuyRequests[requestIndex].status = 'rejected';
+	mockBuyRequests[requestIndex].updatedAt = new Date().toISOString();
+	return true;
+};
+
+export const updateBuyRequestQuantity = (
+	requestId: number,
+	newQuantity: number,
+): boolean => {
+	const requestIndex = mockBuyRequests.findIndex(r => r.id === requestId);
+	if (requestIndex === -1) {
+		return false;
+	}
+	mockBuyRequests[requestIndex].requestedQuantity = newQuantity;
+	mockBuyRequests[requestIndex].updatedAt = new Date().toISOString();
+	return true;
+};

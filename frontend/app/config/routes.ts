@@ -15,4 +15,16 @@ export const routes = [
 		path: '/allergies',
 		role: 'student',
 	},
+	{
+		path: '/stats',
+		role: 'admin',
+	},
+	{
+		path: '/buy-requests',
+		role: 'admin',
+	},
+	{
+		path: '/create-report',
+		role: 'admin',
+	},
 ];

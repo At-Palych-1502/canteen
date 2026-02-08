@@ -79,3 +79,25 @@ export interface IOrder {
 	date: string;
 	meals: IDish[];
 }
+
+// Типы для заявок на покупки
+export type BuyRequestStatus = 'pending' | 'approved' | 'rejected';
+
+export interface IBuyRequest {
+	id: number;
+	author: {
+		username: string;
+		fullName: string;
+		id: number;
+	};
+	ingredient: {
+		id: number;
+		name: string;
+	};
+	requestedQuantity: number;
+	currentStock: number;
+	unit: string;
+	status: BuyRequestStatus;
+	createdAt: string;
+	updatedAt?: string;
+}

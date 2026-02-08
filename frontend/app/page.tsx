@@ -8,7 +8,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { selectUser, setUser } from './tools/redux/user';
 import { IUser } from './tools/types/user';
 import CurrentOrders from './components/student/CurrentOrder/CurrentOrders';
-import UsersTable from './components/admin/UsersTable/UsersTable';
+import UsersTable from './components/admin/UsersTable/UsersTable/UsersTable';
 
 export default function Home() {
 	const { data, isLoading } = useGetUserQuery();

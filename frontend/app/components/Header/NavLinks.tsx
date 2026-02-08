@@ -17,7 +17,7 @@ const NavLinks = ({ role, orderCount = 0 }: IProps) => {
 					</Link>
 				</li>
 				<li>
-					<Link href={'/buys'} className={Styles['button']}>
+					<Link href={'/buy-requests'} className={Styles['button']}>
 						Заявки на покупки
 					</Link>
 				</li>
