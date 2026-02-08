@@ -6,7 +6,6 @@ import { mockBuyOptions, getDailyMeals } from '@/app/tools/mockData';
 import { IBuyOption, IComplexMeal } from '@/app/tools/types/mock';
 import { OptionCard } from './components/OptionCard';
 import { SubscriptionTypeSelector } from './components/SubscriptionTypeSelector';
-import { MealSelectionSection } from './components/MealSelectionSection';
 import { OrderSection } from './components/OrderSection';
 import {
 	clearComplexOrder,

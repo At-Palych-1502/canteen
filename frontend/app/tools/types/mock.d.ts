@@ -1,5 +1,7 @@
 // Расширенные типы для моковых данных блюд
 
+import { IDish } from './dishes';
+
 export type MealType = 'breakfast' | 'lunch' | 'dinner';
 
 export type OrderType = 'single' | 'week' | 'month';
@@ -73,9 +75,7 @@ export interface IDailyMeals {
 }
 
 export interface IOrder {
-	id: string;
+	id: number;
 	date: string;
-	mealType: MealType;
-	meal: IComplexMeal;
-	createdAt: string;
+	meals: IDish[];
 }

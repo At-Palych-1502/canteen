@@ -4,6 +4,7 @@ import {
 	IFeedback,
 	IBuyOption,
 	IDailyMeals,
+	IOrder,
 } from './types/mock';
 
 // Моковые данные блюд
@@ -563,3 +564,30 @@ export const getDailyMeals = (day: number): IDailyMeals => {
 
 	return weekMeals[day] || weekMeals[0];
 };
+
+export const getCurrentOrders = (): IOrder[] => [
+	{
+		id: 1,
+		date: '1770539545725',
+		meals: [
+			{
+				id: 1,
+				name: 'Овсяная каша',
+				weight: 200,
+				quantity: 50,
+			},
+		],
+	},
+	{
+		id: 2,
+		date: '1770539545625',
+		meals: [
+			{
+				id: 6,
+				name: 'Борщ',
+				weight: 250,
+				quantity: 45,
+			},
+		],
+	},
+];

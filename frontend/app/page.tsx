@@ -7,7 +7,7 @@ import { useGetUserQuery } from './tools/redux/api/auth';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectUser, setUser } from './tools/redux/user';
 import { IUser } from './tools/types/user';
-import Menu from './components/Menu/Menu/Menu';
+import CurrentOrders from './components/CurrentOrder/CurrentOrders';
 
 export default function Home() {
 	const { data, isLoading } = useGetUserQuery();
@@ -26,7 +26,7 @@ export default function Home() {
 				{isLoading ? (
 					<h3>Загрузка...</h3>
 				) : User ? (
-					User.role === 'student' && <Menu />
+					User.role === 'student' && <CurrentOrders />
 				) : (
 					<div className={Styles['title-wrapper']}>
 						<div className={Styles['title_section']}>
