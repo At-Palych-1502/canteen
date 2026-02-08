@@ -56,11 +56,7 @@ const Menu = () => {
 			// Сохраняем выбранные обеды в localStorage
 			if (newSelected.length > 0) {
 				const dailyMeals = getDailyMeals(selectedDay);
-				const meals = [
-					dailyMeals.breakfast,
-					dailyMeals.lunch,
-					dailyMeals.dinner,
-				];
+				const meals = [dailyMeals.breakfast, dailyMeals.lunch];
 				// Сохраняем все выбранные обеды сразу
 				const selectedMealsObjects = newSelected
 					.map(id => meals.find(m => m.id === id))
