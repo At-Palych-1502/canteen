@@ -32,7 +32,7 @@ export const MealSelectionSection: React.FC<Props> = ({
 	};
 
 	const dailyMeals = getDailyMeals(selectedDay);
-	const meals = [dailyMeals.breakfast, dailyMeals.lunch, dailyMeals.dinner];
+	const meals = [dailyMeals.breakfast, dailyMeals.lunch];
 
 	return (
 		<div className={Styles['dishes-section']}>
