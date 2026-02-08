@@ -125,57 +125,6 @@ export const mockDishes: IDishExtended[] = [
 		price: 85,
 		description: 'Рыба запеченная с овощами',
 	},
-	// Полдники
-	{
-		id: 12,
-		name: 'Печенье',
-		weight: 100,
-		quantity: 70,
-		type: 'dinner',
-		available: true,
-		price: 30,
-		description: 'Печенье овсяное',
-	},
-	{
-		id: 13,
-		name: 'Йогурт',
-		weight: 150,
-		quantity: 45,
-		type: 'dinner',
-		available: true,
-		price: 40,
-		description: 'Йогурт натуральный с фруктами',
-	},
-	{
-		id: 14,
-		name: 'Фрукты',
-		weight: 200,
-		quantity: 50,
-		type: 'dinner',
-		available: false,
-		price: 50,
-		description: 'Набор сезонных фруктов',
-	},
-	{
-		id: 15,
-		name: 'Булочка',
-		weight: 80,
-		quantity: 60,
-		type: 'dinner',
-		available: true,
-		price: 25,
-		description: 'Булочка с изюмом',
-	},
-	{
-		id: 16,
-		name: 'Какао',
-		weight: 180,
-		quantity: 40,
-		type: 'dinner',
-		available: true,
-		price: 35,
-		description: 'Какао с молоком',
-	},
 ];
 
 // Моковые данные аллергенов
@@ -299,18 +248,6 @@ export const getDailyMeals = (day: number): IDailyMeals => {
 					{ id: 10, name: 'Компот', weight: 200, price: 20 },
 				],
 			},
-			dinner: {
-				id: 'dinner-0',
-				type: 'dinner',
-				name: 'Полдник',
-				description: 'Печенье и какао',
-				price: 50,
-				calories: 250,
-				dishes: [
-					{ id: 12, name: 'Печенье', weight: 100, price: 30 },
-					{ id: 16, name: 'Какао', weight: 180, price: 20 },
-				],
-			},
 		},
 		// Вторник
 		{
@@ -339,18 +276,6 @@ export const getDailyMeals = (day: number): IDailyMeals => {
 					{ id: 8, name: 'Плов', weight: 200, price: 80 },
 					{ id: 9, name: 'Салат', weight: 150, price: 45 },
 					{ id: 10, name: 'Компот', weight: 200, price: 20 },
-				],
-			},
-			dinner: {
-				id: 'dinner-1',
-				type: 'dinner',
-				name: 'Полдник',
-				description: 'Йогурт и фрукты',
-				price: 70,
-				calories: 280,
-				dishes: [
-					{ id: 13, name: 'Йогурт', weight: 150, price: 40 },
-					{ id: 14, name: 'Фрукты', weight: 200, price: 30 },
 				],
 			},
 		},
@@ -383,18 +308,6 @@ export const getDailyMeals = (day: number): IDailyMeals => {
 					{ id: 10, name: 'Компот', weight: 200, price: 20 },
 				],
 			},
-			dinner: {
-				id: 'dinner-2',
-				type: 'dinner',
-				name: 'Полдник',
-				description: 'Булочка и чай',
-				price: 45,
-				calories: 220,
-				dishes: [
-					{ id: 15, name: 'Булочка', weight: 80, price: 25 },
-					{ id: 16, name: 'Чай', weight: 200, price: 15 },
-				],
-			},
 		},
 		// Четверг
 		{
@@ -423,18 +336,6 @@ export const getDailyMeals = (day: number): IDailyMeals => {
 					{ id: 6, name: 'Борщ', weight: 250, price: 60 },
 					{ id: 7, name: 'Котлета с гарниром', weight: 200, price: 70 },
 					{ id: 10, name: 'Компот', weight: 200, price: 20 },
-				],
-			},
-			dinner: {
-				id: 'dinner-3',
-				type: 'dinner',
-				name: 'Полдник',
-				description: 'Печенье и какао',
-				price: 50,
-				calories: 250,
-				dishes: [
-					{ id: 12, name: 'Печенье', weight: 100, price: 30 },
-					{ id: 16, name: 'Какао', weight: 180, price: 20 },
 				],
 			},
 		},
@@ -467,18 +368,6 @@ export const getDailyMeals = (day: number): IDailyMeals => {
 					{ id: 10, name: 'Компот', weight: 200, price: 20 },
 				],
 			},
-			dinner: {
-				id: 'dinner-4',
-				type: 'dinner',
-				name: 'Полдник',
-				description: 'Йогурт и фрукты',
-				price: 70,
-				calories: 280,
-				dishes: [
-					{ id: 13, name: 'Йогурт', weight: 150, price: 40 },
-					{ id: 14, name: 'Фрукты', weight: 200, price: 30 },
-				],
-			},
 		},
 		// Суббота
 		{
@@ -509,18 +398,6 @@ export const getDailyMeals = (day: number): IDailyMeals => {
 					{ id: 10, name: 'Компот', weight: 200, price: 20 },
 				],
 			},
-			dinner: {
-				id: 'dinner-5',
-				type: 'dinner',
-				name: 'Полдник',
-				description: 'Булочка и какао',
-				price: 50,
-				calories: 240,
-				dishes: [
-					{ id: 15, name: 'Булочка', weight: 80, price: 25 },
-					{ id: 16, name: 'Какао', weight: 180, price: 20 },
-				],
-			},
 		},
 		// Воскресенье
 		{
@@ -549,18 +426,6 @@ export const getDailyMeals = (day: number): IDailyMeals => {
 					{ id: 6, name: 'Борщ', weight: 250, price: 60 },
 					{ id: 7, name: 'Котлета с гарниром', weight: 200, price: 70 },
 					{ id: 10, name: 'Компот', weight: 200, price: 20 },
-				],
-			},
-			dinner: {
-				id: 'dinner-6',
-				type: 'dinner',
-				name: 'Полдник',
-				description: 'Печенье и чай',
-				price: 45,
-				calories: 230,
-				dishes: [
-					{ id: 12, name: 'Печенье', weight: 100, price: 30 },
-					{ id: 16, name: 'Чай', weight: 200, price: 15 },
 				],
 			},
 		},
@@ -978,10 +843,9 @@ export const GetReport = (req: GetReportArg): GetReportRes => {
 			date: new Date().toISOString(),
 			period: '1 день',
 			mealsStats: {
-				totalMeals: 150,
+				totalMeals: 105,
 				breakfasts: 45,
 				lunches: 60,
-				dinners: 45,
 			},
 			popularMeals: [
 				{ id: 1, name: 'Овсяная каша', count: 30, rating: 4.8 },
@@ -1040,11 +904,14 @@ export const GetReport = (req: GetReportArg): GetReportRes => {
 			productsUsed: [
 				{ id: 1, name: 'Крупа овсяная', count: 15, unit: 'кг' },
 				{ id: 2, name: 'Молоко', count: 20, unit: 'л' },
+				{ id: 3, name: 'Мука', count: 10, unit: 'кг' },
 			],
 			totalExpenses: 50000,
 			expensesByCategory: [
 				{ category: 'Продукты питания', amount: 35000, percentage: 70 },
 				{ category: 'Инвентарь', amount: 5000, percentage: 10 },
+				{ category: 'Коммунальные услуги', amount: 4000, percentage: 8 },
+				{ category: 'Заработная плата', amount: 6000, percentage: 12 },
 			],
 			income: {
 				subscriptions: 45000,
@@ -1052,15 +919,19 @@ export const GetReport = (req: GetReportArg): GetReportRes => {
 				total: 60000,
 			},
 			profit: 10000,
+			dailyAverage: {
+				expenses: 50000,
+				income: 60000,
+				profit: 10000,
+			},
 		},
 		'3d_food': {
 			date: new Date().toISOString(),
 			period: '3 дня',
 			mealsStats: {
-				totalMeals: 450,
+				totalMeals: 315,
 				breakfasts: 135,
 				lunches: 180,
-				dinners: 135,
 			},
 			popularMeals: [
 				{ id: 4, name: 'Сырники', count: 75, rating: 4.9 },
@@ -1107,10 +978,9 @@ export const GetReport = (req: GetReportArg): GetReportRes => {
 			date: new Date().toISOString(),
 			period: '3 дня',
 			mealsStats: {
-				totalMeals: 450,
+				totalMeals: 315,
 				breakfasts: 135,
 				lunches: 180,
-				dinners: 135,
 			},
 			popularMeals: [
 				{ id: 6, name: 'Борщ', count: 105, rating: 4.9 },
@@ -1132,15 +1002,19 @@ export const GetReport = (req: GetReportArg): GetReportRes => {
 				total: 180000,
 			},
 			profit: 30000,
+			dailyAverage: {
+				expenses: 50000,
+				income: 60000,
+				profit: 10000,
+			},
 		},
 		'7d_food': {
 			date: new Date().toISOString(),
 			period: '7 дней',
 			mealsStats: {
-				totalMeals: 1050,
+				totalMeals: 735,
 				breakfasts: 315,
 				lunches: 420,
-				dinners: 315,
 			},
 			popularMeals: [
 				{ id: 1, name: 'Овсяная каша', count: 210, rating: 4.8 },
@@ -1193,10 +1067,9 @@ export const GetReport = (req: GetReportArg): GetReportRes => {
 			date: new Date().toISOString(),
 			period: '7 дней',
 			mealsStats: {
-				totalMeals: 1050,
+				totalMeals: 735,
 				breakfasts: 315,
 				lunches: 420,
-				dinners: 315,
 			},
 			popularMeals: [
 				{ id: 1, name: 'Овсяная каша', count: 210, rating: 4.8 },
@@ -1259,6 +1132,10 @@ export const GetReport = (req: GetReportArg): GetReportRes => {
 	return {
 		data: reports[reportKey] || reports['1d_food+finance'],
 	};
+};
+
+export const editDish = (id: number, data: Partial<IDishArg>) => {
+	return;
 };
 
 export const editMeal = (id: number, data: Partial<IMeal>) => {

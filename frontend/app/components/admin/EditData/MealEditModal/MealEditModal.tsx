@@ -21,7 +21,7 @@ const MealEditModal: React.FC<MealEditModalProps> = ({
 	const [formData, setFormData] = React.useState<IDailyMeals | null>(null);
 	const [searchTerm, setSearchTerm] = useState('');
 	const [showDishSelector, setShowDishSelector] = useState<
-		'breakfast' | 'lunch' | 'dinner' | null
+		'breakfast' | 'lunch' | null
 	>(null);
 	const [filteredDishes, setFilteredDishes] = useState<IDishExtended[]>([]);
 
@@ -43,7 +43,7 @@ const MealEditModal: React.FC<MealEditModalProps> = ({
 	if (!meal || !formData) return null;
 
 	const handleComplexMealChange = (
-		type: 'breakfast' | 'lunch' | 'dinner',
+		type: 'breakfast' | 'lunch',
 		field: keyof IComplexMeal,
 		value: string | number,
 	) => {
@@ -87,10 +87,7 @@ const MealEditModal: React.FC<MealEditModalProps> = ({
 		setSearchTerm('');
 	};
 
-	const handleRemoveDish = (
-		type: 'breakfast' | 'lunch' | 'dinner',
-		dishId: number,
-	) => {
+	const handleRemoveDish = (type: 'breakfast' | 'lunch', dishId: number) => {
 		setFormData(prev => {
 			if (!prev) return null;
 			return {
@@ -118,15 +115,11 @@ const MealEditModal: React.FC<MealEditModalProps> = ({
 					</button>
 				</div>
 				<form onSubmit={handleSubmit} className={Styles.form}>
-					{(['breakfast', 'lunch', 'dinner'] as const).map(type => (
+					{(['breakfast', 'lunch'] as const).map(type => (
 						<div key={type} className={Styles.section}>
 							<div className={Styles.sectionHeader}>
 								<h4 className={Styles.sectionTitle}>
-									{type === 'breakfast'
-										? 'Завтрак'
-										: type === 'lunch'
-											? 'Обед'
-											: 'Полдник'}
+									{type === 'breakfast' ? 'Завтрак' : 'Обед'}
 								</h4>
 								<button
 									type='button'

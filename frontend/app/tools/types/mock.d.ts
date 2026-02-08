@@ -2,7 +2,7 @@
 
 import { IDish } from './dishes';
 
-export type MealType = 'breakfast' | 'lunch' | 'dinner';
+export type MealType = 'breakfast' | 'lunch';
 
 export type OrderType = 'single' | 'week' | 'month';
 
@@ -71,7 +71,6 @@ export interface IDailyMeals {
 	date: string;
 	breakfast: IComplexMeal;
 	lunch: IComplexMeal;
-	dinner: IComplexMeal;
 }
 
 export interface IOrder {
