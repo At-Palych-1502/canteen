@@ -73,6 +73,12 @@ _users [GET]_
         "role": role,
         "username": username}]}
 
+/change_role/<int:uesr_id> [PUT]
+    
+    требумые роли: admin
+    формат запроса: {"role": choice_of(admin, student, cook'}
+    
+
 **dish**:
 
 
@@ -178,3 +184,15 @@ _crud логика (/ingredients)_: аналогично для dish, парам
     Формат ответа: 
     [200] {'message': 'successfully added allergy'}
     [208] {'error': 'Ingredient-allergy relationship already exists'}
+
+
+**meals**
+
+/meals [POST]
+
+    требуемые роли: admin
+    Headers Bearer
+    Тело запроса: {"name": String, "price": Integer,
+    "date": "y-m-d", "dishes": [dish_id1, dish_id2, ..0]
+    Пример формата даты: "2026-02-08"
+    
