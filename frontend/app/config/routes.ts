@@ -16,7 +16,7 @@ export const routes = [
 		role: 'student',
 	},
 	{
-		path: '/stats',
+		path: '/edit-data',
 		role: 'admin',
 	},
 	{

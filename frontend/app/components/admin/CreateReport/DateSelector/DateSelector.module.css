@@ -1,0 +1,38 @@
+.dateSelector {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+}
+
+.label {
+	font-size: 14px;
+	color: #666;
+	font-weight: 500;
+}
+
+.options {
+	display: flex;
+	gap: 8px;
+}
+
+.option {
+	padding: 8px 16px;
+	border: 1px solid #ddd;
+	border-radius: 6px;
+	background: #fff;
+	color: #333;
+	font-size: 14px;
+	cursor: pointer;
+	transition: all 0.2s ease;
+}
+
+.option:hover {
+	border-color: #4a90e2;
+	background: #f8f9fa;
+}
+
+.option.active {
+	background: #4a90e2;
+	border-color: #4a90e2;
+	color: #fff;
+}

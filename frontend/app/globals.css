@@ -107,7 +107,7 @@ button:hover{
 
 .main-container {
   padding: 44px 80px;
-  height: calc(100% - 88px - 8vh - 0.7vh);
+  /* height: calc(100% - 88px - 8vh - 0.7vh); */
 }
 
 .page-loading {

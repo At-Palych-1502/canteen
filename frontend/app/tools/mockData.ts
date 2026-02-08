@@ -1,3 +1,5 @@
+import { IDishArg } from './types/dishes';
+import { IMeal } from './types/meals';
 import {
 	IDishExtended,
 	IAllergy,
@@ -954,4 +956,333 @@ export const updateBuyRequestQuantity = (
 	mockBuyRequests[requestIndex].requestedQuantity = newQuantity;
 	mockBuyRequests[requestIndex].updatedAt = new Date().toISOString();
 	return true;
+};
+
+type GetReportArg = {
+	date: '1d' | '3d' | '7d';
+	type: ['food'] | ['food', 'finance' | 'food+finance'];
+};
+
+type GetReportRes = {
+	data: {
+		[field: string]: unknown;
+	};
+};
+
+export const GetReport = (req: GetReportArg): GetReportRes => {
+	const { date, type } = req;
+
+	// Уникальные данные для каждой комбинации
+	const reports: Record<string, Record<string, unknown>> = {
+		'1d_food': {
+			date: new Date().toISOString(),
+			period: '1 день',
+			mealsStats: {
+				totalMeals: 150,
+				breakfasts: 45,
+				lunches: 60,
+				dinners: 45,
+			},
+			popularMeals: [
+				{ id: 1, name: 'Овсяная каша', count: 30, rating: 4.8 },
+				{ id: 6, name: 'Борщ', count: 35, rating: 4.9 },
+				{ id: 7, name: 'Котлета с гарниром', count: 28, rating: 4.7 },
+			],
+			productsUsed: [
+				{ id: 1, name: 'Крупа овсяная', count: 15, unit: 'кг' },
+				{ id: 2, name: 'Молоко', count: 20, unit: 'л' },
+				{ id: 3, name: 'Мука', count: 10, unit: 'кг' },
+			],
+			allergiesInfo: {
+				totalStudents: 50,
+				withAllergies: 12,
+				commonAllergies: [
+					{ name: 'Молоко', count: 5 },
+					{ name: 'Яйца', count: 4 },
+				],
+			},
+		},
+		'1d_finance': {
+			date: new Date().toISOString(),
+			period: '1 день',
+			totalExpenses: 50000,
+			expensesByCategory: [
+				{ category: 'Продукты питания', amount: 35000, percentage: 70 },
+				{ category: 'Инвентарь', amount: 5000, percentage: 10 },
+				{ category: 'Коммунальные услуги', amount: 4000, percentage: 8 },
+				{ category: 'Заработная плата', amount: 6000, percentage: 12 },
+			],
+			income: {
+				subscriptions: 45000,
+				singleMeals: 15000,
+				total: 60000,
+			},
+			profit: 10000,
+			dailyAverage: {
+				expenses: 50000,
+				income: 60000,
+				profit: 10000,
+			},
+		},
+		'1d_food+finance': {
+			date: new Date().toISOString(),
+			period: '1 день',
+			mealsStats: {
+				totalMeals: 150,
+				breakfasts: 45,
+				lunches: 60,
+				dinners: 45,
+			},
+			popularMeals: [
+				{ id: 1, name: 'Овсяная каша', count: 30, rating: 4.8 },
+				{ id: 6, name: 'Борщ', count: 35, rating: 4.9 },
+			],
+			productsUsed: [
+				{ id: 1, name: 'Крупа овсяная', count: 15, unit: 'кг' },
+				{ id: 2, name: 'Молоко', count: 20, unit: 'л' },
+			],
+			totalExpenses: 50000,
+			expensesByCategory: [
+				{ category: 'Продукты питания', amount: 35000, percentage: 70 },
+				{ category: 'Инвентарь', amount: 5000, percentage: 10 },
+			],
+			income: {
+				subscriptions: 45000,
+				singleMeals: 15000,
+				total: 60000,
+			},
+			profit: 10000,
+		},
+		'3d_food': {
+			date: new Date().toISOString(),
+			period: '3 дня',
+			mealsStats: {
+				totalMeals: 450,
+				breakfasts: 135,
+				lunches: 180,
+				dinners: 135,
+			},
+			popularMeals: [
+				{ id: 4, name: 'Сырники', count: 75, rating: 4.9 },
+				{ id: 12, name: 'Печенье', count: 96, rating: 4.5 },
+				{ id: 13, name: 'Йогурт', count: 60, rating: 4.6 },
+			],
+			productsUsed: [
+				{ id: 4, name: 'Мясо', count: 36, unit: 'кг' },
+				{ id: 5, name: 'Овощи', count: 75, unit: 'кг' },
+				{ id: 6, name: 'Сахар', count: 24, unit: 'кг' },
+			],
+			allergiesInfo: {
+				totalStudents: 50,
+				withAllergies: 12,
+				commonAllergies: [
+					{ name: 'Орехи', count: 2 },
+					{ name: 'Глютен', count: 1 },
+				],
+			},
+		},
+		'3d_finance': {
+			date: new Date().toISOString(),
+			period: '3 дня',
+			totalExpenses: 150000,
+			expensesByCategory: [
+				{ category: 'Продукты питания', amount: 105000, percentage: 70 },
+				{ category: 'Инвентарь', amount: 15000, percentage: 10 },
+				{ category: 'Коммунальные услуги', amount: 12000, percentage: 8 },
+				{ category: 'Заработная плата', amount: 18000, percentage: 12 },
+			],
+			income: {
+				subscriptions: 135000,
+				singleMeals: 45000,
+				total: 180000,
+			},
+			profit: 30000,
+			dailyAverage: {
+				expenses: 50000,
+				income: 60000,
+				profit: 10000,
+			},
+		},
+		'3d_food+finance': {
+			date: new Date().toISOString(),
+			period: '3 дня',
+			mealsStats: {
+				totalMeals: 450,
+				breakfasts: 135,
+				lunches: 180,
+				dinners: 135,
+			},
+			popularMeals: [
+				{ id: 6, name: 'Борщ', count: 105, rating: 4.9 },
+				{ id: 7, name: 'Котлета с гарниром', count: 84, rating: 4.7 },
+				{ id: 9, name: 'Салат', count: 90, rating: 4.8 },
+			],
+			productsUsed: [
+				{ id: 7, name: 'Масло растительное', count: 15, unit: 'л' },
+				{ id: 8, name: 'Яйца', count: 120, unit: 'шт' },
+			],
+			totalExpenses: 150000,
+			expensesByCategory: [
+				{ category: 'Продукты питания', amount: 105000, percentage: 70 },
+				{ category: 'Заработная плата', amount: 18000, percentage: 12 },
+			],
+			income: {
+				subscriptions: 135000,
+				singleMeals: 45000,
+				total: 180000,
+			},
+			profit: 30000,
+		},
+		'7d_food': {
+			date: new Date().toISOString(),
+			period: '7 дней',
+			mealsStats: {
+				totalMeals: 1050,
+				breakfasts: 315,
+				lunches: 420,
+				dinners: 315,
+			},
+			popularMeals: [
+				{ id: 1, name: 'Овсяная каша', count: 210, rating: 4.8 },
+				{ id: 6, name: 'Борщ', count: 245, rating: 4.9 },
+				{ id: 4, name: 'Сырники', count: 175, rating: 4.9 },
+				{ id: 12, name: 'Печенье', count: 224, rating: 4.5 },
+				{ id: 13, name: 'Йогурт', count: 140, rating: 4.6 },
+			],
+			productsUsed: [
+				{ id: 1, name: 'Крупа овсяная', count: 105, unit: 'кг' },
+				{ id: 2, name: 'Молоко', count: 140, unit: 'л' },
+				{ id: 3, name: 'Мука', count: 70, unit: 'кг' },
+				{ id: 4, name: 'Мясо', count: 84, unit: 'кг' },
+				{ id: 5, name: 'Овощи', count: 175, unit: 'кг' },
+			],
+			allergiesInfo: {
+				totalStudents: 50,
+				withAllergies: 12,
+				commonAllergies: [
+					{ name: 'Молоко', count: 5 },
+					{ name: 'Яйца', count: 4 },
+					{ name: 'Орехи', count: 2 },
+					{ name: 'Глютен', count: 1 },
+				],
+			},
+		},
+		'7d_finance': {
+			date: new Date().toISOString(),
+			period: '7 дней',
+			totalExpenses: 350000,
+			expensesByCategory: [
+				{ category: 'Продукты питания', amount: 245000, percentage: 70 },
+				{ category: 'Инвентарь', amount: 35000, percentage: 10 },
+				{ category: 'Коммунальные услуги', amount: 28000, percentage: 8 },
+				{ category: 'Заработная плата', amount: 42000, percentage: 12 },
+			],
+			income: {
+				subscriptions: 315000,
+				singleMeals: 105000,
+				total: 420000,
+			},
+			profit: 70000,
+			dailyAverage: {
+				expenses: 50000,
+				income: 60000,
+				profit: 10000,
+			},
+		},
+		'7d_food+finance': {
+			date: new Date().toISOString(),
+			period: '7 дней',
+			mealsStats: {
+				totalMeals: 1050,
+				breakfasts: 315,
+				lunches: 420,
+				dinners: 315,
+			},
+			popularMeals: [
+				{ id: 1, name: 'Овсяная каша', count: 210, rating: 4.8 },
+				{ id: 6, name: 'Борщ', count: 245, rating: 4.9 },
+				{ id: 7, name: 'Котлета с гарниром', count: 196, rating: 4.7 },
+				{ id: 4, name: 'Сырники', count: 175, rating: 4.9 },
+				{ id: 12, name: 'Печенье', count: 224, rating: 4.5 },
+			],
+			productsUsed: [
+				{ id: 1, name: 'Крупа овсяная', count: 105, unit: 'кг' },
+				{ id: 2, name: 'Молоко', count: 140, unit: 'л' },
+				{ id: 3, name: 'Мука', count: 70, unit: 'кг' },
+				{ id: 4, name: 'Мясо', count: 84, unit: 'кг' },
+				{ id: 5, name: 'Овощи', count: 175, unit: 'кг' },
+				{ id: 6, name: 'Сахар', count: 56, unit: 'кг' },
+				{ id: 7, name: 'Масло растительное', count: 35, unit: 'л' },
+				{ id: 8, name: 'Яйца', count: 280, unit: 'шт' },
+			],
+			allergiesInfo: {
+				totalStudents: 50,
+				withAllergies: 12,
+				commonAllergies: [
+					{ name: 'Молоко', count: 5 },
+					{ name: 'Яйца', count: 4 },
+					{ name: 'Орехи', count: 2 },
+					{ name: 'Глютен', count: 1 },
+				],
+			},
+			totalExpenses: 350000,
+			expensesByCategory: [
+				{ category: 'Продукты питания', amount: 245000, percentage: 70 },
+				{ category: 'Инвентарь', amount: 35000, percentage: 10 },
+				{ category: 'Коммунальные услуги', amount: 28000, percentage: 8 },
+				{ category: 'Заработная плата', amount: 42000, percentage: 12 },
+			],
+			income: {
+				subscriptions: 315000,
+				singleMeals: 105000,
+				total: 420000,
+			},
+			profit: 70000,
+			dailyAverage: {
+				expenses: 50000,
+				income: 60000,
+				profit: 10000,
+			},
+		},
+	};
+
+	// Определяем ключ отчёта на основе параметров
+	let reportKey = '';
+	if (type.includes('food') && type.length > 1) {
+		reportKey = `${date}_food+finance`;
+	} else if (type.includes('food')) {
+		reportKey = `${date}_food`;
+	} else {
+		reportKey = `${date}_finance`;
+	}
+
+	return {
+		data: reports[reportKey] || reports['1d_food+finance'],
+	};
+};
+
+export const editMeal = (id: number, data: Partial<IMeal>) => {
+	return;
+};
+
+export const getMenu = () => {
+	return [
+		{
+			id: 1,
+			breakfast: {},
+			lunch: {},
+		},
+		{
+			id: 2,
+			breakfast: {},
+			lunch: {},
+		},
+	];
+};
+
+export const editMenu = (
+	id: number,
+	data: { breakfast: IMeal; lunch: IMeal },
+) => {
+	return;
 };

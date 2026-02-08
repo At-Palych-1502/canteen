@@ -12,8 +12,8 @@ const NavLinks = ({ role, orderCount = 0 }: IProps) => {
 		return (
 			<>
 				<li>
-					<Link href={'/stats'} className={Styles['button']}>
-						Статистика
+					<Link href={'/edit-data'} className={Styles['button']}>
+						Изменение данных
 					</Link>
 				</li>
 				<li>
