@@ -8,29 +8,33 @@ from ..utils import role_required
 bp = Blueprint('logic', __name__)
 
 
-@bp.route('/meals', methods=['POST'])
+@bp.route('/meals', methods=['POST', 'GET'])
 @jwt_required()
 @role_required(['admin'])
 def add_meal():
-    data = request.get_json()
+    if request.method == 'POST':
+        data = request.get_json()
 
-    dish_ids = data['dishes']
-    dishes = Dish.query.filter(Dish.id.in_(dish_ids)).all()
-    if len(dishes) != len(dish_ids):
-        found_ids = {d.id for d in dishes}
-        missing = [did for did in dish_ids if did not in found_ids]
-        return jsonify({"error": f"Dish IDs not found: {missing}"}), 404
-    meal = Meal(
-        name=data['name'],
-        price=int(data['price']),
-        date=datetime.datetime.strptime(data['date'], "%Y-%m-%d")
-    )
-    meal.dishes = dishes
+        dish_ids = data['dishes']
+        dishes = Dish.query.filter(Dish.id.in_(dish_ids)).all()
+        if len(dishes) != len(dish_ids):
+            found_ids = {d.id for d in dishes}
+            missing = [did for did in dish_ids if did not in found_ids]
+            return jsonify({"error": f"Dish IDs not found: {missing}"}), 404
+        meal = Meal(
+            name=data['name'],
+            price=int(data['price']),
+            date=datetime.datetime.strptime(data['date'], "%Y-%m-%d")
+        )
+        meal.dishes = dishes
 
-    db.session.add(meal)
-    db.session.commit()
+        db.session.add(meal)
+        db.session.commit()
 
-    return jsonify(meal.to_dict()), 200
+        return jsonify(meal.to_dict()), 200
+    if request.method == 'GET':
+        meals = Meal.query.all()
+        return jsonify({"meals": [meal.to_dict() for meal in meals]})
 
 
 @bp.route('/meals/<int:id>', methods=['GET', 'PUT', 'DELETE'])
@@ -88,3 +92,5 @@ def meal_detail(id):
             db.session.rollback()
             return jsonify({"error": "Failed to delete meal"}), 500
     return None
+
+
