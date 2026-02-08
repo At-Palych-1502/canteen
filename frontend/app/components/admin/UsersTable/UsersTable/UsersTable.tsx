@@ -16,7 +16,7 @@ interface PopupState {
 	currentRole: UserRole;
 }
 
-const USERS_PER_PAGE = 5;
+const USERS_PER_PAGE = 8;
 
 const UsersTable: React.FC = () => {
 	const currentUser = useSelector(selectUser);
