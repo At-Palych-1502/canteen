@@ -32,14 +32,21 @@ def post_order():
         found_ids = {d.id for d in meals}
         missing = [did for did in meal_ids if did not in found_ids]
         return jsonify({"error": f"Dish IDs not found: {missing}"}), 404
-    # order = Order.query.filter_by(user_id=user.id, date=datetime.datetime.strptime(data['date'], '%Y-%m-%d')).first()
+    order = Order.query.filter_by(user_id=user.id, date=datetime.datetime.strptime(data['date'], '%Y-%m-%d')).first()
+    if order:
+        return jsonify({"error": "order already exists"}), 400
+    full_cost = sum([meal.price for meal in meals])
+    if user.balance < full_cost:
+        return jsonify({"error": "not enough balance"}), 400
     order = Order(
         user_id=user.id,
         date=datetime.datetime.strptime(data['date'], '%Y-%m-%d')
     )
     order.meals = meals
     db.session.add(order)
+    user.balance -= full_cost
     db.session.commit()
+
 
 # @bp.route('/order/<int:order_id>', methods=['GET', 'PUT', 'DELETE'])
 # @jwt_required()
