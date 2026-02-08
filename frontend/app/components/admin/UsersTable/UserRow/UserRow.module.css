@@ -1,6 +1,14 @@
 .row {
 	border-bottom: 1px solid #e0e0e0;
 	transition: background-color 0.2s ease;
+	-webkit-transition: background-color 0.2s ease;
+	-moz-transition: background-color 0.2s ease;
+	-ms-transition: background-color 0.2s ease;
+	-o-transition: background-color 0.2s ease;
+}
+
+.row:last-child {
+  border: none;
 }
 
 .row:hover {
@@ -22,7 +30,6 @@
 	padding: 6px 14px;
 	border-radius: 12px;
 	font-size: 14px;
-	font-weight: 500;
 	text-transform: uppercase;
 }
 
@@ -62,6 +69,7 @@
 }
 
 .changeRoleButton:hover {
+  color: white;
 	background-color: #1565c0;
 }
 
@@ -71,5 +79,6 @@
 }
 
 .deleteButton:hover {
+  color: white;
 	background-color: #c62828;
 }
