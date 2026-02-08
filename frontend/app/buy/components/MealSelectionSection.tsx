@@ -1,7 +1,7 @@
 import React from 'react';
 import Styles from '../page.module.css';
-import DaySelector from '../../components/Menu/DaySelector/DaySelector';
-import ComplexMeals from '../../components/Menu/ComplexMeals/ComplexMeals';
+import DaySelector from '../../components/student/Menu/DaySelector/DaySelector';
+import ComplexMeals from '../../components/student/Menu/ComplexMeals/ComplexMeals';
 import { getDailyMeals } from '@/app/tools/mockData';
 import { IComplexMeal } from '@/app/tools/types/mock';
 
