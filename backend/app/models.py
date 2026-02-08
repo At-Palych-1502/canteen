@@ -22,6 +22,8 @@ class User(Base):
 
     allergies = relationship("Ingredient", secondary="user_allergies", back_populates="allergic_users")
     transactions = relationship("Transaction", back_populates="user")
+    orders = relationship("Order", back_populates="user")
+
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
@@ -54,8 +56,9 @@ class Dish(Base):
     created_at = Column(DateTime, nullable=False, default=datetime.datetime.now())
 
     dish_ingredients = relationship("DishIngredient", back_populates="dish")
-    meal = relationship("Meal", secondary="meal_ingredients", back_populates="dish"
+    meals = relationship("Meal", secondary="meal_ingredients", back_populates="dishes"
                         )
+
     def to_dict(self, include_ingredients=False):
         sl = []
         if include_ingredients:
@@ -109,7 +112,6 @@ class DishIngredient(Base):
     ingredient = relationship('Ingredient', back_populates='dish_ingredients')
 
 
-
 class Transaction(Base):
     __tablename__ = 'transactions'
     id = Column(Integer, primary_key=True, autoincrement=True)
@@ -134,8 +136,40 @@ class Meal(Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String(80), nullable=False)
     price = Column(Float, nullable=False)
+    date = Column(DateTime, nullable=False)
 
-    dish = relationship("Dish", secondary="meal_ingredients", back_populates="meal")
+    dishes = relationship("Dish", secondary="meal_ingredients", back_populates="meals")
+    orders = relationship("Order", secondary='orders_meals', back_populates='meals')
+
+    def to_dict(self):
+        sl = []
+        for dish in self.dishes:
+            sl.append(dish.to_dict())
+        return {
+            "id": self.id,
+            "name": self.name,
+            "price": self.price,
+            "date": self.date,
+            "dishes": sl
+        }
+
+
+class Order(Base):
+    __tablename__ = 'orders'
+
+    id = Column(Integer, primary_key=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    date = Column(DateTime, nullable=False)
+
+    user = relationship("User", back_populates="orders")
+    meals = relationship("Meal", secondary='orders_meals', back_populates="orders")
+
+
+class OrderMeal(Base):
+    __tablename__ = 'orders_meals'
+
+    order_id = Column(Integer, ForeignKey('orders.id'), primary_key=True)
+    meal_id = Column(Integer, ForeignKey("meals.id"), primary_key=True)
 
 
 class MealDish(Base):
@@ -143,4 +177,3 @@ class MealDish(Base):
 
     meal_id = Column(Integer, ForeignKey('meals.id'), primary_key=True)
     dish_id = Column(Integer, ForeignKey('dishes.id'), primary_key=True)
-
