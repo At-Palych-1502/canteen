@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import Styles from './Header.module.css';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectUser, SetOrderCount, setUser } from '@/app/tools/redux/user';
 import { RootState } from '@/app/tools/redux/store';
@@ -21,15 +21,6 @@ export const Header = () => {
 	const [isLoginPopup, setIsLoginPopup] = useState(false);
 	const [isRegisterPopup, setIsRegisterPopup] = useState(false);
 	const orderCount = useSelector((state: RootState) => state.user.orderCount);
-
-	const [isMounted, setIsMounted] = useState(false);
-
-	useEffect(() => {
-		setIsMounted(true);
-	}, []);
-	if (!isMounted) {
-		return null;
-	}
 
 	const logout = () => {
 		dispatch(setUser(null));
@@ -53,11 +44,7 @@ export const Header = () => {
 							onRegisterClick={() => setIsRegisterPopup(true)}
 						/>
 					) : (
-						<UserMenu
-							username={User.username}
-							onLogout={logout}
-							orderCount={orderCount}
-						/>
+						<UserMenu user={User} onLogout={logout} orderCount={orderCount} />
 					)}
 				</div>
 			</header>

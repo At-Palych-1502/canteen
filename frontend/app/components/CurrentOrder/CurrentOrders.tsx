@@ -19,7 +19,7 @@ const CurrentOrders = () => {
 			) : (
 				<div className={Styles['orders-empty']}>
 					<h3>У вас ещё нету заказов на питание</h3>
-					<Link href={'/buy'} />
+					<Link href={'/buy'}>Заказать питание</Link>
 				</div>
 			)}
 		</div>

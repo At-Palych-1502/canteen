@@ -568,7 +568,7 @@ export const getDailyMeals = (day: number): IDailyMeals => {
 export const getCurrentOrders = (): IOrder[] => [
 	{
 		id: 1,
-		date: '1770539545725',
+		date: '1770516369000', // 7 февраля 2026
 		meals: [
 			{
 				id: 1,
@@ -576,17 +576,41 @@ export const getCurrentOrders = (): IOrder[] => [
 				weight: 200,
 				quantity: 50,
 			},
+			{
+				id: 4,
+				name: 'Сырники',
+				weight: 180,
+				quantity: 25,
+			},
 		],
 	},
 	{
 		id: 2,
-		date: '1770539545625',
+		date: '1770602769000', // 8 февраля 2026 (сегодня)
 		meals: [
 			{
 				id: 6,
 				name: 'Борщ',
 				weight: 250,
 				quantity: 45,
+			},
+			{
+				id: 7,
+				name: 'Котлета',
+				weight: 150,
+				quantity: 35,
+			},
+		],
+	},
+	{
+		id: 3,
+		date: '1770689169000', // 9 февраля 2026
+		meals: [
+			{
+				id: 12,
+				name: 'Печенье',
+				weight: 100,
+				quantity: 70,
 			},
 		],
 	},

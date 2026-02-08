@@ -1,13 +1,23 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Styles from './page.module.css';
 import { mockAllergies } from '@/app/tools/mockData';
 import { IAllergy } from '@/app/tools/types/mock';
+import { useRouter } from 'next/navigation';
+import { useSelector } from 'react-redux';
+import { selectUser } from '../tools/redux/user';
 
 export default function AllergiesPage() {
 	const [allergies, setAllergies] = useState<IAllergy[]>(mockAllergies);
 	const [saved, setSaved] = useState(false);
+
+	const router = useRouter();
+	const User = useSelector(selectUser);
+
+	useEffect(() => {
+		if (User && User.role !== 'student') router.push('/');
+	}, [User, router]);
 
 	const toggleAllergy = (id: number) => {
 		setAllergies(

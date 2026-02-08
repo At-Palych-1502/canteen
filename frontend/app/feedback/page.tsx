@@ -1,9 +1,12 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Styles from './page.module.css';
 import { mockDishes, mockFeedbacks } from '@/app/tools/mockData';
 import { IFeedback } from '@/app/tools/types/mock';
+import { useRouter } from 'next/navigation';
+import { useSelector } from 'react-redux';
+import { selectUser } from '../tools/redux/user';
 
 // ID текущего пользователя (в реальном приложении берется из Redux)
 const CURRENT_USER_ID = 'user1';
@@ -14,6 +17,13 @@ export default function FeedbackPage() {
 	const [comment, setComment] = useState<string>('');
 	const [feedbacks, setFeedbacks] = useState<IFeedback[]>(mockFeedbacks);
 	const [submitted, setSubmitted] = useState(false);
+
+	const router = useRouter();
+	const User = useSelector(selectUser);
+
+	useEffect(() => {
+		if (User && User.role !== 'student') router.push('/');
+	}, [User, router]);
 
 	// Фильтруем отзывы только для текущего пользователя
 	const userFeedbacks = feedbacks.filter(f => f.userId === CURRENT_USER_ID);

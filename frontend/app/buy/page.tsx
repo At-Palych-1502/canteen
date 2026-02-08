@@ -13,6 +13,9 @@ import {
 } from '@/app/tools/utils/order';
 import ComplexMeals from '../components/Menu/ComplexMeals/ComplexMeals';
 import DaySelector from '../components/Menu/DaySelector/DaySelector';
+import { useSelector } from 'react-redux';
+import { selectUser } from '../tools/redux/user';
+import { useRouter } from 'next/navigation';
 
 type SubscriptionType =
 	| 'breakfast'
@@ -31,6 +34,13 @@ export default function BuyPage() {
 	const [orderPlaced, setOrderPlaced] = useState(false);
 	const [subscriptionType, setSubscriptionType] =
 		useState<SubscriptionType>('breakfast');
+
+	const router = useRouter();
+	const User = useSelector(selectUser);
+
+	useEffect(() => {
+		if (User && User.role !== 'student') router.push('/');
+	}, [User, router]);
 
 	// Автоматически выбираем сегодняшний день при загрузке страницы
 	useEffect(() => {
