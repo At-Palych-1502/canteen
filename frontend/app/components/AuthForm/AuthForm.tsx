@@ -1,12 +1,11 @@
 'use client';
 
-import Styles from './AuthFrom.module.css';
+import Styles from './AuthForm.module.css';
 import { useForm } from 'react-hook-form';
 import {
 	useLoginMutation,
 	useRegisterMutation,
 } from '@/app/tools/redux/api/auth';
-
 import {
 	getAuthData,
 	getAuthErrorMessage,
@@ -16,7 +15,6 @@ import { setUser } from '@/app/tools/redux/user';
 import { useDispatch } from 'react-redux';
 import { AuthInputs } from '@/app/tools/types/user';
 import { useEffect } from 'react';
-
 
 interface Props {
 	closePopup: VoidFunction;
@@ -36,7 +34,7 @@ export function AuthForm({ closePopup, isLogin, openLoginPopup }: Props) {
 
 	const values = watch();
 
-	useEffect(() => setAuthData(values), [values]);
+	useEffect(() => setAuthData({ ...values, password: '' }), [values]);
 
 	const [login, { error: loginError }]: ReturnType<typeof useLoginMutation> =
 		useLoginMutation();

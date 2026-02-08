@@ -1,15 +1,31 @@
 'use client';
 
 import { store } from '@/app/tools/redux/store';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Provider } from 'react-redux';
+import { Header } from '../Header/Header';
+import AuthLayout from '../AuthLayout/AuthLayout';
 
 interface IProps {
 	children: React.ReactNode;
 }
 
 const ReduxLayout = ({ children }: IProps) => {
-	return <Provider store={store}>{children}</Provider>;
+	const [isMounted, setIsMounted] = useState(false);
+
+	useEffect(() => {
+		setIsMounted(true);
+	}, []);
+	if (!isMounted) {
+		return <h1 className='page-loading'>Загрузка...</h1>;
+	}
+
+	return (
+		<Provider store={store}>
+			<Header />
+			<AuthLayout>{children}</AuthLayout>
+		</Provider>
+	);
 };
 
 export default ReduxLayout;

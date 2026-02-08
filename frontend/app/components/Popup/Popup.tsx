@@ -1,4 +1,3 @@
-import { AuthForm } from '../AuthForm/AuthForm';
 import Styles from './Popup.module.css';
 
 interface Props {

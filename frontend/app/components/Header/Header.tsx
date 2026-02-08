@@ -2,23 +2,31 @@
 
 import Link from 'next/link';
 import Styles from './Header.module.css';
-import { Popup } from '../Popup/Popup';
 import { useState } from 'react';
-import { AuthForm } from '../AuthForm/AuthForm';
 import { useDispatch, useSelector } from 'react-redux';
-import { selectUser, setUser } from '@/app/tools/redux/user';
+import { selectUser, SetOrderCount, setUser } from '@/app/tools/redux/user';
+import { RootState } from '@/app/tools/redux/store';
 import { IUser } from '@/app/tools/types/user.d';
-import { removeAccessToken } from '@/app/tools/utils/auth';
+import {
+	removeAccessToken,
+	removeUserLocalStorage,
+} from '@/app/tools/utils/auth';
+import { AuthButtons } from './AuthButtons';
+import { UserMenu } from './UserMenu';
+import { AuthPopups } from './AuthPopups';
 
-export function Header() {
-	const dispatch = useDispatch();
+export const Header = () => {
 	const User: IUser | null = useSelector(selectUser);
+	const dispatch = useDispatch();
 	const [isLoginPopup, setIsLoginPopup] = useState(false);
 	const [isRegisterPopup, setIsRegisterPopup] = useState(false);
+	const orderCount = useSelector((state: RootState) => state.user.orderCount);
 
 	const logout = () => {
 		dispatch(setUser(null));
 		removeAccessToken();
+		removeUserLocalStorage();
+		dispatch(SetOrderCount(0));
 	};
 
 	return (
@@ -26,75 +34,28 @@ export function Header() {
 			<header className={Styles['header']}>
 				<div className={Styles['header_container']}>
 					<Link href='/'>
-						<h1 className={Styles['main_title']}>Умная столовая</h1>
+						<h1 className={Styles['main_title'] + ' color-primary'}>
+							Умная столовая
+						</h1>
 					</Link>
-					<ul className={Styles['button_list']}>
-						{User && User.role === 'admin' && (
-							<>
-								<li>
-									<Link href={'/stats'} className={Styles['button']}>
-										Статистика
-									</Link>
-								</li>
-								<li>
-									<Link href={'/buys'} className={Styles['button']}>
-										Заявки на покупки
-									</Link>
-								</li>
-								<li>
-									<Link href={'/create-report'} className={Styles['button']}>
-										Создать отчет
-									</Link>
-								</li>
-							</>
-						)}
-					</ul>
 					{!User ? (
-						<>
-							<button
-								onClick={() => setIsRegisterPopup(true)}
-								className={Styles['auth_button']}
-							>
-								Зарегистрироваться
-							</button>
-							<button
-								onClick={() => setIsLoginPopup(true)}
-								className={Styles['auth_button']}
-							>
-								Войти
-							</button>
-						</>
+						<AuthButtons
+							onLoginClick={() => setIsLoginPopup(true)}
+							onRegisterClick={() => setIsRegisterPopup(true)}
+						/>
 					) : (
-						<div>
-							<span>{User.username} </span>
-							<span>
-								<button onClick={logout} className={Styles['auth_button']}>
-									Выйти
-								</button>
-							</span>
-						</div>
+						<UserMenu user={User} onLogout={logout} orderCount={orderCount} />
 					)}
 				</div>
 			</header>
 
-			{isLoginPopup && (
-				<Popup closePopup={() => setIsLoginPopup(false)}>
-					<AuthForm
-						isLogin={true}
-						closePopup={() => setIsLoginPopup(false)}
-						openLoginPopup={() => setIsLoginPopup(true)}
-					/>
-				</Popup>
-			)}
-			{isRegisterPopup && (
-				<Popup closePopup={() => setIsRegisterPopup(false)}>
-					<AuthForm
-						isLogin={false}
-						closePopup={() => setIsRegisterPopup(false)}
-						openLoginPopup={() => setIsLoginPopup(true)}
-					/>
-				</Popup>
-			)}
+			<AuthPopups
+				isLoginPopup={isLoginPopup}
+				isRegisterPopup={isRegisterPopup}
+				onCloseLoginPopup={() => setIsLoginPopup(false)}
+				onCloseRegisterPopup={() => setIsRegisterPopup(false)}
+				onOpenLoginPopup={() => setIsLoginPopup(true)}
+			/>
 		</>
 	);
-}
+};
