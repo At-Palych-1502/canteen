@@ -21,10 +21,12 @@ def add_meal():
             found_ids = {d.id for d in dishes}
             missing = [did for did in dish_ids if did not in found_ids]
             return jsonify({"error": f"Dish IDs not found: {missing}"}), 404
+        if not data['day_of_weak'].lower() in ['monday', 'tuesday', 'wednesday', 'thursday', 'friday']:
+            return jsonify({"error": "Invalid day of weak"}), 400
         meal = Meal(
             name=data['name'],
             price=int(data['price']),
-            date=datetime.datetime.strptime(data['date'], "%Y-%m-%d")
+            day_of_weak=data['day_of_weak'].lower()
         )
         meal.dishes = dishes
 
@@ -43,46 +45,37 @@ def add_meal():
 def meal_detail(id):
     meal = Meal.query.get_or_404(id)
 
-    if not meal:
-        return jsonify({"error": "Meal not found"}), 404
-
     if request.method == 'GET':
         return jsonify(meal.to_dict()), 200
     elif request.method == 'PUT':
         data = request.get_json()
-        if not data:
-            return jsonify({"error": "No JSON data provided"}), 400
-        if 'name' in data:
-            if not isinstance(data['name'], str) or not data['name'].strip():
-                return jsonify({"error": "Name must be a non-empty string"}), 400
-            meal.name = data['name']
-        if 'price' in data:
-            try:
-                meal.price = float(data['price'])
-            except (TypeError, ValueError):
-                return jsonify({"error": "Price must be a number"}), 400
-        if 'date' in data:
-            try:
-                meal.date = datetime.datetime.strptime(data['date'], "%Y-%m-%d")
-            except ValueError:
-                return jsonify({"error": "Invalid date format. Use YYYY-MM-DD"}), 400
-        if 'dishes' in data:
-            if not isinstance(data['dishes'], list):
-                return jsonify({"error": "'dishes' must be a list of dish IDs"}), 400
-            dish_ids = data['dishes']
-            if dish_ids:
-                dishes = db.session.query(Dish).filter(Dish.id.in_(dish_ids)).all()
+        allowed_keys = ["name", "price", "day_of_week", "dishes"]  # ⚠️ опечатка: "day_of_weak" → "day_of_week"
+
+        if not all(key in allowed_keys for key in data.keys()):
+            return jsonify({"error": "Invalid data fields"}), 400
+
+        for key, value in data.items():
+            if key == "dishes":
+                if not isinstance(value, list):
+                    return jsonify({"error": "'dishes' must be a list of IDs"}), 400
+                try:
+                    dish_ids = [int(i) for i in value]
+                except (TypeError, ValueError):
+                    return jsonify({"error": "All dish IDs must be integers"}), 400
+
+                dishes = Dish.query.filter(Dish.id.in_(dish_ids)).all()
+
                 if len(dishes) != len(dish_ids):
                     found_ids = {d.id for d in dishes}
-                    missing = [did for did in dish_ids if did not in found_ids]
-                    return jsonify({"error": f"Dish IDs not found: {missing}"}), 404
+                    missing = set(dish_ids) - found_ids
+                    return jsonify({"error": f"Dish IDs not found: {sorted(missing)}"}), 404
+
                 meal.dishes = dishes
             else:
-                meal.dishes = []
+                setattr(meal, key, value)
 
         db.session.commit()
-        return jsonify(meal.to_dict()), 200
-
+        return jsonify({"message": "Meal updated"}), 200
     elif request.method == 'DELETE':
         try:
             db.session.delete(meal)
