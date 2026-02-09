@@ -22,10 +22,13 @@ def add_meal():
             return jsonify({"error": f"Dish IDs not found: {missing}"}), 404
         if not data['day_of_week'].lower() in ['monday', 'tuesday', 'wednesday', 'thursday', 'friday']:
             return jsonify({"error": "Invalid day of week"}), 400
+        if not data['type'].lower() in ['breakfast', 'lunch']:
+            return jsonify({"error": "Invalid type"}), 400
         meal = Meal(
             name=data['name'],
             price=int(data['price']),
-            day_of_week=data['day_of_week'].lower()
+            day_of_week=data['day_of_week'].lower(),
+            type=data['type']
         )
         meal.dishes = dishes
 
@@ -41,7 +44,8 @@ def add_meal():
 @jwt_required()
 @role_required(['admin', 'cook'])
 def meals_by_day():
-    day = request.get_json()['day_of_week'].lower()
+    day = request.args.get('day_of_week').lower()
+
     meals = Meal.query.filter(Meal.day_of_week == day).all()
     return jsonify({"meals": [meal.to_dict() for meal in meals]}), 200
 
@@ -56,7 +60,7 @@ def meal_detail(id):
         return jsonify(meal.to_dict()), 200
     elif request.method == 'PUT':
         data = request.get_json()
-        allowed_keys = ["name", "price", "day_of_week", "dishes"]
+        allowed_keys = ["name", "price", "day_of_week", "dishes", "type"]
 
         if not all(key in allowed_keys for key in data.keys()):
             return jsonify({"error": "Invalid data fields"}), 400
