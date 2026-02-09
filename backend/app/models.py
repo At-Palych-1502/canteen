@@ -70,7 +70,6 @@ class Dish(Base):
                 "id": self.id,
                 "name": self.name,
                 "weight": self.weight,
-                "quantity": self.quantity,
                 "ingredients": sl
             }
 
@@ -78,7 +77,6 @@ class Dish(Base):
             "id": self.id,
             "name": self.name,
             "weight": self.weight,
-            "quantity": self.quantity
         }
 
 
@@ -138,7 +136,7 @@ class Meal(Base):
     name = Column(String(80), nullable=False)
     price = Column(Float, nullable=False)
     day_of_week = Column(String)
-    quantity = Column(Integer, nullable=False)
+    quantity = Column(Integer)
     type = Column(String(20), nullable=False)
 
     dishes = relationship("Dish", secondary="meal_ingredients", back_populates="meals")
@@ -152,6 +150,7 @@ class Meal(Base):
             "id": self.id,
             "name": self.name,
             "price": self.price,
+            "quantity": self.quantity,
             "day_of_week": self.day_of_week,
             "type": self.type,
             "dishes": sl
