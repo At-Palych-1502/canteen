@@ -11,8 +11,8 @@ bp = Blueprint('business', __name__)
 @bp.route('/menu', methods=['GET'])
 @jwt_required()
 def get_menu():
-    date = datetime.datetime.strptime(request.get_json()['date'], '%Y-%m-%d')
-    meals = Meal.query.filter_by(date=date).all()
+    day_of_weak = request.get_json()['day_of_weak']
+    meals = Meal.query.filter_by(day_of_weak=day_of_weak).all()
     if not meals:
         return jsonify({"error": "There are no meals on this date"}), 400
     sl = []
