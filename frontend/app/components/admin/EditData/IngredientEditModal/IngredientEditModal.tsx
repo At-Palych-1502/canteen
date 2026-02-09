@@ -1,6 +1,9 @@
 import React, { useEffect } from 'react';
 import Styles from './IngredientEditModal.module.css';
-import { useUpdateIngredientMutation } from '@/app/tools/redux/api/ingredients';
+import {
+	useDeleteIngredientMutation,
+	useUpdateIngredientMutation,
+} from '@/app/tools/redux/api/ingredients';
 import { IIngredient } from '@/app/tools/types/ingredients';
 
 interface IngredientEditModalProps {
@@ -12,8 +15,9 @@ const IngredientEditModal: React.FC<IngredientEditModalProps> = ({
 	ingredient,
 	onClose,
 }) => {
-	const [updateIngredient, { error, isLoading: isUpdateLoading }] =
+	const [updateIngredient, { isLoading: isUpdateLoading }] =
 		useUpdateIngredientMutation();
+	const [removeIngredient] = useDeleteIngredientMutation();
 
 	const [formData, setFormData] = React.useState<IIngredient | null>(null);
 
@@ -33,6 +37,12 @@ const IngredientEditModal: React.FC<IngredientEditModalProps> = ({
 		const { id, ...data } = formData;
 
 		await updateIngredient({ id, data });
+
+		onClose(true);
+	};
+
+	const handleRemove = (id: number) => {
+		removeIngredient(id);
 
 		onClose(true);
 	};
@@ -61,6 +71,13 @@ const IngredientEditModal: React.FC<IngredientEditModalProps> = ({
 					</div>
 					{isUpdateLoading && <p>Обновление ингридиента...</p>}
 					<div className={Styles.actions}>
+						<button
+							type='button'
+							onClick={() => handleRemove(ingredient.id)}
+							className={Styles.saveBtn}
+						>
+							Удалить
+						</button>
 						<button
 							type='button'
 							onClick={() => onClose(false)}
