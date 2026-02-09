@@ -24,7 +24,7 @@ class User(Base):
     transactions = relationship("Transaction", back_populates="user")
     orders = relationship("Order", back_populates="user")
     reviews = relationship("Review", back_populates="user")
-    purchase_requests = relationship("PurchaseRequest", back_populates="cook")
+    purchase_requests = relationship("PurchaseRequest", back_populates="user")
 
 
     def set_password(self, password):
@@ -86,6 +86,7 @@ class Ingredient(Base):
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String(80), nullable=False)
+
 
     dish_ingredients = relationship('DishIngredient', back_populates='ingredient', cascade='all, delete-orphan')
     allergic_users = relationship("User", secondary="user_allergies", back_populates="allergies")
@@ -217,10 +218,21 @@ class PurchaseRequest(Base):
     __tablename__ = 'purchase_requests'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    cook_id = Column(Integer, ForeignKey('users.id'), nullable=False)
+    user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
     ingredient_id = Column(Integer, ForeignKey('ingredients.id'), nullable=False)
     quantity = Column(Integer, nullable=False)
-    is_accepted = Column(Boolean, nullable=False)
+    is_accepted = Column(Boolean, nullable=False, default=False)
+    data=Column(DateTime, nullable=False, default=datetime.datetime.now())
 
-    cook = relationship("User", back_populates="purchase_requests")
+    user = relationship("User", back_populates="purchase_requests")
     ingredient = relationship("Ingredient", back_populates="purchase_requests")
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "user_id": self.user_id,
+            "ingredient_id": self.ingredient_id,
+            "quantity": self.quantity,
+            "is_accepted": self.is_accepted,
+            "data": self.data
+        }

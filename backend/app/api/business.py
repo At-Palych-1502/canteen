@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
-from ..models import Meal, User, Order, OrderMeal, Transaction
+from ..models import Meal, User, Order, OrderMeal, Transaction, PurchaseRequest
 import datetime
 from .. import db
 from ..utils import role_required
@@ -128,3 +128,29 @@ def set_meals_count():
         meal.quantity = meal_ls["quantity"]
         db.session.commit()
     return jsonify({"message": "meals updated"}), 200
+
+@bp.route('/purchase_requests', methods=['POST', 'GET'])
+@jwt_required()
+@role_required(['admin', 'cook'])
+def purchase_request():
+    if request.method == 'GET':
+        return {"purchase_requests": [purch_req.to_dict() for purch_req in PurchaseRequest.query.all()]}
+    data = request.get_json()
+    purchase_req = PurchaseRequest(
+        user_id=get_jwt_identity(),
+        ingredient_id=data['ingredient_id'],
+        quantity=data['quantity'],
+    )
+    db.session.add(purchase_req)
+    db.session.commit()
+    return jsonify({"purchase_req": purchase_req.to_dict()}), 200
+
+@bp.route('/purchase_requests/<int:id>/accept', methods=['PUT'])
+@jwt_required()
+@role_required(['admin'])
+def meals(id):
+    purch_req = PurchaseRequest.query.get_or_404(id)
+    purch_req.is_accepted = True
+    db.session.commit()
+    return jsonify({"meal": purch_req.to_dict()}), 200
+
