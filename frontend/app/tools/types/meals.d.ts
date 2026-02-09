@@ -4,6 +4,7 @@ export interface IMealCreateArg {
 	dishes: number[];
 	name: string;
 	price: number;
+	type: 'breakfast' | 'lunch';
 	day_of_week: 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday';
 }
 

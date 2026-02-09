@@ -143,16 +143,6 @@ const DishEditModal: React.FC<DishEditModalProps> = ({
 									onChange={e => handleChange('weight', Number(e.target.value))}
 								/>
 							</div>
-							<div className={Styles.field}>
-								<label>Количество</label>
-								<input
-									type='number'
-									value={formData.quantity}
-									onChange={e =>
-										handleChange('quantity', Number(e.target.value))
-									}
-								/>
-							</div>
 						</div>
 						<div className={Styles['ingredients']}>
 							<div className={Styles.ingredientsList}>

@@ -11,7 +11,6 @@ import Styles from './page.module.css';
 import { useGetAllDishesQuery } from '../tools/redux/api/dishes';
 import { useGetAllMealsQuery } from '../tools/redux/api/meals';
 import { useGetAllIngredientsQuery } from '../tools/redux/api/ingredients';
-import { IMeal } from '../tools/types/meals';
 import { IDish } from '../tools/types/dishes';
 import { IIngredient } from '../tools/types/ingredients';
 
@@ -38,7 +37,7 @@ const Page = () => {
 		ingredients: refetchIngredients,
 	};
 
-	const [selectedMeal, setSelectedMeal] = useState<IMeal | null>(null);
+	const [selectedDay, setSelectedDay] = useState<number | null>(null);
 	const [selectedDish, setSelectedDish] = useState<IDish | null>(null);
 	const [selectedIngredient, setSelectedIngredient] =
 		useState<IIngredient | null>(null);
@@ -61,7 +60,7 @@ const Page = () => {
 				) : typeof meals === 'undefined' ? (
 					<p>Ошибка загрузки</p>
 				) : (
-					<MealsTable meals={meals.meals} onRowClick={setSelectedMeal} />
+					<MealsTable onRowClick={setSelectedDay} />
 				)}
 				{dishesLoading ? (
 					<p className={Styles['loading']}>Загрузка...</p>
@@ -81,13 +80,15 @@ const Page = () => {
 					/>
 				)}
 			</div>
-			{selectedMeal &&
+			{selectedDay !== null &&
+				meals &&
 				(typeof dishes === 'undefined' ? (
 					<p>Ошибка загрузки</p>
 				) : (
 					<MealEditModal
-						meal={selectedMeal}
-						onClose={update => handleClose('meals', setSelectedMeal, update)}
+						day={selectedDay}
+						meals={meals.meals}
+						onClose={update => handleClose('meals', setSelectedDay, update)}
 						dishes={dishes.data}
 					/>
 				))}
