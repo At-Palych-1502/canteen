@@ -196,3 +196,124 @@ _crud логика (/ingredients)_: аналогично для dish, парам
     "date": "y-m-d", "dishes": [dish_id1, dish_id2, ..0]
     Пример формата даты: "2026-02-08"
     
+
+
+**reviews**
+
+/<int:dish_id> [GET]
+
+    (получение всех отзывов о блюде)
+    Headers: {
+        "Authorization": "Bearer " + jwt_token
+    }
+    Формат ответа:
+    [200] {"reviews": [
+        {
+            "id": 1,
+            "dish_id": 123,
+            "user_id": 456,
+            "score": 5,
+            "comment": "Отличное блюдо!"
+        }
+    ]}
+
+/<int:dish_id> [POST]
+
+    Headers: {
+        "Authorization": "Bearer " + jwt_token
+    }
+    Формат запроса: {
+        "score": Integer (1-5),
+        "comment": String
+    }
+    Формат ответа:
+    [200] {"review": {
+        "id": 789,
+        "dish_id": 123,
+        "user_id": 456,
+        "score": 4,
+        "comment": "Хорошо, но можно соли добавить"
+    }}
+    [400] {"error": "Invalid input"}
+
+
+/<int:review_id> [PUT]
+
+    Headers: {
+        "Authorization": "Bearer " + jwt_token
+    }
+    Формат запроса: {
+        "score": Integer (1-5),
+        "comment": String
+    }
+    Формат ответа:
+    [200] {"review": {
+        "id": 789,
+        "dish_id": 123,
+        "user_id": 456,
+        "score": 5,
+        "comment": "Теперь идеально!"
+    }}
+    [400] {"error": "Invalid input"}
+    [403] {"error": "You are not allowed to edit this review"}
+    [404] {"error": "Not found"}
+
+
+/<int:review_id> [GET]
+
+    Headers: {
+    "Authorization": "Bearer " + jwt_token
+    }
+    Формат ответа:
+    [200] {"review": {
+        "id": 789,
+        "dish_id": 123,
+        "user_id": 456,
+        "score": 4,
+        "comment": "Хорошо, но можно соли добавить"
+    }}
+    [404] {"error": "Not found"}
+
+
+/<int:review_id> [DELETE]
+
+
+    Headers: {
+        "Authorization": "Bearer " + jwt_token
+    }
+    Формат ответа:
+    [200] ("message": "Review deleted")
+    [404] {"error": "Not found"}
+    [403] {"error":"You are not allowed to delete this review"}
+
+
+
+**business**
+/users/filter ['GET']
+    
+    Требуемая роль: 'admin'
+    Headers: {
+        "Authorization": "Bearer " + jwt_token
+    }
+    Формат запроса:
+        ?username=...&email=...&role=...&page=2
+        Пример: /api/_users/filter?username=ivan&role=student&per_page
+    Формат ответа:
+    [200] {
+        "users": [
+            {
+                "id": 123,
+                "username": "ivan",
+                "email": "ivan@example.com",
+                "role": "student"
+            }
+        ],
+        "pagination": {
+            "page": 1,
+            "pages": 3,
+            "per_page": 8,
+            "total": 22,
+            "has_next": true,
+            "has_prev": false
+        }
+    }

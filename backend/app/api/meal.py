@@ -14,19 +14,21 @@ bp = Blueprint('logic', __name__)
 def add_meal():
     if request.method == 'POST':
         data = request.get_json()
-
         dish_ids = data['dishes']
         dishes = Dish.query.filter(Dish.id.in_(dish_ids)).all()
         if len(dishes) != len(dish_ids):
             found_ids = {d.id for d in dishes}
             missing = [did for did in dish_ids if did not in found_ids]
             return jsonify({"error": f"Dish IDs not found: {missing}"}), 404
-        if not data['day_of_weak'].lower() in ['monday', 'tuesday', 'wednesday', 'thursday', 'friday']:
-            return jsonify({"error": "Invalid day of weak"}), 400
+        if not data['day_of_week'].lower() in ['monday', 'tuesday', 'wednesday', 'thursday', 'friday']:
+            return jsonify({"error": "Invalid day of week"}), 400
+        if not data['type'].lower() in ['breakfast', 'lunch']:
+            return jsonify({"error": "Invalid type"}), 400
         meal = Meal(
             name=data['name'],
             price=int(data['price']),
-            day_of_weak=data['day_of_weak'].lower()
+            day_of_week=data['day_of_week'].lower(),
+            type=data['type']
         )
         meal.dishes = dishes
 
@@ -37,6 +39,15 @@ def add_meal():
     if request.method == 'GET':
         meals = Meal.query.all()
         return jsonify({"meals": [meal.to_dict() for meal in meals]})
+
+@bp.route('/meals_by_day', methods=['GET'])
+@jwt_required()
+@role_required(['admin', 'cook'])
+def meals_by_day():
+    day = request.args.get('day_of_week').lower()
+
+    meals = Meal.query.filter(Meal.day_of_week == day).all()
+    return jsonify({"meals": [meal.to_dict() for meal in meals]}), 200
 
 
 @bp.route('/meals/<int:id>', methods=['GET', 'PUT', 'DELETE'])
@@ -49,7 +60,7 @@ def meal_detail(id):
         return jsonify(meal.to_dict()), 200
     elif request.method == 'PUT':
         data = request.get_json()
-        allowed_keys = ["name", "price", "day_of_week", "dishes"]  # ⚠️ опечатка: "day_of_weak" → "day_of_week"
+        allowed_keys = ["name", "price", "day_of_week", "dishes", "type"]
 
         if not all(key in allowed_keys for key in data.keys()):
             return jsonify({"error": "Invalid data fields"}), 400
