@@ -285,3 +285,16 @@ _crud логика (/ingredients)_: аналогично для dish, парам
     [200] ("message": "Review deleted")
     [404] {"error": "Not found"}
     [403] {"error":"You are not allowed to delete this review"}
+
+
+
+**business**
+/users/filter ['GET']
+    
+    Требуемая роль: 'admin'
+    Headers: {
+        "Authorization": "Bearer " + jwt_token
+    }
+    Формат запроса:
+        ?username=...&email=...&role=...&page=2
+        Пример: /api/_users/filter?username=ivan&role=student&per_page
