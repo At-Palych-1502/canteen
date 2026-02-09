@@ -62,7 +62,7 @@ def meal_detail(id):
         return jsonify(meal.to_dict()), 200
     elif request.method == 'PUT':
         data = request.get_json()
-        allowed_keys = ["name", "price", "day_of_week", "dishes", "type"]
+        allowed_keys = ["name", "price", "day_of_week", "dishes", "type", "quantity"]
 
         if not all(key in allowed_keys for key in data.keys()):
             return jsonify({"error": "Invalid data fields"}), 400
