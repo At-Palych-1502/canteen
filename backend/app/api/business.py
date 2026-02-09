@@ -94,12 +94,11 @@ def order():
     data = request.get_json()
     date = datetime.datetime.strptime(data['date'], '%Y-%m-%d')
     meal_ids = data['meals']
-        meals.append(Meal.query.get_or_404(id))
-    total_price = sum([meal.price for meal in meals])
-    user = User.query.get_or_404(get_jwt_identity())
+    meals = [Meal.query.get_or_404(id) for id in meal_ids]
+    total_price = sum(meal.price for meal in meals)
+    user_id = get_jwt_identity()
+    user = User.query.get_or_404(user_id)
 
-    payment_type = data['payment_type']
-    if payment_type.lower() not in ['subscription', 'balance']:
     payment_type = data['payment_type'].lower()
     if payment_type not in ['subscription', 'balance']:
         return jsonify({"error": "Invalid payment type"}), 400
