@@ -209,3 +209,12 @@ class MealDish(Base):
 
     meal_id = Column(Integer, ForeignKey('meals.id'), primary_key=True)
     dish_id = Column(Integer, ForeignKey('dishes.id'), primary_key=True)
+
+
+class Purchase_request(Base):
+    __tablename__ = 'purchase_requests'
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    cook_id = Column(Integer, ForeignKey('users.id'), nullable=False)
+    ingredient_id = Column(Integer, ForeignKey('ingredients.id'), nullable=False)
+    
