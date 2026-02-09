@@ -134,3 +134,29 @@
 	font-weight: 600;
 	font-size: 1rem;
 }
+
+.cook_panel{
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+.cook_panel_title{
+	font-size: 20px;
+}
+.add_button{
+	width: 30px;
+	height: 30px;
+
+	font-size: 25px;
+	text-align: center;
+	margin: 0 10px;
+	border: #1976d2 solid 1px;
+	border-radius: 10px;
+	color: #1976d2;
+}
+.add_button:hover{
+	cursor: pointer;
+}
+.cook_panel_digit{
+	font-size: 25px;
+}

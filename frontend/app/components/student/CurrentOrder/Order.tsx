@@ -4,11 +4,13 @@ import React, { useState } from 'react';
 import Styles from './CurrentOrder.module.css';
 
 interface Props {
-	order: IOrder;
+	order: IOrder,
+	role: "cook" | "student"
 }
 
-const Order = ({ order }: Props) => {
+const Order = ({ order, role }: Props) => {
 	const [isReceived, setIsReceived] = useState(false);
+	const [orderCount, setOrderCount] = useState(0);
 
 	// Проверяем, является ли дата сегодняшней
 	const isToday = () => {
@@ -34,6 +36,16 @@ const Order = ({ order }: Props) => {
 		setIsReceived(true);
 		// Здесь можно добавить логику отправки на сервер
 	};
+	const handleOrderCountPlus = () => {
+		const temp = orderCount;
+		setOrderCount(temp + 1);
+		// Запрос на сервер <- temp
+	}
+	const handleOrderCountMines = () => {
+		const temp = orderCount;
+		setOrderCount(temp > 0 ? temp - 1 : 0);
+		// Запрос на сервер <- temp
+	}
 
 	const today = isToday();
 
@@ -54,15 +66,25 @@ const Order = ({ order }: Props) => {
 					</div>
 				))}
 			</div>
-			{today && !isReceived && (
-				<button
-					className={Styles['receive-button']}
-					onClick={handleReceiveOrder}
-				>
-					Получить заказ
-				</button>
+
+			{/* Кнопки для студента */}
+			{today && !isReceived && role == "student" && (
+				<button className={Styles['receive-button']} onClick={handleReceiveOrder}>Получить заказ</button>
 			)}
-			{today && isReceived && (
+			{today && isReceived && role == "student" && (
+				<div className={Styles['received-badge']}>✓ Заказ получен</div>
+			)}
+			
+			{/* Кнопки для повара */}
+			{!isReceived && role == "cook" && (
+				<div className={Styles["cook_panel"]}>
+					<h4 className={Styles["cook_panel_title"]}>Выдано:</h4>
+					<span onClick={handleOrderCountMines} className={Styles["add_button"]}>–</span>
+					<span className={Styles["cook_panel_digit"]}>{orderCount}</span>
+					<span onClick={handleOrderCountPlus} className={Styles["add_button"]}>+</span>
+				</div>
+			)}
+			{isReceived && role == "student" && (
 				<div className={Styles['received-badge']}>✓ Заказ получен</div>
 			)}
 		</div>

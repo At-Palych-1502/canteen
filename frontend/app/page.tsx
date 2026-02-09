@@ -27,12 +27,10 @@ export default function Home() {
 				{isLoading ? (
 					<h3>Загрузка...</h3>
 				) : User ? (
-					User.role === 'student' ? (
-						<CurrentOrders />
-					) : User.role === 'admin' ? (
+					User.role === 'admin' ? (
 						<UsersTable />
 					) : (
-						<p>a</p>
+						<CurrentOrders role={User.role}/>
 					)
 				) : (
 					<div className={Styles['title-wrapper']}>
