@@ -48,10 +48,10 @@ def add_ingredient():
 @role_required(['admin', 'cook'])
 def ingredients():
     ingredients = Ingredient.query.all()
-    sl = {}
+    sl = []
     for ingredient in ingredients:
-        sl[ingredient.id] = ingredient.to_dict()
-    return jsonify({'data': sl})
+        sl.append(ingredient.to_dict())
+    return jsonify({"data": sl})
 
 
 @bp.route('add_allergic_ingredient/<int:id>', methods=['POST'])

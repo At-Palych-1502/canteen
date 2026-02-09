@@ -73,6 +73,12 @@ _users [GET]_
         "role": role,
         "username": username}]}
 
+/change_role/<int:uesr_id> [PUT]
+    
+    требумые роли: admin
+    формат запроса: {"role": choice_of(admin, student, cook'}
+    
+
 **dish**:
 
 
@@ -178,3 +184,214 @@ _crud логика (/ingredients)_: аналогично для dish, парам
     Формат ответа: 
     [200] {'message': 'successfully added allergy'}
     [208] {'error': 'Ingredient-allergy relationship already exists'}
+
+
+**meals**
+
+/meals [POST]
+
+    требуемые роли: admin
+    Headers Bearer
+    Тело запроса: {"name": String, "price": Integer,
+    "date": "y-m-d", "dishes": [dish_id1, dish_id2, ..0]
+    Пример формата даты: "2026-02-08"
+    
+
+
+**reviews**
+
+/<int:dish_id> [GET]
+
+    (получение всех отзывов о блюде)
+    Headers: {
+        "Authorization": "Bearer " + jwt_token
+    }
+    Формат ответа:
+    [200] {"reviews": [
+        {
+            "id": 1,
+            "dish_id": 123,
+            "user_id": 456,
+            "score": 5,
+            "comment": "Отличное блюдо!"
+        }
+    ]}
+
+/<int:dish_id> [POST]
+
+    Headers: {
+        "Authorization": "Bearer " + jwt_token
+    }
+    Формат запроса: {
+        "score": Integer (1-5),
+        "comment": String
+    }
+    Формат ответа:
+    [200] {"review": {
+        "id": 789,
+        "dish_id": 123,
+        "user_id": 456,
+        "score": 4,
+        "comment": "Хорошо, но можно соли добавить"
+    }}
+    [400] {"error": "Invalid input"}
+
+
+/<int:review_id> [PUT]
+
+    Headers: {
+        "Authorization": "Bearer " + jwt_token
+    }
+    Формат запроса: {
+        "score": Integer (1-5),
+        "comment": String
+    }
+    Формат ответа:
+    [200] {"review": {
+        "id": 789,
+        "dish_id": 123,
+        "user_id": 456,
+        "score": 5,
+        "comment": "Теперь идеально!"
+    }}
+    [400] {"error": "Invalid input"}
+    [403] {"error": "You are not allowed to edit this review"}
+    [404] {"error": "Not found"}
+
+
+/<int:review_id> [GET]
+
+    Headers: {
+    "Authorization": "Bearer " + jwt_token
+    }
+    Формат ответа:
+    [200] {"review": {
+        "id": 789,
+        "dish_id": 123,
+        "user_id": 456,
+        "score": 4,
+        "comment": "Хорошо, но можно соли добавить"
+    }}
+    [404] {"error": "Not found"}
+
+
+/<int:review_id> [DELETE]
+
+
+    Headers: {
+        "Authorization": "Bearer " + jwt_token
+    }
+    Формат ответа:
+    [200] ("message": "Review deleted")
+    [404] {"error": "Not found"}
+    [403] {"error":"You are not allowed to delete this review"}
+
+
+
+**business**
+/users/filter ['GET']
+    
+    Требуемая роль: 'admin'
+    Headers: {
+        "Authorization": "Bearer " + jwt_token
+    }
+    Формат запроса:
+        ?username=...&email=...&role=...&page=2
+        Пример: /api/_users/filter?username=ivan&role=student&per_page=1
+    Формат ответа:
+    [200] {
+        "users": [
+            {
+                "id": 123,
+                "username": "shego1enok",
+                "email": "ivan@example.com",
+                "role": "student",
+                "name":"Александр",
+                "surname":"Иванов",
+                "patronymic":"Иванович"
+            }
+        ],
+        "pagination": {
+            "page": 1,
+            "pages": 3,
+            "per_page": 8,
+            "total": 22,
+            "has_next": true,
+            "has_prev": false
+        }
+    }
+
+/menu ['GET']
+
+    Headers: {
+        "Authorization": "Bearer " + jwt_token
+    }
+    Формат запроса:{
+        "day_of_week":String
+    }
+    Формат вывода:{
+        [200]   [
+        {
+            "id": 1,
+            "name": "Борщ",
+            "price": 150,
+            "date": "2026-02-09",
+            "day_of_week": "monday",
+            "dishes": [...]
+    }
+    ]
+    [400] {"error": "There are no meals on this date"}
+}
+
+
+/order ['POST']
+
+
+    Headers: {
+        "Authorization": "Bearer " + jwt_token
+    }
+    Формат запроса: {
+        "date": "YYYY-MM-DD",          
+        "meals": [...]
+    }
+    Формат ответа:
+        [200] {"order": {
+        "id": 456,
+        "user_id": 123,
+        "date": "2026-02-10",
+        "meals": [ ... ]  
+    }}
+    [400] {"error": "You don't have enough money"}
+    [404] {"error": "Not found"}  
+
+/orders ['GET']
+
+    Требуемая роль: admin, cook
+    Headers: {
+        "Authorization": "Bearer " + jwt_token
+    }
+    Формат ответа:
+    [200] {"data": [
+        {
+            "id": 456,
+            "user_id": 123,
+            "date": "2026-02-10",
+            "meals": [...]
+        },
+    ]}
+
+set_meals_count  ['PUT']
+
+    Требуемая роль: cook
+    Headers:{
+        "Authorization": "Bearer" + jwt_token
+    }
+    Формат запроса: {
+        "meals": [
+            {"id": 1, "quantity": 10},
+            {"id": 2, "quantity": 5}
+        ]
+    }
+    Формат ответа:
+    [200] {"message": "meals updated"}
+    [404] {"error": "Not found"}

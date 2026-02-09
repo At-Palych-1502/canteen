@@ -27,15 +27,29 @@ def dish(id):
         db.session.delete(dish)
         db.session.commit()
         return jsonify({"message": "Dish deleted"}), 200
-    else:
+    elif request.method == 'PUT':
         data = request.get_json()
-        allowed_keys = ["name", "weight", "meal", "quantity"]
+        allowed_keys = ["name", "weight", "meal", "quantity", "ingredients"]
         if not all(key in allowed_keys for key in data.keys()):
             return jsonify({"error": "Not valid data"}), 400
+
         for key, value in data.items():
-            setattr(dish, key, value)
+            if key != 'ingredients':
+                setattr(dish, key, value)
+
+        if 'ingredients' in data:
+            db.session.query(DishIngredient).filter_by(dish_id=dish.id).delete()
+            for ing_id in data["ingredients"]:
+                ingredient = Ingredient.query.get_or_404(ing_id)
+                dish_ing = DishIngredient(
+                    ingredient_id=ingredient.id,
+                    dish_id=dish.id
+                )
+                db.session.add(dish_ing)
+
         db.session.commit()
         return jsonify({"message": "Dish updated"}), 200
+
 
 
 @bp.route('/dishes', methods=['POST'])
@@ -66,24 +80,4 @@ def dishes():
     for dish in dishes:
         sl.append(dish.to_dict())
     return jsonify({"data": sl}), 200
-
-@bp.route('/dishes/<int:dish_id>/add_ingredient/<int:ingredient_id>', methods=['POST'])
-@jwt_required()
-@role_required(["admin", "cook"])
-def add_ingredient_to_dish(dish_id, ingredient_id):
-    dish = Dish.query.get_or_404(dish_id)
-    ingredient = Ingredient.query.get_or_404(ingredient_id)
-    existing = db.session.query(DishIngredient).filter_by(
-        ingredient_id=ingredient.id,
-        dish_id=dish.id
-    ).first()
-    if existing:
-        return jsonify({"error": "Ingredient-dish relation already exists"}), 208
-    dish_ing = DishIngredient(
-        ingredient_id=ingredient.id,
-        dish_id=dish.id
-    )
-    db.session.add(dish_ing)
-    db.session.commit()
-    return jsonify({"message": "Ingredient added to dish"}), 201
 
