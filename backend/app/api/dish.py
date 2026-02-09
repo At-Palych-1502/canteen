@@ -24,6 +24,9 @@ def dish(id):
             return jsonify({"error": "Dish not found"}), 404
         return jsonify({"data": dish.to_dict(include_ingredients=True)}), 200
     elif request.method == 'DELETE':
+        db.session.execute(
+            db.delete(DishIngredient).where(DishIngredient.dish_id == dish.id)
+        )
         db.session.delete(dish)
         db.session.commit()
         return jsonify({"message": "Dish deleted"}), 200
