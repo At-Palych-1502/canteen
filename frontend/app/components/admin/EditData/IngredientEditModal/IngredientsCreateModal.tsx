@@ -1,38 +1,34 @@
 import React, { useEffect } from 'react';
 import Styles from './IngredientEditModal.module.css';
-import { useUpdateIngredientMutation } from '@/app/tools/redux/api/ingredients';
-import { IIngredient } from '@/app/tools/types/ingredients';
+import { useCreateIngredientMutation } from '@/app/tools/redux/api/ingredients';
+import { IIngredientArg } from '@/app/tools/types/ingredients';
 
-interface IngredientEditModalProps {
-	ingredient: IIngredient | null;
+interface Props {
 	onClose: (update: boolean) => void;
 }
 
-const IngredientEditModal: React.FC<IngredientEditModalProps> = ({
-	ingredient,
-	onClose,
-}) => {
-	const [updateIngredient, { error, isLoading: isUpdateLoading }] =
-		useUpdateIngredientMutation();
+const IngredientsCreateModal = ({ onClose }: Props) => {
+	const [createIngredient] = useCreateIngredientMutation();
 
-	const [formData, setFormData] = React.useState<IIngredient | null>(null);
+	const [formData, setFormData] = React.useState<IIngredientArg | null>(null);
 
 	useEffect(() => {
-		setFormData(ingredient);
-	}, [ingredient]);
+		setFormData({ name: '' });
+	}, []);
 
-	if (!ingredient || !formData) return null;
+	if (!formData) return null;
 
-	const handleChange = (field: keyof IIngredient, value: string | number) => {
+	const handleChange = (
+		field: keyof IIngredientArg,
+		value: string | number,
+	) => {
 		setFormData(prev => (prev ? { ...prev, [field]: value } : null));
 	};
 
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
 
-		const { id, ...data } = formData;
-
-		await updateIngredient({ id, data });
+		await createIngredient(formData);
 
 		onClose(true);
 	};
@@ -48,10 +44,6 @@ const IngredientEditModal: React.FC<IngredientEditModalProps> = ({
 				</div>
 				<form onSubmit={handleSubmit} className={Styles.form}>
 					<div className={Styles.field}>
-						<label>ID</label>
-						<input type='number' value={formData.id} disabled />
-					</div>
-					<div className={Styles.field}>
 						<label>Название</label>
 						<input
 							type='text'
@@ -59,7 +51,6 @@ const IngredientEditModal: React.FC<IngredientEditModalProps> = ({
 							onChange={e => handleChange('name', e.target.value)}
 						/>
 					</div>
-					{isUpdateLoading && <p>Обновление ингридиента...</p>}
 					<div className={Styles.actions}>
 						<button
 							type='button'
@@ -78,4 +69,4 @@ const IngredientEditModal: React.FC<IngredientEditModalProps> = ({
 	);
 };
 
-export default IngredientEditModal;
+export default IngredientsCreateModal;

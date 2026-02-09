@@ -13,6 +13,8 @@ import { useGetAllMealsQuery } from '../tools/redux/api/meals';
 import { useGetAllIngredientsQuery } from '../tools/redux/api/ingredients';
 import { IDish } from '../tools/types/dishes';
 import { IIngredient } from '../tools/types/ingredients';
+import DishCreateModal from '../components/admin/EditData/DishEditModal/DishCreateModal';
+import IngredientsCreateModal from '../components/admin/EditData/IngredientEditModal/IngredientsCreateModal';
 
 const Page = () => {
 	const {
@@ -42,6 +44,9 @@ const Page = () => {
 	const [selectedIngredient, setSelectedIngredient] =
 		useState<IIngredient | null>(null);
 
+	const [createDish, setCreateDish] = useState(false);
+	const [createIngredient, setCreateIngredient] = useState(false);
+
 	function handleClose<Type>(
 		type: 'meals' | 'dishes' | 'ingredients',
 		closePopup: (_: Type | null) => void,
@@ -67,7 +72,11 @@ const Page = () => {
 				) : typeof dishes === 'undefined' ? (
 					<p>Ошибка загрузки</p>
 				) : (
-					<DishesTable dishes={dishes.data} onRowClick={setSelectedDish} />
+					<DishesTable
+						onCreate={() => setCreateDish(true)}
+						dishes={dishes.data}
+						onRowClick={setSelectedDish}
+					/>
 				)}
 				{ingredientsLoading ? (
 					<p className={Styles['loading']}>Загрузка...</p>
@@ -75,6 +84,7 @@ const Page = () => {
 					<p>Ошибка загрузки</p>
 				) : (
 					<IngredientsTable
+						onCreate={() => setCreateIngredient(true)}
 						ingredients={ingredients.data}
 						onRowClick={setSelectedIngredient}
 					/>
@@ -86,7 +96,7 @@ const Page = () => {
 					<p>Ошибка загрузки</p>
 				) : (
 					<MealEditModal
-						day={selectedDay}
+						day={selectedDay || -1}
 						meals={meals.meals}
 						onClose={update => handleClose('meals', setSelectedDay, update)}
 						dishes={dishes.data}
@@ -98,10 +108,30 @@ const Page = () => {
 				) : (
 					<DishEditModal
 						ingredients={ingredients.data}
-						id={selectedDish.id}
+						id={(selectedDish || { id: -1 }).id}
 						onClose={update => handleClose('dishes', setSelectedDish, update)}
 					/>
 				))}
+			{createDish &&
+				(typeof ingredients === 'undefined' ? (
+					<p>Ошибка загрузки</p>
+				) : (
+					<DishCreateModal
+						ingredients={ingredients.data}
+						onClose={update => {
+							if (update) refetchDishes();
+							setCreateDish(false);
+						}}
+					/>
+				))}
+			{createIngredient && (
+				<IngredientsCreateModal
+					onClose={update => {
+						if (update) refetchIngredients();
+						setCreateIngredient(false);
+					}}
+				/>
+			)}
 			{selectedIngredient && (
 				<IngredientEditModal
 					ingredient={selectedIngredient}
