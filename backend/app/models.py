@@ -136,7 +136,7 @@ class Meal(Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String(80), nullable=False)
     price = Column(Float, nullable=False)
-    date = Column(DateTime, nullable=False)
+    day_of_weak = Column(String, nullable=False)
 
     dishes = relationship("Dish", secondary="meal_ingredients", back_populates="meals")
     orders = relationship("Order", secondary='orders_meals', back_populates='meals')
@@ -149,7 +149,7 @@ class Meal(Base):
             "id": self.id,
             "name": self.name,
             "price": self.price,
-            "date": self.date,
+            "day_of_weak": self.day_of_weak,
             "dishes": sl
         }
 
