@@ -14,7 +14,6 @@ bp = Blueprint('logic', __name__)
 def add_meal():
     if request.method == 'POST':
         data = request.get_json()
-
         dish_ids = data['dishes']
         dishes = Dish.query.filter(Dish.id.in_(dish_ids)).all()
         if len(dishes) != len(dish_ids):
@@ -37,6 +36,14 @@ def add_meal():
     if request.method == 'GET':
         meals = Meal.query.all()
         return jsonify({"meals": [meal.to_dict() for meal in meals]})
+
+@bp.route('/meals_by_day', methods=['GET'])
+@jwt_required()
+@role_required(['admin', 'cook'])
+def meals_by_day():
+    day = request.get_json()['day_of_week'].lower()
+    meals = Meal.query.filter(Meal.day_of_week == day).all()
+    return jsonify({"meals": [meal.to_dict() for meal in meals]}), 200
 
 
 @bp.route('/meals/<int:id>', methods=['GET', 'PUT', 'DELETE'])
