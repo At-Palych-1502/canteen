@@ -1,16 +1,17 @@
 import { endpoints } from '@/app/config/endpoints';
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { getAccessToken } from '../../utils/auth';
-import type {
-	IIngredientArg,
-	IIngredientRes,
-	IIngredientUpdate,
-} from '../../types/ingredients';
+import {
+	IMeal,
+	IMealCreateArg,
+	IMealsGet,
+	IMealUpdateReq,
+} from '../../types/meals';
 
-export const ingredientsApi = createApi({
-	reducerPath: 'ingredientsApi',
+export const mealsApi = createApi({
+	reducerPath: 'mealsApi',
 	baseQuery: fetchBaseQuery({
-		baseUrl: endpoints.ingredients.base,
+		baseUrl: endpoints.meals.base,
 		prepareHeaders: headers => {
 			const token = getAccessToken();
 
@@ -20,26 +21,26 @@ export const ingredientsApi = createApi({
 		},
 	}),
 	endpoints: builder => ({
-		getAllIngredients: builder.query<IIngredientRes[], void>({
+		getAllMeals: builder.query<IMealsGet, void>({
 			query: () => '',
 		}),
-		getIngredientById: builder.query<IIngredientRes, number>({
+		getMealById: builder.query<IMeal, number>({
 			query: (id: number) => `/${id}`,
 		}),
-		deleteIngredient: builder.mutation<void, number>({
+		deleteMeal: builder.mutation<void, number>({
 			query: (id: number) => ({
 				url: `/${id}`,
 				method: 'DELETE',
 			}),
 		}),
-		updateIngredient: builder.mutation<void, IIngredientUpdate>({
+		updateMeal: builder.mutation<IMeal, IMealUpdateReq>({
 			query: ({ id, data }) => ({
 				url: `/${id}`,
 				method: 'PUT',
 				body: data,
 			}),
 		}),
-		createIngredient: builder.mutation<number, IIngredientArg>({
+		createMeal: builder.mutation<number, IMealCreateArg>({
 			query: data => ({
 				url: '',
 				method: 'POST',
@@ -50,9 +51,9 @@ export const ingredientsApi = createApi({
 });
 
 export const {
-	useGetAllIngredientsQuery,
-	useGetIngredientByIdQuery,
-	useDeleteIngredientMutation,
-	useUpdateIngredientMutation,
-	useCreateIngredientMutation,
-} = ingredientsApi;
+	useGetAllMealsQuery,
+	useGetMealByIdQuery,
+	useDeleteMealMutation,
+	useUpdateMealMutation,
+	useCreateMealMutation,
+} = mealsApi;

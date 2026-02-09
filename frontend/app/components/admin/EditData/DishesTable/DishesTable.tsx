@@ -1,10 +1,10 @@
 import React from 'react';
-import { IDishExtended } from '@/app/tools/types/mock';
 import Styles from './DishesTable.module.css';
+import { IDish } from '@/app/tools/types/dishes';
 
 interface DishesTableProps {
-	dishes: IDishExtended[];
-	onRowClick: (dish: IDishExtended) => void;
+	dishes: IDish[];
+	onRowClick: (dish: IDish) => void;
 }
 
 const DishesTable: React.FC<DishesTableProps> = ({ dishes, onRowClick }) => {
