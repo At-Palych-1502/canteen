@@ -87,6 +87,7 @@ class Ingredient(Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String(80), nullable=False)
 
+
     dish_ingredients = relationship('DishIngredient', back_populates='ingredient', cascade='all, delete-orphan')
     allergic_users = relationship("User", secondary="user_allergies", back_populates="allergies")
     purchase_requests = relationship("PurchaseRequest", back_populates="ingredient")
