@@ -23,6 +23,7 @@ class User(Base):
     allergies = relationship("Ingredient", secondary="user_allergies", back_populates="allergic_users")
     transactions = relationship("Transaction", back_populates="user")
     orders = relationship("Order", back_populates="user")
+    reviews = relationship("Review", back_populates="user")
 
 
     def set_password(self, password):
@@ -58,6 +59,7 @@ class Dish(Base):
     dish_ingredients = relationship("DishIngredient", back_populates="dish")
     meals = relationship("Meal", secondary="meal_ingredients", back_populates="dishes"
                         )
+    reviews = relationship("Review", back_populates="dish")
 
     def to_dict(self, include_ingredients=False):
         sl = []
@@ -136,7 +138,7 @@ class Meal(Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String(80), nullable=False)
     price = Column(Float, nullable=False)
-    day_of_weak = Column(String, nullable=False)
+    day_of_week = Column(String)
 
     dishes = relationship("Dish", secondary="meal_ingredients", back_populates="meals")
     orders = relationship("Order", secondary='orders_meals', back_populates='meals')
@@ -149,7 +151,7 @@ class Meal(Base):
             "id": self.id,
             "name": self.name,
             "price": self.price,
-            "day_of_weak": self.day_of_weak,
+            "day_of_week": self.day_of_week,
             "dishes": sl
         }
 
@@ -172,6 +174,18 @@ class Order(Base):
             "date": self.date,
             "meals": sl
         }
+
+class Review(Base):
+    __tablename__ = 'reviews'
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
+    dish_id = Column(Integer, ForeignKey('dishes.id'), nullable=False)
+    score = Column(Integer, nullable=False)
+    comment = Column(String(200), nullable=False)
+
+    user = relationship("User", back_populates="reviews")
+    dish = relationship("Dish", back_populates="reviews")
 
 
 class OrderMeal(Base):
