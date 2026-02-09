@@ -24,5 +24,7 @@ export const endpoints = {
 	},
 	buyRequests: {
 		base: `${BASE_URL}/purchase_requests`,
+		getMealsDayOfWeek: `${BASE_URL}/meals_by_day`,
+		setMealsCount: `${BASE_URL}/set_meals_count`,
 	},
 };
