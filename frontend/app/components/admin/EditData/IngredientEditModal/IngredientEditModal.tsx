@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import Styles from './IngredientEditModal.module.css';
+import { useUpdateIngredientMutation } from '@/app/tools/redux/api/ingredients';
 
 interface Ingredient {
 	id: number;
@@ -8,15 +9,16 @@ interface Ingredient {
 
 interface IngredientEditModalProps {
 	ingredient: Ingredient | null;
-	onClose: () => void;
-	onSave: (ingredient: Ingredient) => void;
+	onClose: (update: boolean) => void;
 }
 
 const IngredientEditModal: React.FC<IngredientEditModalProps> = ({
 	ingredient,
 	onClose,
-	onSave,
 }) => {
+	const [updateIngredient, { error, isLoading: isUpdateLoading }] =
+		useUpdateIngredientMutation();
+
 	const [formData, setFormData] = React.useState<Ingredient | null>(null);
 
 	useEffect(() => {
@@ -29,17 +31,22 @@ const IngredientEditModal: React.FC<IngredientEditModalProps> = ({
 		setFormData(prev => (prev ? { ...prev, [field]: value } : null));
 	};
 
-	const handleSubmit = (e: React.FormEvent) => {
+	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
-		if (formData) onSave(formData);
+
+		const { id, ...data } = formData;
+
+		await updateIngredient({ id, data });
+
+		onClose(true);
 	};
 
 	return (
-		<div className={Styles.overlay} onClick={onClose}>
+		<div className={Styles.overlay} onClick={() => onClose(false)}>
 			<div className={Styles.modal} onClick={e => e.stopPropagation()}>
 				<div className={Styles.header}>
 					<h2>Редактирование ингредиента</h2>
-					<button onClick={onClose} className={Styles.closeBtn}>
+					<button onClick={() => onClose(false)} className={Styles.closeBtn}>
 						&times;
 					</button>
 				</div>
@@ -56,10 +63,12 @@ const IngredientEditModal: React.FC<IngredientEditModalProps> = ({
 							onChange={e => handleChange('name', e.target.value)}
 						/>
 					</div>
+					{isUpdateLoading && <p>Обновление ингридиента...</p>}
+					{isUpdateLoading && <p>Обновление ингридиента...</p>}
 					<div className={Styles.actions}>
 						<button
 							type='button'
-							onClick={onClose}
+							onClick={() => onClose(false)}
 							className={Styles.cancelBtn}
 						>
 							Отмена

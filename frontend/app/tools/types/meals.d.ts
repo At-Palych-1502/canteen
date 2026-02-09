@@ -1,10 +1,24 @@
 import { IDish } from './dishes';
 
-export interface IMeal {
+export interface IMealCreateArg {
+	dishes: number[];
 	name: string;
 	price: number;
-	day_of_week: string;
-	quantity: number;
+	type: 'breakfast' | 'lunch';
+	day_of_week: 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday';
+}
+
+export interface IMeal extends IMealCreateArg {
+	id: number;
 
 	dishes: IDish[];
+}
+
+export type IMealUpdateReq = {
+	id: number;
+	data: Partial<IMealCreateArg>;
+};
+
+export interface IMealsGet {
+	meals: IMeal[];
 }
