@@ -45,6 +45,7 @@ def add_meal():
 @role_required(['admin', 'cook'])
 def meals_by_day():
     day = request.args.get('day_of_week').lower()
+
     meals = Meal.query.filter(Meal.day_of_week == day).all()
     return jsonify({"meals": [meal.to_dict() for meal in meals]}), 200
 
