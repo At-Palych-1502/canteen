@@ -187,6 +187,14 @@ class Review(Base):
     user = relationship("User", back_populates="reviews")
     dish = relationship("Dish", back_populates="reviews")
 
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "username": self.user.username,
+            "score": self.score,
+            "comment": self.comment,
+        }
+
 
 class OrderMeal(Base):
     __tablename__ = 'orders_meals'
