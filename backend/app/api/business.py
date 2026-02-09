@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify
-from flask_jwt_extended import jwt_required
-from ..models import Meal, User
+from flask_jwt_extended import jwt_required, get_jwt_identity
+from ..models import Meal, User, Order, OrderMeal
 import datetime
 from .. import db
 from ..utils import role_required
@@ -54,3 +54,53 @@ def filter_users():
                         "has_next": pagination.has_next,
                         "has_prev": pagination.has_prev
                     }})
+
+@bp.route('/order', methods=['POST'])
+@jwt_required()
+def order():
+    data = request.get_json()
+    date = datetime.datetime.strptime(data['date'], '%Y-%m-%d')
+    meal_ids = data['meals']
+    user = User.query.get_or_404(get_jwt_identity())
+    meals = []
+    for id in meal_ids:
+        meals.append(Meal.query.get_or_404(id))
+    total_price = sum([meal.price for meal in meals])
+    if user.balance < total_price:
+        return jsonify({"error": "You don't have enough money"}), 400
+    user.balance -= total_price
+    order = Order(
+        user_id=get_jwt_identity(),
+        date=date
+    )
+    db.session.add(order)
+    db.session.flush()
+
+    for meal in meals:
+        ord_meal = OrderMeal(
+            order_id=order.id,
+            meal_id=meal.id
+        )
+        db.session.add(ord_meal)
+    db.session.commit()
+    return jsonify({"order": order.to_dict()}), 200
+
+@bp.route('/orders', methods=['GET'])
+@jwt_required()
+@role_required(['admin', 'cook'])
+def orders():
+    orders = Order.query.all()
+    return jsonify({"data": [order.to_dict() for order in orders]}), 200
+
+
+@bp.route('/set_meals_count', methods=['PUT'])
+@jwt_required()
+@role_required(['cook'])
+def set_meals_count():
+    data = request.get_json()
+    meals = data['meals']
+    for meal_ls in meals:
+        meal = Meal.query.get_or_404(meal_ls["id"])
+        meal.quantity = meal_ls["quantity"]
+        db.session.commit()
+    return jsonify({"message": "meals updated"}), 200
