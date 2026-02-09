@@ -222,7 +222,7 @@ class PurchaseRequest(Base):
     user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
     ingredient_id = Column(Integer, ForeignKey('ingredients.id'), nullable=False)
     quantity = Column(Integer, nullable=False)
-    is_accepted = Column(Boolean, nullable=False, default=False)
+    is_accepted = Column(Boolean)
     data=Column(DateTime, nullable=False, default=datetime.datetime.now())
 
     user = relationship("User", back_populates="purchase_requests")
@@ -237,3 +237,17 @@ class PurchaseRequest(Base):
             "is_accepted": self.is_accepted,
             "data": self.data
         }
+
+class Subscription(Base):
+    __tablename__ = 'subscriptions'
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
+    type = Column(String(20), nullable=False)
+    duration = Column(Integer, nullable=False)
+
+    user = relationship("User", back_populates="subscriptions")
+
+    @property
+    def active(self):
+         return self.duration > 0
