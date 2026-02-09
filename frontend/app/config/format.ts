@@ -1,7 +1,9 @@
-export const days = {
-	monday: 'Понедельник',
-	tuesday: 'Вторник',
-	wednesday: 'Среда',
-	thursday: 'четверг',
-	friday: 'пятница',
-};
+export const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'];
+
+export const daysIndex = [
+	'Понедельник',
+	'Вторник',
+	'Среда',
+	'Четверг',
+	'Пятница',
+];

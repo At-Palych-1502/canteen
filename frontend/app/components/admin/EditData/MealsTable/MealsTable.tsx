@@ -1,33 +1,31 @@
 import React from 'react';
 import Styles from './MealsTable.module.css';
-import { IMeal } from '@/app/tools/types/meals';
-import { days } from '@/app/config/format';
+import { days, daysIndex } from '@/app/config/format';
 
 interface MealsTableProps {
-	meals: IMeal[];
-	onRowClick: (meal: IMeal) => void;
+	onRowClick: (day: number) => void;
 }
 
-const MealsTable: React.FC<MealsTableProps> = ({ meals, onRowClick }) => {
+const MealsTable: React.FC<MealsTableProps> = ({ onRowClick }) => {
 	return (
 		<div className={Styles.container}>
 			<h3 className={Styles.title}>Еда</h3>
 			<table className={Styles.table}>
 				<thead>
 					<tr>
-						<th>ID</th>
+						<th>Номер</th>
 						<th>День</th>
 					</tr>
 				</thead>
 				<tbody>
-					{meals.map(meal => (
+					{Object.keys(days).map((day, index) => (
 						<tr
-							key={meal.id}
-							onClick={() => onRowClick(meal)}
+							key={index}
+							onClick={() => onRowClick(index)}
 							className={Styles.row}
 						>
-							<td>{meal.id}</td>
-							<td>{days[meal.day_of_weak]}</td>
+							<td>{index + 1}</td>
+							<td>{daysIndex[index] || 'Ошибка загрузки'}</td>
 						</tr>
 					))}
 				</tbody>
