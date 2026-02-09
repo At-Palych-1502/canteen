@@ -1,6 +1,6 @@
 from flask import send_file, render_template, Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
-from ..models import Meal, User, Order, OrderMeal, Transaction
+from ..models import Meal, User, Order, Subscription, OrderMeal, Transaction, PurchaseRequest, Ingredient
 import datetime
 from datetime import timedelta
 from .. import db
@@ -94,11 +94,27 @@ def order():
     data = request.get_json()
     date = datetime.datetime.strptime(data['date'], '%Y-%m-%d')
     meal_ids = data['meals']
-    user = User.query.get_or_404(get_jwt_identity())
     meals = []
     for id in meal_ids:
         meals.append(Meal.query.get_or_404(id))
     total_price = sum([meal.price for meal in meals])
+    user = User.query.get_or_404(get_jwt_identity())
+
+    payment_type = data['payment_type']
+    if payment_type.lower() not in ['subscription', 'balance']:
+        return jsonify({"error": "Invalid payment type"}), 400
+    if payment_type.lower() == 'subscription':
+        subsc = Subscription.query.filter_by(user_id=user.id).first()
+        if subsc and subsc.active():
+            subsc.duration -= 1
+            add_transaction(user.id, total_price,)
+        else:
+            return jsonify({"error": "Subscription not active"}), 400
+        db.session.commit()
+        add_transaction(user.id, total_price,
+                        description=f"Произведен заказ питания на дату {data['date']}, общая цена: {total_price}")
+
+
     if user.balance < total_price:
         return jsonify({"error": "You don't have enough money"}), 400
     add_transaction(user.id, total_price, description=f"Произведен заказ питания на дату {data['date']}, общая цена: {total_price}")
@@ -157,11 +173,45 @@ def purchase_request():
 @bp.route('/purchase_requests/<int:id>/accept', methods=['PUT'])
 @jwt_required()
 @role_required(['admin'])
-def meals(id):
+def purch_req_accept(id):
     purch_req = PurchaseRequest.query.get_or_404(id)
-    purch_req.is_accepted = True
+    if purch_req.is_accepted is True or purch_req.is_accepted is False:
+        purch_req.is_accepted = True
+    else:
+        return jsonify({"error": ""}), 400
+    ingredient = Ingredient.query.get_or_404(purch_req.ingredient_id)
+    ingredient.quantity += purch_req.quantity
     db.session.commit()
     return jsonify({"meal": purch_req.to_dict()}), 200
+
+
+@bp.route('/purchase_requests/<int:id>/reject', methods=['PUT'])
+@jwt_required()
+@role_required(['admin'])
+def purch_req_reject(id):
+    purch_req = PurchaseRequest.query.get_or_404(id)
+    if purch_req.is_accepted is True or purch_req.is_accepted is False:
+        purch_req.is_accepted = False
+        db.session.commit()
+        return jsonify({"meal": purch_req.to_dict()}), 200
+    else:
+        return jsonify({"error": ""}), 400
+
+@bp.route('/subscriptions', methods=['POST'])
+@jwt_required()
+@role_required(['student'])
+def subscriptions():
+    data = request.get_json()
+    user = User.query.get_or_404(get_jwt_identity())
+    if user.balance < data['price']:
+        return jsonify({"error": "not enough balance"}), 400
+    subsc = Subscription(
+        user_id=get_jwt_identity(),
+        type=data['type'],
+        duration=20,
+    )
+    db.session.add(subsc)
+    db.session.commit()
 
 
 @bp.route('/report/orders', methods=['GET'])

@@ -32,13 +32,13 @@ const NavLinks = ({ role, orderCount = 0 }: IProps) => {
 		return (
 			<>
 				<li>
-					<Link href={'/buy-request'} className={Styles['button']}>
+					<Link href={'/buy-requests-cook'} className={Styles['button']}>
 						Заявка на покупку
 					</Link>
 				</li>
 				<li>
 					<Link href={'/meals'} className={Styles['button']}>
-						Список блю и продуктов
+						Список блюд и продуктов
 					</Link>
 				</li>
 			</>
