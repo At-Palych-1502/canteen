@@ -29,6 +29,7 @@ def review_by_id(review_id):
         for key, value in data.items():
             setattr(review, key, value)
         db.session.commit()
+        return jsonify({"review": review.to_dict()}), 200
     elif request.method == 'DELETE':
         db.session.delete(review)
         db.session.commit()
