@@ -11,7 +11,6 @@ def test_balance_topup_success(client, app):
             'patronymic': 'Testovich'
         })
         assert user_response.status_code == 200
-
         # Получаем токен
         login_response = client.post('/api/auth/login', json={
             'username': 'testuser_balance',
@@ -49,7 +48,6 @@ def test_balance_deduct_success(client, app):
             'patronymic': 'Testovich'
         })
         assert user_response.status_code == 200
-
         # Получаем токен
         login_response = client.post('/api/auth/login', json={
             'username': 'testuser_deduct',
@@ -93,7 +91,6 @@ def test_balance_deduct_insufficient_funds(client, app):
             'patronymic': 'Testovich'
         })
         assert user_response.status_code == 200
-
         # Получаем токен
         login_response = client.post('/api/auth/login', json={
             'username': 'testuser_insufficient',
