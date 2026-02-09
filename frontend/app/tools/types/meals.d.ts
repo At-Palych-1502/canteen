@@ -8,17 +8,11 @@ export interface IMealCreateArg {
 	day_of_week: 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday';
 }
 
-export interface IMeal {
-	name: string;
-	price: number;
-	day_of_week: string;
-	quantity: number;
+export interface IMeal extends IMealCreateArg {
+	id: number;
 
 	dishes: IDish[];
 }
-
-
-
 
 export type IMealUpdateReq = {
 	id: number;
