@@ -1,6 +1,7 @@
 from app.models import Dish, Ingredient, User
+from flask_jwt_extended import get_jwt_identity,jwt_required
 
-
+@jwt_required()
 def test_user_becomes_admin_and_adds_dish(client, app):
     """Тест: пользователь создается, получает роль администратора и добавляет блюдо"""
     with app.app_context():
@@ -17,7 +18,8 @@ def test_user_becomes_admin_and_adds_dish(client, app):
         assert 'message' in user_response.json
 
         # Получаем ID созданного пользователя
-        user_id = user_response.json['user']['id']
+
+        user_id = get_jwt_identity()
 
         # 2. Создаём пользователя-администратора для изменения ролей
         admin_response = client.post('/api/auth/register', json={
