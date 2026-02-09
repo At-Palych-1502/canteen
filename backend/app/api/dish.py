@@ -27,15 +27,29 @@ def dish(id):
         db.session.delete(dish)
         db.session.commit()
         return jsonify({"message": "Dish deleted"}), 200
-    else:
+    elif request.method == 'PUT':
         data = request.get_json()
-        allowed_keys = ["name", "weight", "meal", "quantity"]
+        allowed_keys = ["name", "weight", "meal", "quantity", "ingredients"]
         if not all(key in allowed_keys for key in data.keys()):
             return jsonify({"error": "Not valid data"}), 400
+
         for key, value in data.items():
-            setattr(dish, key, value)
+            if key != 'ingredients':
+                setattr(dish, key, value)
+
+        if 'ingredients' in data:
+            db.session.query(DishIngredient).filter_by(dish_id=dish.id).delete()
+            for ing_id in data["ingredients"]:
+                ingredient = Ingredient.query.get_or_404(ing_id)
+                dish_ing = DishIngredient(
+                    ingredient_id=ingredient.id,
+                    dish_id=dish.id
+                )
+                db.session.add(dish_ing)
+
         db.session.commit()
         return jsonify({"message": "Dish updated"}), 200
+
 
 
 @bp.route('/dishes', methods=['POST'])
