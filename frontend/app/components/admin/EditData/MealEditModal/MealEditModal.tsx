@@ -6,24 +6,32 @@ import {
 } from '@/app/tools/types/mock';
 import { mockDishes } from '@/app/tools/mockData';
 import Styles from './MealEditModal.module.css';
+import { IMeal } from '@/app/tools/types/meals';
+import { IDish } from '@/app/tools/types/dishes';
+import { days } from '@/app/config/format';
 
 interface MealEditModalProps {
-	meal: IDailyMeals | null;
-	onClose: () => void;
-	onSave: (meal: IDailyMeals) => void;
+	meal: IMeal | null;
+	dishes: IDish[];
+	onClose: (update: boolean) => void;
 }
 
 const MealEditModal: React.FC<MealEditModalProps> = ({
 	meal,
+	dishes,
 	onClose,
-	onSave,
 }) => {
-	const [formData, setFormData] = React.useState<IDailyMeals | null>(null);
+	console.log(meal, dishes);
+
+	const [formData, setFormData] = React.useState<{
+		breakfast: IMeal;
+		lunch: IMeal;
+	} | null>(null);
 	const [searchTerm, setSearchTerm] = useState('');
 	const [showDishSelector, setShowDishSelector] = useState<
 		'breakfast' | 'lunch' | null
 	>(null);
-	const [filteredDishes, setFilteredDishes] = useState<IDishExtended[]>([]);
+	const [filteredDishes, setFilteredDishes] = useState<IDish[]>([]);
 
 	useEffect(() => {
 		setFormData(meal);
@@ -31,14 +39,14 @@ const MealEditModal: React.FC<MealEditModalProps> = ({
 
 	useEffect(() => {
 		if (searchTerm) {
-			const filtered = mockDishes.filter(dish =>
+			const filtered = dishes.filter(dish =>
 				dish.name.toLowerCase().includes(searchTerm.toLowerCase()),
 			);
 			setFilteredDishes(filtered);
 		} else {
 			setFilteredDishes(mockDishes);
 		}
-	}, [searchTerm]);
+	}, [searchTerm, dishes]);
 
 	if (!meal || !formData) return null;
 
@@ -93,8 +101,8 @@ const MealEditModal: React.FC<MealEditModalProps> = ({
 			return {
 				...prev,
 				[type]: {
-					...prev[type],
-					dishes: prev[type].dishes.filter(d => d.id !== dishId),
+					...prev,
+					dishes: prev.dishes.filter(d => d.id !== dishId),
 				},
 			};
 		});
@@ -102,15 +110,17 @@ const MealEditModal: React.FC<MealEditModalProps> = ({
 
 	const handleSubmit = (e: React.FormEvent) => {
 		e.preventDefault();
-		if (formData) onSave(formData);
+		console.log(formData);
+
+		// if (formData) onSave(formData);
 	};
 
 	return (
-		<div className={Styles.overlay} onClick={onClose}>
+		<div className={Styles.overlay} onClick={() => onClose(false)}>
 			<div className={Styles.modal} onClick={e => e.stopPropagation()}>
 				<div className={Styles.header}>
-					<h2>Редактирование: {formData.date}</h2>
-					<button onClick={onClose} className={Styles.closeBtn}>
+					<h2>Редактирование: {days[formData.day_of_week]}</h2>
+					<button onClick={() => onClose(false)} className={Styles.closeBtn}>
 						&times;
 					</button>
 				</div>
@@ -134,23 +144,9 @@ const MealEditModal: React.FC<MealEditModalProps> = ({
 									<label>Название</label>
 									<input
 										type='text'
-										value={formData[type].name}
+										value={formData.name}
 										onChange={e =>
 											handleComplexMealChange(type, 'name', e.target.value)
-										}
-									/>
-								</div>
-								<div className={Styles.field}>
-									<label>Описание</label>
-									<input
-										type='text'
-										value={formData[type].description}
-										onChange={e =>
-											handleComplexMealChange(
-												type,
-												'description',
-												e.target.value,
-											)
 										}
 									/>
 								</div>
@@ -160,7 +156,7 @@ const MealEditModal: React.FC<MealEditModalProps> = ({
 									<label>Цена</label>
 									<input
 										type='number'
-										value={formData[type].price}
+										value={formData.price}
 										onChange={e =>
 											handleComplexMealChange(
 												type,
@@ -170,24 +166,10 @@ const MealEditModal: React.FC<MealEditModalProps> = ({
 										}
 									/>
 								</div>
-								<div className={Styles.field}>
-									<label>Калории</label>
-									<input
-										type='number'
-										value={formData[type].calories}
-										onChange={e =>
-											handleComplexMealChange(
-												type,
-												'calories',
-												Number(e.target.value),
-											)
-										}
-									/>
-								</div>
 							</div>
 							<div className={Styles.dishesList}>
 								<label>Блюда:</label>
-								{formData[type].dishes.map(dish => (
+								{dishes.map(dish => (
 									<div key={dish.id} className={Styles.dishItem}>
 										<span>
 											{dish.name} ({dish.weight}г)
@@ -214,9 +196,7 @@ const MealEditModal: React.FC<MealEditModalProps> = ({
 									/>
 									<div className={Styles.dishOptions}>
 										{filteredDishes.map(dish => {
-											const isAdded = formData[type].dishes.some(
-												d => d.id === dish.id,
-											);
+											const isAdded = dishes.some(d => d.id === dish.id);
 											return (
 												<div
 													key={dish.id}
@@ -248,7 +228,7 @@ const MealEditModal: React.FC<MealEditModalProps> = ({
 					<div className={Styles.actions}>
 						<button
 							type='button'
-							onClick={onClose}
+							onClick={() => onClose(false)}
 							className={Styles.cancelBtn}
 						>
 							Отмена

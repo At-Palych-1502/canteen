@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 import Styles from './IngredientsTable.module.css';
 

@@ -1,10 +1,11 @@
 import React from 'react';
-import { IDailyMeals } from '@/app/tools/types/mock';
 import Styles from './MealsTable.module.css';
+import { IMeal } from '@/app/tools/types/meals';
+import { days } from '@/app/config/format';
 
 interface MealsTableProps {
-	meals: IDailyMeals[];
-	onRowClick: (meal: IDailyMeals) => void;
+	meals: IMeal[];
+	onRowClick: (meal: IMeal) => void;
 }
 
 const MealsTable: React.FC<MealsTableProps> = ({ meals, onRowClick }) => {
@@ -21,12 +22,12 @@ const MealsTable: React.FC<MealsTableProps> = ({ meals, onRowClick }) => {
 				<tbody>
 					{meals.map(meal => (
 						<tr
-							key={meal.day}
+							key={meal.id}
 							onClick={() => onRowClick(meal)}
 							className={Styles.row}
 						>
-							<td>{meal.day}</td>
-							<td>{meal.date}</td>
+							<td>{meal.id}</td>
+							<td>{days[meal.day_of_weak]}</td>
 						</tr>
 					))}
 				</tbody>

@@ -1,8 +1,6 @@
 'use client';
 
 import React, { useState } from 'react';
-import { mockDishes, getDailyMeals } from '@/app/tools/mockData';
-import { IDailyMeals, IDishExtended } from '@/app/tools/types/mock';
 import MealsTable from '@/app/components/admin/EditData/MealsTable/MealsTable';
 import DishesTable from '@/app/components/admin/EditData/DishesTable/DishesTable';
 import IngredientsTable from '@/app/components/admin/EditData/IngredientsTable/IngredientsTable';
@@ -10,72 +8,105 @@ import MealEditModal from '@/app/components/admin/EditData/MealEditModal/MealEdi
 import DishEditModal from '@/app/components/admin/EditData/DishEditModal/DishEditModal';
 import IngredientEditModal from '@/app/components/admin/EditData/IngredientEditModal/IngredientEditModal';
 import Styles from './page.module.css';
-
-interface Ingredient {
-	id: number;
-	name: string;
-}
+import { useGetAllDishesQuery } from '../tools/redux/api/dishes';
+import { useGetAllMealsQuery } from '../tools/redux/api/meals';
+import { useGetAllIngredientsQuery } from '../tools/redux/api/ingredients';
+import { IMeal } from '../tools/types/meals';
+import { IDish } from '../tools/types/dishes';
+import { IIngredient } from '../tools/types/ingredients';
 
 const Page = () => {
-	const [selectedMeal, setSelectedMeal] = useState<IDailyMeals | null>(null);
-	const [selectedDish, setSelectedDish] = useState<IDishExtended | null>(null);
-	const [selectedIngredient, setSelectedIngredient] = useState<Ingredient | null>(null);
+	const {
+		data: meals,
+		isLoading: mealsLoading,
+		refetch: refetchMeals,
+	} = useGetAllMealsQuery();
+	const {
+		data: dishes,
+		isLoading: dishesLoading,
+		refetch: refetchDishes,
+	} = useGetAllDishesQuery();
+	const {
+		data: ingredients,
+		isLoading: ingredientsLoading,
+		refetch: refetchIngredients,
+	} = useGetAllIngredientsQuery();
 
-	const weekMeals: IDailyMeals[] = Array.from({ length: 7 }, (_, i) => getDailyMeals(i));
-
-	const ingredients: Ingredient[] = [
-		{ id: 1, name: 'Морковь' },
-		{ id: 2, name: 'Картофель' },
-		{ id: 3, name: 'Лук репчатый' },
-		{ id: 4, name: 'Мука пшеничная' },
-		{ id: 5, name: 'Сахар' },
-		{ id: 6, name: 'Масло подсолнечное' },
-		{ id: 7, name: 'Яйца' },
-		{ id: 8, name: 'Молоко' },
-	];
-
-	const handleSaveMeal = (meal: IDailyMeals) => {
-		console.log('Сохранение еды:', meal);
-		setSelectedMeal(null);
+	const refetch = {
+		dishes: refetchDishes,
+		meals: refetchMeals,
+		ingredients: refetchIngredients,
 	};
 
-	const handleSaveDish = (dish: IDishExtended) => {
-		console.log('Сохранение блюда:', dish);
-		setSelectedDish(null);
-	};
+	const [selectedMeal, setSelectedMeal] = useState<IMeal | null>(null);
+	const [selectedDish, setSelectedDish] = useState<IDish | null>(null);
+	const [selectedIngredient, setSelectedIngredient] =
+		useState<IIngredient | null>(null);
 
-	const handleSaveIngredient = (ingredient: Ingredient) => {
-		console.log('Сохранение ингредиента:', ingredient);
-		setSelectedIngredient(null);
-	};
+	function handleClose<Type>(
+		type: 'meals' | 'dishes' | 'ingredients',
+		closePopup: (_: Type | null) => void,
+		updated: boolean,
+	) {
+		closePopup(null);
+		if (updated) setTimeout(() => refetch[type](), 100);
+	}
 
 	return (
 		<div className={Styles.container}>
 			<h1 className={Styles.title}>Управление данными</h1>
 			<div className={Styles.tables}>
-				<MealsTable meals={weekMeals} onRowClick={setSelectedMeal} />
-				<DishesTable dishes={mockDishes} onRowClick={setSelectedDish} />
-				<IngredientsTable ingredients={ingredients} onRowClick={setSelectedIngredient} />
+				{mealsLoading ? (
+					<p className={Styles['loading']}>Загрузка...</p>
+				) : typeof meals === 'undefined' ? (
+					<p>Ошибка загрузки</p>
+				) : (
+					<MealsTable meals={meals.meals} onRowClick={setSelectedMeal} />
+				)}
+				{dishesLoading ? (
+					<p className={Styles['loading']}>Загрузка...</p>
+				) : typeof dishes === 'undefined' ? (
+					<p>Ошибка загрузки</p>
+				) : (
+					<DishesTable dishes={dishes.data} onRowClick={setSelectedDish} />
+				)}
+				{ingredientsLoading ? (
+					<p className={Styles['loading']}>Загрузка...</p>
+				) : typeof ingredients === 'undefined' ? (
+					<p>Ошибка загрузки</p>
+				) : (
+					<IngredientsTable
+						ingredients={ingredients.data}
+						onRowClick={setSelectedIngredient}
+					/>
+				)}
 			</div>
-			{selectedMeal && (
-				<MealEditModal
-					meal={selectedMeal}
-					onClose={() => setSelectedMeal(null)}
-					onSave={handleSaveMeal}
-				/>
-			)}
-			{selectedDish && (
-				<DishEditModal
-					dish={selectedDish}
-					onClose={() => setSelectedDish(null)}
-					onSave={handleSaveDish}
-				/>
-			)}
+			{selectedMeal &&
+				(typeof dishes === 'undefined' ? (
+					<p>Ошибка загрузки</p>
+				) : (
+					<MealEditModal
+						meal={selectedMeal}
+						onClose={update => handleClose('meals', setSelectedMeal, update)}
+						dishes={dishes.data}
+					/>
+				))}
+			{selectedDish &&
+				(typeof ingredients === 'undefined' ? (
+					<p>Ошибка загрузки</p>
+				) : (
+					<DishEditModal
+						ingredients={ingredients.data}
+						id={selectedDish.id}
+						onClose={update => handleClose('dishes', setSelectedDish, update)}
+					/>
+				))}
 			{selectedIngredient && (
 				<IngredientEditModal
 					ingredient={selectedIngredient}
-					onClose={() => setSelectedIngredient(null)}
-					onSave={handleSaveIngredient}
+					onClose={update =>
+						handleClose('ingredients', setSelectedIngredient, update)
+					}
 				/>
 			)}
 		</div>
