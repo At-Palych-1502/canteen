@@ -4,7 +4,7 @@ import { IOrder } from '@/app/tools/types/mock';
 import { IDish } from '@/app/tools/types/dishes';
 import React, { useEffect, useState } from 'react';
 import Styles from './CurrentOrder.module.css';
-import { getMealsForCook } from '@/app/tools/utils/meals';
+import { getMealsForCook, setMealsCount } from '@/app/tools/utils/meals';
 import { getAccessToken } from '@/app/tools/utils/auth';
 import { IMeal } from '@/app/tools/types/meals';
 
@@ -14,27 +14,28 @@ interface Props {
 
 export const OrdersForCook = () => {
 	const [orderCount, setOrderCount] = useState(Array<number>);
-    const [meals, setMeals] = useState([]);
+    const [meals, setMeals] = useState(Array<IMeal>);
     const [isLoaded, setIsLoaded] = useState(false);
+    const [hasChanged, setHasChanged] = useState(false);
+
+    async function uploadMeals() {
+        const date = new Date();
+        const dayOfWeek = date.toLocaleString('en-US', {weekday: "long"});
+        const temp = await getMealsForCook(dayOfWeek);
+
+        if (temp.ok) {
+            setMeals(temp.response.meals);
+            setIsLoaded(true);
+            const arr = temp.response.meals.map(() => { return 0; } );
+            setOrderCount(arr);
+            console.log(temp.response.meals);
+        } else {
+            console.log(temp.error);
+        }
+    }
 
 	useEffect(() => {
-		async function foo() {
-            const jwt = getAccessToken();
-            const date = new Date();
-            const dayOfWeek = date.toLocaleString('en-US', {weekday: "long"});
-            const temp = await getMealsForCook(jwt, dayOfWeek);
-
-            if (temp.ok) {
-                setMeals(temp.response.meals);
-                setIsLoaded(true);
-                const arr = temp.response.meals.map(() => { return 0; } );
-                setOrderCount(arr);
-                console.log(temp.response.meals);
-            } else {
-                console.log(temp.error);
-            }
-        }
-        foo();
+        uploadMeals();
     }, []);
 
 	const handleOrderCountPlus = (index: number) => {
@@ -45,7 +46,7 @@ export const OrdersForCook = () => {
                 return val;
             }
         }));
-		// Запрос на сервер <- temp
+        setHasChanged(true);
 	}
 	const handleOrderCountMines = (index: number) => {
         setOrderCount(orderCount.map((val, i: number) => { 
@@ -55,8 +56,19 @@ export const OrdersForCook = () => {
                 return val;
             }
         }));
-		// Запрос на сервер <- temp
+        setHasChanged(true);
 	}
+
+    const handleButton = () => {
+        const temp = meals.map((meal: IMeal, index: number) => {
+            meal.quantity = meal.quantity < orderCount[index] ? 0 : meal.quantity - orderCount[index];
+            return meal;
+        });
+        setMeals(temp);
+        setOrderCount(temp.map(() => { return 0; }));
+        setMealsCount(temp);
+        setHasChanged(false);
+    }
 
 	return (
         <div className={Styles["cook_div"]}>
@@ -67,7 +79,7 @@ export const OrdersForCook = () => {
                     meals.map((meal: IMeal, index) => {
                         return (
                             <div key={index} className={Styles['order-card']}>
-                                <div className={Styles['order-header']}>{meal.name}</div>
+                                <div className={Styles['order-header']}>{meal.name} <span>({meal.quantity})</span></div>
                                 <div className={Styles['order-meals']}>
                                     {meal.dishes.map((meal: IDish, index: number) => (
                                         <div
@@ -90,7 +102,7 @@ export const OrdersForCook = () => {
                     })
                 }
                 </div>
-                <button className={`${Styles["receive-button"]} ${Styles["receive-button-cook"]}`}>Сохранить</button>
+                <button onClick={handleButton} disabled={!hasChanged} className={`${Styles["receive-button"]} ${Styles["receive-button-cook"]}`}>{hasChanged ? "Сохранить" : "Сохранено"}</button>
                 </>
             ) : (
                 <h3>Загрузка...</h3>

@@ -158,8 +158,10 @@
 .cook_panel_digit{
 	font-size: 25px;
 }
-.receive-button-cook{
-	/* display: block; */
+.receive-button-cook:disabled{
+	background-color: #c5e2ff;
+	color: white;
+	cursor: auto;
 }
 .cook_div{
 	display: flex;

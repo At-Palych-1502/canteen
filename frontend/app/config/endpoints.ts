@@ -20,6 +20,7 @@ export const endpoints = {
 		base: `${BASE_URL}/ingredients`,
 	},
 	meals: {
-		getMealsDayOfWeek: `${BASE_URL}/meals_by_day`
+		getMealsDayOfWeek: `${BASE_URL}/meals_by_day`,
+		setMealsCount: `${BASE_URL}/set_meals_count`
 	}
 };
