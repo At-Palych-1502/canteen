@@ -1,6 +1,6 @@
 from flask import send_file, render_template, Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
-from ..models import Meal, User, Order, OrderMeal, Transaction, PurchaseRequest
+from ..models import Meal, User, Order, OrderMeal, Transaction
 import datetime
 from datetime import timedelta
 from .. import db
