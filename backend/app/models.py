@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, ForeignKey, DateTime, JSON, Float
+from sqlalchemy import Column, Integer, String, ForeignKey, DateTime, JSON, Float, Boolean
 from sqlalchemy.orm import relationship
 from .extensions import db
 import datetime
@@ -24,6 +24,7 @@ class User(Base):
     transactions = relationship("Transaction", back_populates="user")
     orders = relationship("Order", back_populates="user")
     reviews = relationship("Review", back_populates="user")
+    purchase_requests = relationship("PurchaseRequest", back_populates="cook")
 
 
     def set_password(self, password):
@@ -88,6 +89,7 @@ class Ingredient(Base):
 
     dish_ingredients = relationship('DishIngredient', back_populates='ingredient', cascade='all, delete-orphan')
     allergic_users = relationship("User", secondary="user_allergies", back_populates="allergies")
+    purchase_requests = relationship("PurchaseRequest", back_populates="ingredient")
 
     def __repr__(self):
         return f'Ingredient {self.name}'
@@ -211,10 +213,14 @@ class MealDish(Base):
     dish_id = Column(Integer, ForeignKey('dishes.id'), primary_key=True)
 
 
-class Purchase_request(Base):
+class PurchaseRequest(Base):
     __tablename__ = 'purchase_requests'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     cook_id = Column(Integer, ForeignKey('users.id'), nullable=False)
     ingredient_id = Column(Integer, ForeignKey('ingredients.id'), nullable=False)
-    
+    quantity = Column(Integer, nullable=False)
+    is_accepted = Column(Boolean, nullable=False)
+
+    cook = relationship("User", back_populates="purchase_requests")
+    ingredient = relationship("Ingredient", back_populates="purchase_requests")

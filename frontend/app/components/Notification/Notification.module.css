@@ -1,0 +1,40 @@
+.main{
+    display: inline;
+    padding: 10px 20px;
+    border-radius: 10px;
+
+    position: absolute;
+    left: 20px;
+    top: 20px;
+    
+    font-size: 20px;
+    font-style: italic;
+
+    animation-name: start;
+    animation-duration: 300ms;
+    animation-timing-function: ease-out;
+}
+.main:hover{
+    cursor: default;
+    transform: scale(1.05);
+}
+@keyframes start {
+    0%{
+        top: -20px;
+        opacity: 0.2;
+    }
+    50%{
+        top: 0;
+        opacity: 0.6;
+    }
+    100%{
+        top: 20px;
+        opacity: 1;
+    }
+}
+.main_red{
+    background-color: #f73939;
+}
+.main_green{
+    background-color: #9bff44;
+}
