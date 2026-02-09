@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Styles from './DishEditModal.module.css';
 import { IDish } from '@/app/tools/types/dishes';
 import {
+	useDeleteDishMutation,
 	useGetDishByIdQuery,
 	useUpdateDishMutation,
 } from '@/app/tools/redux/api/dishes';
@@ -18,8 +19,8 @@ const DishEditModal: React.FC<DishEditModalProps> = ({
 	ingredients,
 	onClose,
 }) => {
-	const [updateDish, { error, isLoading: isUpdateLoading }] =
-		useUpdateDishMutation();
+	const [updateDish] = useUpdateDishMutation();
+	const [removeDish] = useDeleteDishMutation();
 
 	const { data: dish, isLoading, refetch } = useGetDishByIdQuery(id);
 	const [formData, setFormData] = React.useState<IDish | null>(null);
@@ -111,6 +112,11 @@ const DishEditModal: React.FC<DishEditModalProps> = ({
 			};
 		});
 		setSearchTerm('');
+	};
+
+	const handleRemove = (id: number) => {
+		removeDish(id);
+		onClose(true);
 	};
 
 	return (
@@ -224,6 +230,13 @@ const DishEditModal: React.FC<DishEditModalProps> = ({
 							</div>
 						</div>
 						<div className={Styles.actions}>
+							<button
+								type='button'
+								onClick={() => handleRemove(dish.data.id)}
+								className={Styles.saveBtn}
+							>
+								Удалить
+							</button>
 							<button
 								type='button'
 								onClick={() => onClose(false)}

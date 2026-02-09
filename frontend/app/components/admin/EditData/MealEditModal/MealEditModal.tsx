@@ -165,17 +165,24 @@ const MealEditModal: React.FC<MealEditModalProps> = ({
 		(['breakfast', 'lunch'] as const).map(type => {
 			if (formData[type]) {
 				const { id, ...newData } = formData[type];
+
 				if (today[type]) {
 					updateMeal({
 						id,
 						data: {
 							...newData,
-							dishes: formData[type].dishes.map(d => d.id),
+							dishes: newData.dishes.map(d => d.id),
 						},
 					});
+				} else {
+					createMeal({ ...newData, dishes: newData.dishes.map(d => d.id) });
 				}
+			} else {
+				if (today[type]?.id) removeMeal(today[type].id);
 			}
 		});
+
+		onClose(true);
 	};
 
 	return (

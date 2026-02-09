@@ -1,19 +1,10 @@
-from flask import send_file, render_template, Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
-from ..models import Meal, User, Order, Subscription, OrderMeal, Transaction, PurchaseRequest, Ingredient
+from ..models import Meal, User, Order, OrderMeal, Transaction, PurchaseRequest
 import datetime
-from datetime import timedelta
 from .. import db
 from ..utils import role_required
 from sqlalchemy import or_
-from io import BytesIO
-from reportlab.lib import colors
-from reportlab.lib.pagesizes import A4
-from reportlab.platypus import (
-    SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, PageBreak
-)
-from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
-from reportlab.lib.units import inch
 
 bp = Blueprint('business', __name__)
 
@@ -94,7 +85,6 @@ def order():
     data = request.get_json()
     date = datetime.datetime.strptime(data['date'], '%Y-%m-%d')
     meal_ids = data['meals']
-    payment_type = data['payment_type']
     user = User.query.get_or_404(get_jwt_identity())
     meals = []
     for id in meal_ids:
@@ -158,142 +148,11 @@ def purchase_request():
 @bp.route('/purchase_requests/<int:id>/accept', methods=['PUT'])
 @jwt_required()
 @role_required(['admin'])
-def purch_req_accept(id):
+def meals(id):
     purch_req = PurchaseRequest.query.get_or_404(id)
-    if purch_req.is_accepted is True or purch_req.is_accepted is False:
-        purch_req.is_accepted = True
-    else:
-        return jsonify({"error": ""}), 400
-    ingredient = Ingredient.query.get_or_404(purch_req.ingredient_id)
-    ingredient.quantity += purch_req.quantity
+    purch_req.is_accepted = True
     db.session.commit()
     return jsonify({"meal": purch_req.to_dict()}), 200
 
 
-@bp.route('/purchase_requests/<int:id>/reject', methods=['PUT'])
-@jwt_required()
-@role_required(['admin'])
-def purch_req_reject(id):
-    purch_req = PurchaseRequest.query.get_or_404(id)
-    if purch_req.is_accepted is True or purch_req.is_accepted is False:
-        purch_req.is_accepted = False
-        db.session.commit()
-        return jsonify({"meal": purch_req.to_dict()}), 200
-    else:
-        return jsonify({"error": ""}), 400
-
-@bp.route('/subscriptions', methods=['POST'])
-@jwt_required()
-@role_required(['student'])
-def subscriptions():
-    data = request.get_json()
-    user = User.query.get_or_404(get_jwt_identity())
-    if user.balance < data['price']:
-        return jsonify({"error": "not enough balance"}), 400
-    subsc = Subscription(
-        user_id=get_jwt_identity(),
-        type=data['type'],
-        duration=20,
-    )
-    db.session.add(subsc)
-    db.session.commit()
-
-
-@bp.route('/report/orders', methods=['GET'])
-@jwt_required()
-@role_required(['admin'])
-def generate_orders_report():
-    days = int(request.args.get('days'))
-
-    if days not in {1, 3, 7}:
-        return {"error": "Недопустимый период. Укажите 1, 3 или 7 дней."}, 400
-
-    now = datetime.datetime.utcnow()
-    start_date = (now - timedelta(days=days)).replace(hour=0, minute=0, second=0, microsecond=0)
-
-    orders = Order.query.filter(Order.date >= start_date).order_by(Order.date.desc()).all()
-
-    total_orders = len(orders)
-    total_meals = sum(len(order.meals) for order in orders)
-    unique_users = len(set(order.user_id for order in orders))
-
-    # Создаём PDF в памяти
-    buffer = BytesIO()
-    doc = SimpleDocTemplate(buffer, pagesize=A4, topMargin=0.8 * inch, bottomMargin=0.6 * inch)
-    styles = getSampleStyleSheet()
-    story = []
-
-    # Заголовок
-    title_style = ParagraphStyle(
-        'CustomTitle',
-        parent=styles['Heading1'],
-        fontSize=16,
-        spaceAfter=12,
-        alignment=1  # center
-    )
-    story.append(Paragraph("Отчёт по заказам", title_style))
-    story.append(Spacer(1, 12))
-
-    # Сводная информация
-    summary_data = [
-        ["Период:", f"{days} день(дней)"],
-        ["С:", start_date.strftime("%d.%m.%Y")],
-        ["По:", now.strftime("%d.%m.%Y %H:%M")],
-        ["Всего заказов:", str(total_orders)],
-        ["Всего блюд:", str(total_meals)],
-        ["Уникальных учеников:", str(unique_users)],
-    ]
-
-    summary_table = Table(summary_data, colWidths=[2 * inch, 3 * inch])
-    summary_table.setStyle(TableStyle([
-        ('FONTNAME', (0, 0), (-1, -1), 'Helvetica'),
-        ('FONTSIZE', (0, 0), (-1, -1), 10),
-        ('ALIGN', (0, 0), (0, -1), 'LEFT'),
-        ('ALIGN', (1, 0), (1, -1), 'LEFT'),
-        ('BOTTOMPADDING', (0, 0), (-1, -1), 6),
-    ]))
-    story.append(summary_table)
-    story.append(Spacer(1, 18))
-
-    # Таблица заказов
-    if orders:
-        story.append(Paragraph("Список заказов", styles['Heading2']))
-        story.append(Spacer(1, 10))
-
-        table_data = [["ID", "Дата", "Ученик (ID)", "Блюда"]]
-        for order in orders:
-            meals_str = ", ".join(meal.name for meal in order.meals) if order.meals else "—"
-            table_data.append([
-                str(order.id),
-                order.date.strftime("%d.%m.%Y %H:%M"),
-                str(order.user_id),
-                meals_str
-            ])
-
-        # Автоподбор ширины колонок
-        col_widths = [0.6 * inch, 1.5 * inch, 1.2 * inch, 3.2 * inch]
-        orders_table = Table(table_data, colWidths=col_widths)
-        orders_table.setStyle(TableStyle([
-            ('BACKGROUND', (0, 0), (-1, 0), colors.lightgrey),
-            ('TEXTCOLOR', (0, 0), (-1, 0), colors.black),
-            ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
-            ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-            ('FONTSIZE', (0, 0), (-1, -1), 9),
-            ('GRID', (0, 0), (-1, -1), 0.5, colors.grey),
-            ('VALIGN', (0, 0), (-1, -1), 'TOP'),
-        ]))
-        story.append(orders_table)
-    else:
-        story.append(Paragraph("За указанный период заказов не найдено.", styles['Normal']))
-
-    # Генерация PDF
-    doc.build(story)
-    buffer.seek(0)
-
-    filename = f"Отчёт_по_заказам_{days}дн_{now.strftime('%Y%m%d')}.pdf"
-    return send_file(
-        buffer,
-        mimetype='application/pdf',
-        as_attachment=True,
-        download_name=filename
-    )
+@bp.route('/')

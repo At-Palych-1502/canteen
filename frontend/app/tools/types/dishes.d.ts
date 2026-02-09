@@ -3,6 +3,7 @@ import { IIngredient } from './ingredients';
 export interface IDishArg {
 	name: string;
 	weight: number;
+	ingredients: number[];
 }
 
 export interface IDishRes extends IDishArg {
