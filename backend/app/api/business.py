@@ -1,6 +1,6 @@
 from flask import send_file, render_template, Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
-from ..models import Meal, User, Order, OrderMeal, Transaction, PurchaseRequest
+from ..models import Meal, User, Order, OrderMeal, Transaction, PurchaseRequest, Ingredient
 import datetime
 from datetime import timedelta
 from .. import db
@@ -160,6 +160,8 @@ def purchase_request():
 def meals(id):
     purch_req = PurchaseRequest.query.get_or_404(id)
     purch_req.is_accepted = True
+    ingredient = Ingredient.query.get_or_404(purch_req.ingredient_id)
+    ingredient.quantity += purch_req.quantity
     db.session.commit()
     return jsonify({"meal": purch_req.to_dict()}), 200
 

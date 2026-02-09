@@ -86,6 +86,7 @@ class Ingredient(Base):
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String(80), nullable=False)
+    quantity = Column(Integer)
 
 
     dish_ingredients = relationship('DishIngredient', back_populates='ingredient', cascade='all, delete-orphan')
@@ -101,8 +102,8 @@ class Ingredient(Base):
             for dish in self.dish_ingredients:
                 dish = Dish.query.get(dish.dish_id)
                 sl.append(dish.to_dict())
-            return {'id': self.id, 'name': self.name, 'dishes': sl}
-        return {'id': self.id, 'name': self.name}
+            return {'id': self.id, 'name': self.name, 'quantity': self.quantity, 'dishes': sl}
+        return {'id': self.id, 'quantity': self.quantity, 'name': self.name}
 
 
 class DishIngredient(Base):
