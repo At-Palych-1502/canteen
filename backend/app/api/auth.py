@@ -40,8 +40,7 @@ def login():
 def user():
     user_id = get_jwt_identity()
     user = User.query.get_or_404(user_id)
-    if not user:
-        return jsonify({"error": "Not valid json token"}), 404
+
     return jsonify(user=user.to_dict()), 200
 
 @bp.route('/users', methods=['GET'])
