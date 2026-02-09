@@ -3,7 +3,7 @@ import { IDish } from './dishes';
 export interface IMeal {
 	name: string;
 	price: number;
-	date: string;
+	day_of_week: string;
 
 	dishes: IDish[];
 }

@@ -9,6 +9,7 @@ import { selectUser, setUser } from './tools/redux/user';
 import { IUser } from './tools/types/user';
 import CurrentOrders from './components/student/CurrentOrder/CurrentOrders';
 import UsersTable from './components/admin/UsersTable/UsersTable/UsersTable';
+import { OrdersForCook } from './components/student/CurrentOrder/OrdersForCook';
 
 export default function Home() {
 	const { data, isLoading } = useGetUserQuery();
@@ -29,8 +30,10 @@ export default function Home() {
 				) : User ? (
 					User.role === 'admin' ? (
 						<UsersTable />
+					) : User.role === 'student' ? (
+						<CurrentOrders />
 					) : (
-						<CurrentOrders role={User.role}/>
+						<OrdersForCook />
 					)
 				) : (
 					<div className={Styles['title-wrapper']}>

@@ -19,4 +19,7 @@ export const endpoints = {
 	ingredients: {
 		base: `${BASE_URL}/ingredients`,
 	},
+	meals: {
+		getMealsDayOfWeek: `${BASE_URL}/meals_by_day`
+	}
 };

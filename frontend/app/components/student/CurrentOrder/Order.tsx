@@ -1,16 +1,18 @@
 import { IOrder } from '@/app/tools/types/mock';
 import { IDish } from '@/app/tools/types/dishes';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Styles from './CurrentOrder.module.css';
 
 interface Props {
-	order: IOrder,
-	role: "cook" | "student"
+	order: IOrder
 }
 
-const Order = ({ order, role }: Props) => {
+const Order = ({ order }: Props) => {
 	const [isReceived, setIsReceived] = useState(false);
-	const [orderCount, setOrderCount] = useState(0);
+
+	useEffect(() => {
+		// Получение
+	}, [])
 
 	// Проверяем, является ли дата сегодняшней
 	const isToday = () => {
@@ -36,16 +38,6 @@ const Order = ({ order, role }: Props) => {
 		setIsReceived(true);
 		// Здесь можно добавить логику отправки на сервер
 	};
-	const handleOrderCountPlus = () => {
-		const temp = orderCount;
-		setOrderCount(temp + 1);
-		// Запрос на сервер <- temp
-	}
-	const handleOrderCountMines = () => {
-		const temp = orderCount;
-		setOrderCount(temp > 0 ? temp - 1 : 0);
-		// Запрос на сервер <- temp
-	}
 
 	const today = isToday();
 
@@ -68,23 +60,10 @@ const Order = ({ order, role }: Props) => {
 			</div>
 
 			{/* Кнопки для студента */}
-			{today && !isReceived && role == "student" && (
+			{today && !isReceived && (
 				<button className={Styles['receive-button']} onClick={handleReceiveOrder}>Получить заказ</button>
 			)}
-			{today && isReceived && role == "student" && (
-				<div className={Styles['received-badge']}>✓ Заказ получен</div>
-			)}
-			
-			{/* Кнопки для повара */}
-			{!isReceived && role == "cook" && (
-				<div className={Styles["cook_panel"]}>
-					<h4 className={Styles["cook_panel_title"]}>Выдано:</h4>
-					<span onClick={handleOrderCountMines} className={Styles["add_button"]}>–</span>
-					<span className={Styles["cook_panel_digit"]}>{orderCount}</span>
-					<span onClick={handleOrderCountPlus} className={Styles["add_button"]}>+</span>
-				</div>
-			)}
-			{isReceived && role == "student" && (
+			{today && isReceived && (
 				<div className={Styles['received-badge']}>✓ Заказ получен</div>
 			)}
 		</div>

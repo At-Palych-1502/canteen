@@ -17,7 +17,7 @@ const CurrentOrders = (props: any) => {
 			{orders.length > 0 ? (
 				<div className={Styles['orders']}>
 					{orders.map(order => (
-						<Order key={order.id} order={order} role={props.role} />
+						<Order key={order.id} order={order} />
 					))}
 				</div>
 			) : (
