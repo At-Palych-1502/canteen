@@ -74,6 +74,7 @@ export const OrdersForCook = () => {
         <div className={Styles["cook_div"]}>
             {isLoaded ? (
                 <>
+                <h1>Количество выданных комплектов</h1>
                 <div className={Styles['orders']}>
                 {
                     meals.map((meal: IMeal, index) => {
