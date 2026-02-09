@@ -53,7 +53,6 @@ class Dish(Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String(80), nullable=False)
     weight = Column(Integer, nullable=False)
-    quantity = Column(Integer, nullable=False)
     created_at = Column(DateTime, nullable=False, default=datetime.datetime.now())
 
     dish_ingredients = relationship("DishIngredient", back_populates="dish")
@@ -139,6 +138,8 @@ class Meal(Base):
     name = Column(String(80), nullable=False)
     price = Column(Float, nullable=False)
     day_of_week = Column(String)
+    quantity = Column(Integer, nullable=False)
+    type = Column(String(20), nullable=False)
 
     dishes = relationship("Dish", secondary="meal_ingredients", back_populates="meals")
     orders = relationship("Order", secondary='orders_meals', back_populates='meals')
@@ -152,6 +153,7 @@ class Meal(Base):
             "name": self.name,
             "price": self.price,
             "day_of_week": self.day_of_week,
+            "type": self.type,
             "dishes": sl
         }
 
@@ -170,7 +172,7 @@ class Order(Base):
         sl = [meal.to_dict() for meal in self.meals]
         return {
             "id": self.id,
-            "user_id": self.uesr_id,
+            "user_id": self.user_id,
             "date": self.date,
             "meals": sl
         }

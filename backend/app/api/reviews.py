@@ -37,7 +37,7 @@ def review_by_id(review_id):
             return jsonify({"error": "You are not allowed to delete this review"}), 403
         db.session.delete(review)
         db.session.commit()
-        return jsonify({"message": "Review delited"}), 200
+        return jsonify({"message": "Review deleted"}), 200
 
 
 @bp.route('/reviews/<int:dish_id>', methods=['POST'])
