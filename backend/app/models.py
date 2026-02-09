@@ -235,7 +235,7 @@ class PurchaseRequest(Base):
             "ingredient_id": self.ingredient_id,
             "quantity": self.quantity,
             "is_accepted": self.is_accepted,
-            "data": self.data
+            "date": self.data
         }
 
 class Subscription(Base):

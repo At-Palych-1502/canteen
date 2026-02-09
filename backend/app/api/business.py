@@ -94,12 +94,27 @@ def order():
     data = request.get_json()
     date = datetime.datetime.strptime(data['date'], '%Y-%m-%d')
     meal_ids = data['meals']
-    payment_type = data['payment_type']
-    user = User.query.get_or_404(get_jwt_identity())
     meals = []
     for id in meal_ids:
         meals.append(Meal.query.get_or_404(id))
     total_price = sum([meal.price for meal in meals])
+    user = User.query.get_or_404(get_jwt_identity())
+
+    payment_type = data['payment_type']
+    if payment_type.lower() not in ['subscription', 'balance']:
+        return jsonify({"error": "Invalid payment type"}), 400
+    if payment_type.lower() == 'subscription':
+        subsc = Subscription.query.filter_by(user_id=user.id).first()
+        if subsc and subsc.active():
+            subsc.duration -= 1
+            add_transaction(user.id, total_price,)
+        else:
+            return jsonify({"error": "Subscription not active"}), 400
+        db.session.commit()
+        add_transaction(user.id, total_price,
+                        description=f"Произведен заказ питания на дату {data['date']}, общая цена: {total_price}")
+
+
     if user.balance < total_price:
         return jsonify({"error": "You don't have enough money"}), 400
     add_transaction(user.id, total_price, description=f"Произведен заказ питания на дату {data['date']}, общая цена: {total_price}")
