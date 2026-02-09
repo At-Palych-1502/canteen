@@ -14,7 +14,7 @@ class User(Base):
     username = Column(String(80), unique=True, nullable=False)
     name = Column(String(80), nullable=False)
     surname = Column(String(80), nullable=False)
-    patronymic = Column(String(80), nullable=False)
+    patronymic = Column(String(80), nullable=True)
     balance = Column(Float, nullable=False, default=0)
     email = Column(String(120), unique=True, nullable=False)
     role = Column(String(20), nullable=False, default='student')
