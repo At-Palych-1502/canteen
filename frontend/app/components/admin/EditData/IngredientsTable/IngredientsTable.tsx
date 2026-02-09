@@ -8,15 +8,13 @@ interface Ingredient {
 	name: string;
 }
 
-interface IngredientsTableProps {
+interface Props {
 	ingredients: Ingredient[];
 	onRowClick: (ingredient: Ingredient) => void;
+	onCreate: () => void;
 }
 
-const IngredientsTable: React.FC<IngredientsTableProps> = ({
-	ingredients,
-	onRowClick,
-}) => {
+const IngredientsTable = ({ ingredients, onRowClick, onCreate }: Props) => {
 	return (
 		<div className={Styles.container}>
 			<h3 className={Styles.title}>Ингредиенты</h3>
@@ -40,6 +38,9 @@ const IngredientsTable: React.FC<IngredientsTableProps> = ({
 					))}
 				</tbody>
 			</table>
+			<button onClick={onCreate} style={{ marginTop: '12px' }}>
+				Добавить
+			</button>
 		</div>
 	);
 };

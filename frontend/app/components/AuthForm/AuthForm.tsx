@@ -15,6 +15,7 @@ import { setUser } from '@/app/tools/redux/user';
 import { useDispatch } from 'react-redux';
 import { AuthInputs } from '@/app/tools/types/user';
 import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 
 interface Props {
 	closePopup: VoidFunction;
@@ -24,6 +25,7 @@ interface Props {
 
 export function AuthForm({ closePopup, isLogin, openLoginPopup }: Props) {
 	const dispatch = useDispatch();
+	const router = useRouter();
 
 	const {
 		register,
@@ -50,6 +52,8 @@ export function AuthForm({ closePopup, isLogin, openLoginPopup }: Props) {
 		dispatch(setUser(data.user));
 
 		closePopup();
+
+		router.refresh();
 
 		return;
 	};

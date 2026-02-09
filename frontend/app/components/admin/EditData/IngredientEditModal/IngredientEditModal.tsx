@@ -1,14 +1,13 @@
 import React, { useEffect } from 'react';
 import Styles from './IngredientEditModal.module.css';
-import { useUpdateIngredientMutation } from '@/app/tools/redux/api/ingredients';
-
-interface Ingredient {
-	id: number;
-	name: string;
-}
+import {
+	useDeleteIngredientMutation,
+	useUpdateIngredientMutation,
+} from '@/app/tools/redux/api/ingredients';
+import { IIngredient } from '@/app/tools/types/ingredients';
 
 interface IngredientEditModalProps {
-	ingredient: Ingredient | null;
+	ingredient: IIngredient | null;
 	onClose: (update: boolean) => void;
 }
 
@@ -16,10 +15,11 @@ const IngredientEditModal: React.FC<IngredientEditModalProps> = ({
 	ingredient,
 	onClose,
 }) => {
-	const [updateIngredient, { error, isLoading: isUpdateLoading }] =
+	const [updateIngredient, { isLoading: isUpdateLoading }] =
 		useUpdateIngredientMutation();
+	const [removeIngredient] = useDeleteIngredientMutation();
 
-	const [formData, setFormData] = React.useState<Ingredient | null>(null);
+	const [formData, setFormData] = React.useState<IIngredient | null>(null);
 
 	useEffect(() => {
 		setFormData(ingredient);
@@ -27,7 +27,7 @@ const IngredientEditModal: React.FC<IngredientEditModalProps> = ({
 
 	if (!ingredient || !formData) return null;
 
-	const handleChange = (field: keyof Ingredient, value: string | number) => {
+	const handleChange = (field: keyof IIngredient, value: string | number) => {
 		setFormData(prev => (prev ? { ...prev, [field]: value } : null));
 	};
 
@@ -37,6 +37,12 @@ const IngredientEditModal: React.FC<IngredientEditModalProps> = ({
 		const { id, ...data } = formData;
 
 		await updateIngredient({ id, data });
+
+		onClose(true);
+	};
+
+	const handleRemove = (id: number) => {
+		removeIngredient(id);
 
 		onClose(true);
 	};
@@ -64,8 +70,14 @@ const IngredientEditModal: React.FC<IngredientEditModalProps> = ({
 						/>
 					</div>
 					{isUpdateLoading && <p>Обновление ингридиента...</p>}
-					{isUpdateLoading && <p>Обновление ингридиента...</p>}
 					<div className={Styles.actions}>
+						<button
+							type='button'
+							onClick={() => handleRemove(ingredient.id)}
+							className={Styles.saveBtn}
+						>
+							Удалить
+						</button>
 						<button
 							type='button'
 							onClick={() => onClose(false)}
