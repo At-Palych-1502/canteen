@@ -6,11 +6,21 @@ import React, { useEffect, useState } from 'react';
 import Styles from './CurrentOrder.module.css';
 import { getMealsForCook, setMealsCount } from '@/app/tools/utils/meals';
 import { getAccessToken } from '@/app/tools/utils/auth';
-import { IMeal } from '@/app/tools/types/meals';
 
 interface Props {
 	order: IOrder
 }
+
+
+export interface IMeal {
+	name: string;
+	price: number;
+	day_of_week: string;
+	quantity: number;
+
+	dishes: IDish[];
+}
+
 
 export const OrdersForCook = () => {
 	const [orderCount, setOrderCount] = useState(Array<number>);
