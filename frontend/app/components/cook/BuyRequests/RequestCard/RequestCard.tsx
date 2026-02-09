@@ -79,23 +79,6 @@ const RequestCard: React.FC<RequestCardProps> = ({
 					)}
 				</div>
 			</div>
-
-			{isPending && (
-				<div className={Styles.actions}>
-					<button
-						className={`${Styles.actionButton} ${Styles.approveButton}`}
-						onClick={() => onApprove(request.id)}
-					>
-						Одобрить
-					</button>
-					<button
-						className={`${Styles.actionButton} ${Styles.rejectButton}`}
-						onClick={() => onReject(request.id)}
-					>
-						Отклонить
-					</button>
-				</div>
-			)}
 		</div>
 	);
 };

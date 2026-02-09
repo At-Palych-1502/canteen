@@ -1,7 +1,7 @@
 import React from 'react';
-import { IBuyRequest } from '@/app/tools/types/mock';
 import RequestCard from '../RequestCard/RequestCard';
 import Styles from './RequestsList.module.css';
+import { IBuyRequest } from '@/app/tools/types/buyRequests';
 
 interface RequestsListProps {
 	requests: IBuyRequest[];
@@ -16,8 +16,8 @@ const RequestsList: React.FC<RequestsListProps> = ({
 	onReject,
 	onQuantityChange,
 }) => {
-	const pendingRequests = requests.filter(r => r.status === 'pending');
-	const processedRequests = requests.filter(r => r.status !== 'pending');
+	const pendingRequests = requests.filter(r => r.is_accepted === null);
+	const processedRequests = requests.filter(r => r.is_accepted !== null);
 
 	const handleApprove = (requestId: number) => {
 		onApprove(requestId);
