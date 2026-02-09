@@ -154,3 +154,5 @@ def meals(id):
     db.session.commit()
     return jsonify({"meal": purch_req.to_dict()}), 200
 
+
+@bp.route('/')
