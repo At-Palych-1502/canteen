@@ -18,6 +18,7 @@ export interface IMeal {
 }
 
 
+
 export type IMealUpdateReq = {
 	id: number;
 	data: Partial<IMealCreateArg>;
