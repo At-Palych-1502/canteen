@@ -19,6 +19,11 @@ export interface IMeal {
 
 
 
+
+<<<<<<< Updated upstream
+
+=======
+>>>>>>> Stashed changes
 export type IMealUpdateReq = {
 	id: number;
 	data: Partial<IMealCreateArg>;
