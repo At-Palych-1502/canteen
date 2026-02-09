@@ -1,6 +1,6 @@
 import { endpoints } from "@/app/config/endpoints"
 import { getAccessToken } from "./auth";
-import { IMeal } from "../types/meals";
+import { IMeal } from "@/app/components/student/CurrentOrder/OrdersForCook";
 
 export const getMealsForCook = async(dayOfWeek: string) => {
     const jwt = getAccessToken();
