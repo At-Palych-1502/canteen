@@ -76,12 +76,12 @@ export const OrdersForCook = () => {
                 <>
                 <div className={Styles['orders']}>
                 {
-                    meals.map((meal: IMeal, index) => {
+                    meals?.map((meal: IMeal, index) => {
                         return (
                             <div key={index} className={Styles['order-card']}>
                                 <div className={Styles['order-header']}>{meal.name} <span>({meal.quantity})</span></div>
                                 <div className={Styles['order-meals']}>
-                                    {meal.dishes.map((meal: IDish, index: number) => (
+                                    {meal.dishes?.map((meal: IDish, index: number) => (
                                         <div
                                             key={index}
                                             className={Styles['meal-item']}
