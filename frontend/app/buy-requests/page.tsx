@@ -1,23 +1,15 @@
 'use client';
-
-import React, { useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
-import { selectUser } from '../tools/redux/user';
-import { IBuyRequest } from '../tools/types/mock';
+import React from 'react';
 import RequestsList from '../components/admin/BuyRequests/RequestsList/RequestsList';
 import Styles from './page.module.css';
 import {
 	useAcceptBuyRequestMutation,
-	useCreateBuyRequestMutation,
 	useGetAllBuyRequestsQuery,
 	useRejectBuyRequestMutation,
 	useUpdateBuyRequestMutation,
 } from '../tools/redux/api/buyRequests';
 
-const BuyRequestsPage: React.FC = () => {
-	const currentUser = useSelector(selectUser);
-	const [requests, setRequests] = useState<IBuyRequest[]>([]);
-
+const BuyRequestsPage = () => {
 	const { data, isLoading, refetch } = useGetAllBuyRequestsQuery();
 	const [acceptBuyRequest] = useAcceptBuyRequestMutation();
 	const [rejectBuyRequest] = useRejectBuyRequestMutation();
@@ -34,7 +26,7 @@ const BuyRequestsPage: React.FC = () => {
 		rejectBuyRequest(requestId);
 		refetch();
 	};
-	refetch;
+
 	const handleQuantityChange = (requestId: number, newQuantity: number) => {
 		updateBuyRequest({ id: requestId, data: { quantity: newQuantity } });
 		refetch();
