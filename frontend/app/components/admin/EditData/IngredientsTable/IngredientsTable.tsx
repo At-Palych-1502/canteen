@@ -2,15 +2,11 @@
 
 import React from 'react';
 import Styles from './IngredientsTable.module.css';
-
-interface Ingredient {
-	id: number;
-	name: string;
-}
+import { IIngredient } from '@/app/tools/types/ingredients';
 
 interface Props {
-	ingredients: Ingredient[];
-	onRowClick: (ingredient: Ingredient) => void;
+	ingredients: IIngredient[];
+	onRowClick: (ingredient: IIngredient | null) => void;
 	onCreate: () => void;
 }
 
