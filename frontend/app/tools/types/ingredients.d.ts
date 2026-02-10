@@ -13,5 +13,8 @@ export interface IIngredientUpdate {
 
 export interface IIngredient extends IIngredientArg {
 	id: number;
-	name: string;
+}
+
+export interface IGetAllIngredients {
+	data: IIngredient[];
 }

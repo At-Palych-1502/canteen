@@ -1,11 +1,11 @@
 import { endpoints } from "@/app/config/endpoints"
 import { getAccessToken } from "./auth";
-import { IMeal } from "../types/meals";
+import { IMeal } from "@/app/components/student/CurrentOrder/OrdersForCook";
 
 export const getMealsForCook = async(dayOfWeek: string) => {
     const jwt = getAccessToken();
     try {
-        const response = await fetch(`${endpoints.meals.getMealsDayOfWeek}?day_of_week=${dayOfWeek}`, {
+        const response = await fetch(`${endpoints.buyRequests.getMealsDayOfWeek}?day_of_week=${dayOfWeek}`, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
@@ -27,7 +27,7 @@ export const getMealsForCook = async(dayOfWeek: string) => {
 
 export const setMealsCount = async(array: Array<IMeal>) => {
     const jwt = getAccessToken();
-    const response = await fetch(endpoints.meals.setMealsCount, {
+    const response = await fetch(endpoints.buyRequests.setMealsCount, {
         method: "PUT",
         headers: {
             "Content-Type": "application/json",

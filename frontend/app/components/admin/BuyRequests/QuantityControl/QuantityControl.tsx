@@ -3,14 +3,12 @@ import Styles from './QuantityControl.module.css';
 
 interface QuantityControlProps {
 	value: number;
-	unit: string;
 	onChange: (newValue: number) => void;
 	disabled?: boolean;
 }
 
 const QuantityControl: React.FC<QuantityControlProps> = ({
 	value,
-	unit,
 	onChange,
 	disabled = false,
 }) => {
@@ -73,9 +71,7 @@ const QuantityControl: React.FC<QuantityControlProps> = ({
 
 	return (
 		<div className={Styles.displayContainer}>
-			<span className={Styles.value}>
-				{value} {unit}
-			</span>
+			<span className={Styles.value}>{value}</span>
 			{!disabled && (
 				<button
 					className={Styles.editButton}

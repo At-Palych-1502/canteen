@@ -14,6 +14,8 @@ bp = Blueprint('logic', __name__)
 def add_meal():
     if request.method == 'POST':
         data = request.get_json()
+        if Meal.query.filter_by(day_of_week=data["day_of_week"], type=data["type"]).first():
+            return jsonify({"error": "Meal already exists"}), 400
         dish_ids = data['dishes']
         dishes = Dish.query.filter(Dish.id.in_(dish_ids)).all()
         if len(dishes) != len(dish_ids):
@@ -60,7 +62,7 @@ def meal_detail(id):
         return jsonify(meal.to_dict()), 200
     elif request.method == 'PUT':
         data = request.get_json()
-        allowed_keys = ["name", "price", "day_of_week", "dishes", "type"]
+        allowed_keys = ["name", "price", "day_of_week", "dishes", "type", "quantity"]
 
         if not all(key in allowed_keys for key in data.keys()):
             return jsonify({"error": "Invalid data fields"}), 400

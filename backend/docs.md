@@ -297,15 +297,18 @@ _crud логика (/ingredients)_: аналогично для dish, парам
     }
     Формат запроса:
         ?username=...&email=...&role=...&page=2
-        Пример: /api/_users/filter?username=ivan&role=student&per_page
+        Пример: /api/_users/filter?username=ivan&role=student&per_page=1
     Формат ответа:
     [200] {
         "users": [
             {
                 "id": 123,
-                "username": "ivan",
+                "username": "shego1enok",
                 "email": "ivan@example.com",
-                "role": "student"
+                "role": "student",
+                "name":"Александр",
+                "surname":"Иванов",
+                "patronymic":"Иванович"
             }
         ],
         "pagination": {
@@ -317,3 +320,78 @@ _crud логика (/ingredients)_: аналогично для dish, парам
             "has_prev": false
         }
     }
+
+/menu ['GET']
+
+    Headers: {
+        "Authorization": "Bearer " + jwt_token
+    }
+    Формат запроса:{
+        "day_of_week":String
+    }
+    Формат вывода:{
+        [200]   [
+        {
+            "id": 1,
+            "name": "Борщ",
+            "price": 150,
+            "date": "2026-02-09",
+            "day_of_week": "monday",
+            "dishes": [...]
+    }
+    ]
+    [400] {"error": "There are no meals on this date"}
+}
+
+
+/order ['POST']
+
+
+    Headers: {
+        "Authorization": "Bearer " + jwt_token
+    }
+    Формат запроса: {
+        "date": "YYYY-MM-DD",          
+        "meals": [...]
+    }
+    Формат ответа:
+        [200] {"order": {
+        "id": 456,
+        "user_id": 123,
+        "date": "2026-02-10",
+        "meals": [ ... ]  
+    }}
+    [400] {"error": "You don't have enough money"}
+    [404] {"error": "Not found"}  
+
+/orders ['GET']
+
+    Требуемая роль: admin, cook
+    Headers: {
+        "Authorization": "Bearer " + jwt_token
+    }
+    Формат ответа:
+    [200] {"data": [
+        {
+            "id": 456,
+            "user_id": 123,
+            "date": "2026-02-10",
+            "meals": [...]
+        },
+    ]}
+
+set_meals_count  ['PUT']
+
+    Требуемая роль: cook
+    Headers:{
+        "Authorization": "Bearer" + jwt_token
+    }
+    Формат запроса: {
+        "meals": [
+            {"id": 1, "quantity": 10},
+            {"id": 2, "quantity": 5}
+        ]
+    }
+    Формат ответа:
+    [200] {"message": "meals updated"}
+    [404] {"error": "Not found"}

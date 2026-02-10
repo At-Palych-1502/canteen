@@ -1,13 +1,18 @@
 import React from 'react';
-import { IDishExtended } from '@/app/tools/types/mock';
 import Styles from './DishesTable.module.css';
+import { IDish } from '@/app/tools/types/dishes';
 
 interface DishesTableProps {
-	dishes: IDishExtended[];
-	onRowClick: (dish: IDishExtended) => void;
+	dishes: IDish[];
+	onRowClick: (dish: IDish) => void;
+	onCreate: () => void;
 }
 
-const DishesTable: React.FC<DishesTableProps> = ({ dishes, onRowClick }) => {
+const DishesTable: React.FC<DishesTableProps> = ({
+	dishes,
+	onRowClick,
+	onCreate,
+}) => {
 	return (
 		<div className={Styles.container}>
 			<h3 className={Styles.title}>Блюда</h3>
@@ -31,6 +36,9 @@ const DishesTable: React.FC<DishesTableProps> = ({ dishes, onRowClick }) => {
 					))}
 				</tbody>
 			</table>
+			<button onClick={onCreate} style={{ marginTop: '12px' }}>
+				Добавить
+			</button>
 		</div>
 	);
 };

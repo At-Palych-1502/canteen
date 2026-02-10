@@ -1,8 +1,8 @@
 import React from 'react';
-import { IBuyRequest } from '@/app/tools/types/mock';
 import StatusBadge from '../StatusBadge/StatusBadge';
 import QuantityControl from '../QuantityControl/QuantityControl';
 import Styles from './RequestCard.module.css';
+import { IBuyRequest } from '@/app/tools/types/buyRequests';
 
 interface RequestCardProps {
 	request: IBuyRequest;
@@ -28,55 +28,38 @@ const RequestCard: React.FC<RequestCardProps> = ({
 		});
 	};
 
-	const isPending = request.status === 'pending';
+	const isPending = request.is_accepted === null;
 
 	return (
 		<div className={`${Styles.card} ${!isPending ? Styles.disabled : ''}`}>
 			<div className={Styles.header}>
 				<div className={Styles.authorInfo}>
-					<div className={Styles.username}>{request.author.username}</div>
-					<div className={Styles.fullName}>{request.author.fullName}</div>
+					<div className={Styles.username}>
+						ID пользователя {request.user_id}
+					</div>
 				</div>
-				<StatusBadge status={request.status} />
+				<StatusBadge status={request.is_accepted ?? 'pending'} />
 			</div>
-
 			<div className={Styles.body}>
 				<div className={Styles.ingredientSection}>
-					<div className={Styles.ingredientName}>{request.ingredient.name}</div>
+					<div className={Styles.ingredientName}>{request.ingredient_id}</div>
 					<div className={Styles.quantityInfo}>
 						<div className={Styles.quantityRow}>
 							<span className={Styles.label}>Запрошено:</span>
 							<QuantityControl
-								value={request.requestedQuantity}
-								unit={request.unit}
+								value={request.quantity}
 								onChange={newQuantity =>
 									onQuantityChange(request.id, newQuantity)
 								}
 								disabled={!isPending}
 							/>
 						</div>
-						<div className={Styles.quantityRow}>
-							<span className={Styles.label}>В наличии:</span>
-							<span className={Styles.stockValue}>
-								{request.currentStock} {request.unit}
-							</span>
-						</div>
 					</div>
 				</div>
 
 				<div className={Styles.dateInfo}>
 					<span className={Styles.dateLabel}>Создано:</span>
-					<span className={Styles.dateValue}>
-						{formatDate(request.createdAt)}
-					</span>
-					{request.updatedAt && (
-						<>
-							<span className={Styles.dateLabel}>Обновлено:</span>
-							<span className={Styles.dateValue}>
-								{formatDate(request.updatedAt)}
-							</span>
-						</>
-					)}
+					<span className={Styles.dateValue}>{formatDate(request.date)}</span>
 				</div>
 			</div>
 

@@ -6,11 +6,21 @@ import React, { useEffect, useState } from 'react';
 import Styles from './CurrentOrder.module.css';
 import { getMealsForCook, setMealsCount } from '@/app/tools/utils/meals';
 import { getAccessToken } from '@/app/tools/utils/auth';
-import { IMeal } from '@/app/tools/types/meals';
 
 interface Props {
 	order: IOrder
 }
+
+
+export interface IMeal {
+	name: string;
+	price: number;
+	day_of_week: string;
+	quantity: number;
+
+	dishes: IDish[];
+}
+
 
 export const OrdersForCook = () => {
 	const [orderCount, setOrderCount] = useState(Array<number>);
@@ -77,12 +87,12 @@ export const OrdersForCook = () => {
                 <h1>Количество выданных комплектов</h1>
                 <div className={Styles['orders']}>
                 {
-                    meals.map((meal: IMeal, index) => {
+                    meals?.map((meal: IMeal, index) => {
                         return (
                             <div key={index} className={Styles['order-card']}>
                                 <div className={Styles['order-header']}>{meal.name} <span>({meal.quantity})</span></div>
                                 <div className={Styles['order-meals']}>
-                                    {meal.dishes.map((meal: IDish, index: number) => (
+                                    {meal.dishes?.map((meal: IDish, index: number) => (
                                         <div
                                             key={index}
                                             className={Styles['meal-item']}

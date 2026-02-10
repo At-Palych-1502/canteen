@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, ForeignKey, DateTime, JSON, Float
+from sqlalchemy import Column, Integer, String, ForeignKey, DateTime, JSON, Float, Boolean
 from sqlalchemy.orm import relationship
 from .extensions import db
 import datetime
@@ -24,7 +24,8 @@ class User(Base):
     transactions = relationship("Transaction", back_populates="user")
     orders = relationship("Order", back_populates="user")
     reviews = relationship("Review", back_populates="user")
-
+    purchase_requests = relationship("PurchaseRequest", back_populates="user")
+    subscriptions = relationship("Subscription", back_populates="user")
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
@@ -85,9 +86,12 @@ class Ingredient(Base):
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String(80), nullable=False)
+    quantity = Column(Integer)
+
 
     dish_ingredients = relationship('DishIngredient', back_populates='ingredient', cascade='all, delete-orphan')
     allergic_users = relationship("User", secondary="user_allergies", back_populates="allergies")
+    purchase_requests = relationship("PurchaseRequest", back_populates="ingredient")
 
     def __repr__(self):
         return f'Ingredient {self.name}'
@@ -98,8 +102,8 @@ class Ingredient(Base):
             for dish in self.dish_ingredients:
                 dish = Dish.query.get(dish.dish_id)
                 sl.append(dish.to_dict())
-            return {'id': self.id, 'name': self.name, 'dishes': sl}
-        return {'id': self.id, 'name': self.name}
+            return {'id': self.id, 'name': self.name, 'quantity': self.quantity, 'dishes': sl}
+        return {'id': self.id, 'quantity': self.quantity, 'name': self.name}
 
 
 class DishIngredient(Base):
@@ -211,10 +215,47 @@ class MealDish(Base):
     dish_id = Column(Integer, ForeignKey('dishes.id'), primary_key=True)
 
 
-class Purchase_request(Base):
+class PurchaseRequest(Base):
     __tablename__ = 'purchase_requests'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    cook_id = Column(Integer, ForeignKey('users.id'), nullable=False)
+    user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
     ingredient_id = Column(Integer, ForeignKey('ingredients.id'), nullable=False)
-    
+    quantity = Column(Integer, nullable=False)
+    is_accepted = Column(Boolean)
+    data=Column(DateTime, nullable=False, default=datetime.datetime.now())
+
+    user = relationship("User", back_populates="purchase_requests")
+    ingredient = relationship("Ingredient", back_populates="purchase_requests")
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "user": User.query.get(self.user_id).to_dict(),
+            "ingredient": Ingredient.query.get(self.ingredient_id).to_dict(),
+            "quantity": self.quantity,
+            "is_accepted": self.is_accepted,
+            "date": self.data
+        }
+
+class Subscription(Base):
+    __tablename__ = 'subscriptions'
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
+    type = Column(String(20), nullable=False)
+    duration = Column(Integer, nullable=False)
+
+    user = relationship("User", back_populates="subscriptions")
+
+    @property
+    def active(self):
+         return self.duration > 0
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "user_id": self.user_id,
+            "type": self.type,
+            "duration": self.duration
+        }

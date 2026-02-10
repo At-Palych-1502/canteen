@@ -62,7 +62,10 @@ const BuyRequestsPageCook: React.FC = () => {
 	return (
 		<>
 		<div className={Styles.container}>
-			<h1 className={Styles.title}>Заявки на покупки</h1>
+			<div className={Styles["header"]}>
+				<h1 className={Styles.title}>Заявки на покупки</h1>
+				<button onClick={() => {setIsOpenAuthForm(true)}} className={Styles["button"]}>Добавить</button>
+			</div>
 			<RequestsList
 				requests={requests}
 				onApprove={handleApprove}
