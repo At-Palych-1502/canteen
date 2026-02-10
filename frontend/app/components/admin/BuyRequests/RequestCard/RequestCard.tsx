@@ -35,18 +35,20 @@ const RequestCard: React.FC<RequestCardProps> = ({
 			<div className={Styles.header}>
 				<div className={Styles.authorInfo}>
 					<div className={Styles.username}>
-						ID пользователя {request.user_id}
+						Имя пользователя: {request.user.username}
 					</div>
+					<div className={Styles.username}>Почта: {request.user.email}</div>
 				</div>
 				<StatusBadge status={request.is_accepted ?? 'pending'} />
 			</div>
 			<div className={Styles.body}>
 				<div className={Styles.ingredientSection}>
-					<div className={Styles.ingredientName}>{request.ingredient_id}</div>
+					<div className={Styles.ingredientName}>{request.ingredient.name}</div>
 					<div className={Styles.quantityInfo}>
 						<div className={Styles.quantityRow}>
 							<span className={Styles.label}>Запрошено:</span>
 							<QuantityControl
+								remaining={request.ingredient.quantity}
 								value={request.quantity}
 								onChange={newQuantity =>
 									onQuantityChange(request.id, newQuantity)

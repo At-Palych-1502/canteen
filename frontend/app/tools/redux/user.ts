@@ -13,7 +13,7 @@ export const userSlice = createSlice({
 	reducers: {
 		setUser: (state, action) => {
 			state.user = action.payload;
-			// Сохраняем пользователя в localStorage
+
 			if (action.payload) {
 				setUserLocalStorage(action.payload);
 			}
