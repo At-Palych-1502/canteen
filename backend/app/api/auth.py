@@ -62,6 +62,7 @@ def user_id(id):
     else:
         db.session.delete(user)
         db.session.commit()
+        return jsonify({"message": "user deleted"}), 200
 
 @bp.route('/auth/register', methods=['POST'])
 def register():
