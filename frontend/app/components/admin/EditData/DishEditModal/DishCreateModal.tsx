@@ -93,6 +93,7 @@ const DishCreateModal: React.FC<DishEditModalProps> = ({
 			const newIngredient = {
 				id: ingredient.id,
 				name: ingredient.name,
+				quantity: ingredient.quantity,
 			};
 
 			return {
