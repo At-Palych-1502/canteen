@@ -1,14 +1,18 @@
 import { IOrder } from '@/app/tools/types/mock';
 import { IDish } from '@/app/tools/types/dishes';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Styles from './CurrentOrder.module.css';
 
 interface Props {
-	order: IOrder;
+	order: IOrder
 }
 
 const Order = ({ order }: Props) => {
 	const [isReceived, setIsReceived] = useState(false);
+
+	useEffect(() => {
+		// Получение
+	}, [])
 
 	// Проверяем, является ли дата сегодняшней
 	const isToday = () => {
@@ -54,13 +58,10 @@ const Order = ({ order }: Props) => {
 					</div>
 				))}
 			</div>
+
+			{/* Кнопки для студента */}
 			{today && !isReceived && (
-				<button
-					className={Styles['receive-button']}
-					onClick={handleReceiveOrder}
-				>
-					Получить заказ
-				</button>
+				<button className={Styles['receive-button']} onClick={handleReceiveOrder}>Получить заказ</button>
 			)}
 			{today && isReceived && (
 				<div className={Styles['received-badge']}>✓ Заказ получен</div>

@@ -1,8 +1,8 @@
 import React from 'react';
-import { IBuyRequest } from '@/app/tools/types/mock';
 import StatusBadge from '../StatusBadge/StatusBadge';
 import QuantityControl from '../QuantityControl/QuantityControl';
 import Styles from './RequestCard.module.css';
+import { IBuyRequest } from '@/app/tools/types/buyRequests';
 
 interface RequestCardProps {
 	request: IBuyRequest;
@@ -28,16 +28,15 @@ const RequestCard: React.FC<RequestCardProps> = ({
 		});
 	};
 
-	const isPending = request.status === 'pending';
+	const isPending = request.is_accepted === null;
 
 	return (
 		<div className={`${Styles.card} ${!isPending ? Styles.disabled : ''}`}>
 			<div className={Styles.header}>
 				<div className={Styles.authorInfo}>
-					<div className={Styles.username}>{request.author.username}</div>
-					<div className={Styles.fullName}>{request.author.fullName}</div>
+					<div className={Styles.username}>{request.user_id}</div>
 				</div>
-				<StatusBadge status={request.status} />
+				<StatusBadge status={request.is_accepted ?? 'pending'} />
 			</div>
 
 			<div className={Styles.body}>

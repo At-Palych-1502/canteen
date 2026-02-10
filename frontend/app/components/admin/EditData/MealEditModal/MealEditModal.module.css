@@ -275,3 +275,11 @@
 .saveBtn:hover {
 	background: #2563eb;
 }
+
+.addButton {
+  margin-right: 12px;
+}
+
+.removeButton {
+  margin-left: 12px;
+}

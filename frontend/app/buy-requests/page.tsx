@@ -12,16 +12,20 @@ import {
 } from '../tools/mockData';
 import RequestsList from '../components/admin/BuyRequests/RequestsList/RequestsList';
 import Styles from './page.module.css';
+import { useGetAllBuyRequestsQuery } from '../tools/redux/api/buyRequests';
 
 const BuyRequestsPage: React.FC = () => {
 	const currentUser = useSelector(selectUser);
 	const [requests, setRequests] = useState<IBuyRequest[]>([]);
 
+	const { data, isLoading } = useGetAllBuyRequestsQuery();
+
+	console.log(data, isLoading);
+
 	useEffect(() => {
 		loadRequests();
 	}, []);
 
-	// Проверка роли пользователя - компонент отображается только для администраторов
 	if (!currentUser || currentUser.role !== 'admin') {
 		return null;
 	}
@@ -55,12 +59,16 @@ const BuyRequestsPage: React.FC = () => {
 	return (
 		<div className={Styles.container}>
 			<h1 className={Styles.title}>Заявки на покупки</h1>
-			<RequestsList
-				requests={requests}
-				onApprove={handleApprove}
-				onReject={handleReject}
-				onQuantityChange={handleQuantityChange}
-			/>
+			{data ? (
+				<RequestsList
+					requests={data.purchase_requests}
+					onApprove={handleApprove}
+					onReject={handleReject}
+					onQuantityChange={handleQuantityChange}
+				/>
+			) : (
+				<p>Загрузка...</p>
+			)}
 		</div>
 	);
 };

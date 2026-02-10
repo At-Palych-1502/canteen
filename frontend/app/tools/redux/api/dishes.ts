@@ -3,8 +3,9 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import type {
 	IAddIngredientArg,
 	IDishArg,
-	IDishRes,
 	IDishUpdate,
+	IGetAllDishes,
+	IGetDishRes,
 } from '../../types/dishes';
 import { getAccessToken } from '../../utils/auth';
 
@@ -21,10 +22,10 @@ export const dishesApi = createApi({
 		},
 	}),
 	endpoints: builder => ({
-		getAllDishes: builder.query<IDishRes[], void>({
+		getAllDishes: builder.query<IGetAllDishes, void>({
 			query: () => '',
 		}),
-		getDishById: builder.query<IDishRes, number>({
+		getDishById: builder.query<IGetDishRes, number>({
 			query: (id: number) => `/${id}`,
 		}),
 		deleteDish: builder.mutation<void, number>({

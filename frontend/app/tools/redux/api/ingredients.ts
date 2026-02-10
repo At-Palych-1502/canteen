@@ -2,6 +2,7 @@ import { endpoints } from '@/app/config/endpoints';
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { getAccessToken } from '../../utils/auth';
 import type {
+	IGetAllIngredients,
 	IIngredientArg,
 	IIngredientRes,
 	IIngredientUpdate,
@@ -20,7 +21,7 @@ export const ingredientsApi = createApi({
 		},
 	}),
 	endpoints: builder => ({
-		getAllIngredients: builder.query<IIngredientRes[], void>({
+		getAllIngredients: builder.query<IGetAllIngredients, void>({
 			query: () => '',
 		}),
 		getIngredientById: builder.query<IIngredientRes, number>({
