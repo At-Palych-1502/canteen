@@ -94,45 +94,52 @@ def order():
     data = request.get_json()
     date = datetime.datetime.strptime(data['date'], '%Y-%m-%d')
     meal_ids = data['meals']
-    meals = []
-    for id in meal_ids:
-        meals.append(Meal.query.get_or_404(id))
-    total_price = sum([meal.price for meal in meals])
-    user = User.query.get_or_404(get_jwt_identity())
+    meals = [Meal.query.get_or_404(id) for id in meal_ids]
+    total_price = sum(meal.price for meal in meals)
+    user_id = get_jwt_identity()
+    user = User.query.get_or_404(user_id)
 
-    payment_type = data['payment_type']
-    if payment_type.lower() not in ['subscription', 'balance']:
+    payment_type = data['payment_type'].lower()
+    if payment_type not in ['subscription', 'balance']:
         return jsonify({"error": "Invalid payment type"}), 400
-    if payment_type.lower() == 'subscription':
+
+    if payment_type == 'subscription':
         subsc = Subscription.query.filter_by(user_id=user.id).first()
-        if subsc and subsc.active():
-            subsc.duration -= 1
-            add_transaction(user.id, total_price,)
-        else:
+        if not (subsc and subsc.active):
             return jsonify({"error": "Subscription not active"}), 400
+
+        # Создаём заказ
+        order = Order(user_id=user_id, date=date)
+        db.session.add(order)
+        db.session.flush()  # ← получаем order.id
+
+        # Связываем блюда
+        for meal in meals:
+            ord_meal = OrderMeal(order_id=order.id, meal_id=meal.id)
+            db.session.add(ord_meal)
+
+        subsc.duration -= 1
+        add_transaction(user_id, total_price,
+                        description=f"Произведен заказ питания на дату {data['date']}, общая цена: {total_price}, оплата абонементом")
         db.session.commit()
-        add_transaction(user.id, total_price,
+        return jsonify({"message": "success"}), 200  # ← добавлен return!
+
+    else:  # balance
+        if user.balance < total_price:
+            return jsonify({"error": "You don't have enough money"}), 400
+
+        order = Order(user_id=user_id, date=date)
+        db.session.add(order)
+        db.session.flush()
+
+        for meal in meals:
+            ord_meal = OrderMeal(order_id=order.id, meal_id=meal.id)
+            db.session.add(ord_meal)
+
+        add_transaction(user_id, total_price,
                         description=f"Произведен заказ питания на дату {data['date']}, общая цена: {total_price}")
-
-
-    if user.balance < total_price:
-        return jsonify({"error": "You don't have enough money"}), 400
-    add_transaction(user.id, total_price, description=f"Произведен заказ питания на дату {data['date']}, общая цена: {total_price}")
-    order = Order(
-        user_id=get_jwt_identity(),
-        date=date
-    )
-    db.session.add(order)
-    db.session.flush()
-
-    for meal in meals:
-        ord_meal = OrderMeal(
-            order_id=order.id,
-            meal_id=meal.id
-        )
-        db.session.add(ord_meal)
-    db.session.commit()
-    return jsonify({"order": order.to_dict()}), 200
+        db.session.commit()
+        return jsonify({"message": "success"}), 200
 
 @bp.route('/orders', methods=['GET'])
 @jwt_required()
@@ -140,6 +147,14 @@ def order():
 def orders():
     orders = Order.query.all()
     return jsonify({"data": [order.to_dict() for order in orders]}), 200
+
+@bp.route('/orders/<int:id>', methods=['GET'])
+@jwt_required()
+def order_by_id(id):
+    if request.method == 'GET':
+        order = Order.query.get_or_404(id)
+        return jsonify({"order": order.to_dict()})
+
 
 
 @bp.route('/set_meals_count', methods=['PUT'])
@@ -205,13 +220,18 @@ def subscriptions():
     user = User.query.get_or_404(get_jwt_identity())
     if user.balance < data['price']:
         return jsonify({"error": "not enough balance"}), 400
+    exsist = Subscription.query.filter_by(user_id=user.id).first()
+    if exsist and exsist.active is True:
+        return jsonify({"error": "already subscribed"}), 400
     subsc = Subscription(
         user_id=get_jwt_identity(),
         type=data['type'],
         duration=20,
     )
     db.session.add(subsc)
+    user.balance -= data['price']
     db.session.commit()
+    return jsonify({"subscription": subsc.to_dict()}), 200
 
 
 @bp.route('/report/orders', methods=['GET'])

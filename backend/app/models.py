@@ -25,7 +25,7 @@ class User(Base):
     orders = relationship("Order", back_populates="user")
     reviews = relationship("Review", back_populates="user")
     purchase_requests = relationship("PurchaseRequest", back_populates="user")
-
+    subscriptions = relationship("Subscription", back_populates="user")
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
@@ -251,3 +251,11 @@ class Subscription(Base):
     @property
     def active(self):
          return self.duration > 0
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "user_id": self.user_id,
+            "type": self.type,
+            "duration": self.duration
+        }
