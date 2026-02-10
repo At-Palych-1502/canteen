@@ -55,6 +55,7 @@ class Dish(Base):
     name = Column(String(80), nullable=False)
     weight = Column(Integer, nullable=False)
     created_at = Column(DateTime, nullable=False, default=datetime.datetime.now())
+    quantity = Column(Integer)
 
     dish_ingredients = relationship("DishIngredient", back_populates="dish")
     meals = relationship("Meal", secondary="meal_ingredients", back_populates="dishes"
@@ -110,6 +111,7 @@ class DishIngredient(Base):
     __tablename__ = 'dish_ingredient'
     dish_id = Column(Integer, ForeignKey('dishes.id'), primary_key=True)
     ingredient_id = Column(Integer, ForeignKey('ingredients.id'), primary_key=True)
+    weight = Column(Integer, nullable=False)
 
     dish = relationship("Dish", back_populates='dish_ingredients')
     ingredient = relationship('Ingredient', back_populates='dish_ingredients')
@@ -118,7 +120,7 @@ class DishIngredient(Base):
 class Transaction(Base):
     __tablename__ = 'transactions'
     id = Column(Integer, primary_key=True, autoincrement=True)
-    user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
+    user_id = Column(Integer, ForeignKey('users.id'), nullable=True)
     amount = Column(Float, nullable=False)
     description = Column(String(200), nullable=False)
     created_at = Column(DateTime, nullable=False, default=datetime.datetime.now())
@@ -165,7 +167,7 @@ class Order(Base):
     __tablename__ = 'orders'
 
     id = Column(Integer, primary_key=True)
-    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=True)
     date = Column(DateTime, nullable=False)
 
     user = relationship("User", back_populates="orders")
@@ -242,7 +244,7 @@ class Subscription(Base):
     __tablename__ = 'subscriptions'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
+    user_id = Column(Integer, ForeignKey('users.id'), nullable=True)
     type = Column(String(20), nullable=False)
     duration = Column(Integer, nullable=False)
 

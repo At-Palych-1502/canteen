@@ -141,6 +141,7 @@ def order():
         db.session.commit()
         return jsonify({"message": "success"}), 200
 
+
 @bp.route('/orders', methods=['GET'])
 @jwt_required()
 @role_required(['admin', 'cook'])
@@ -148,13 +149,13 @@ def orders():
     orders = Order.query.all()
     return jsonify({"data": [order.to_dict() for order in orders]}), 200
 
+
 @bp.route('/orders/<int:id>', methods=['GET'])
 @jwt_required()
 def order_by_id(id):
     if request.method == 'GET':
         order = Order.query.get_or_404(id)
         return jsonify({"order": order.to_dict()})
-
 
 
 @bp.route('/set_meals_count', methods=['PUT'])
