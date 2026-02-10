@@ -1,3 +1,6 @@
+import { IIngredient } from './ingredients';
+import { IUser } from './user';
+
 export interface ICreateBuyRequestArg {
 	ingredient_id: number;
 	quantity: number;
@@ -7,9 +10,11 @@ export type BuyRequestStatus = boolean | null | 'pending';
 
 export interface IBuyRequest extends ICreateBuyRequestArg {
 	id: number;
-	user_id: number;
+	user: IUser;
 	is_accepted: BuyRequestStatus;
 	date: string;
+	ingredient: IIngredient;
+	ingredient_id: undefined;
 }
 
 export interface IGetAllBuyRequestRes {
