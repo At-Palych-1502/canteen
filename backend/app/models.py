@@ -231,8 +231,8 @@ class PurchaseRequest(Base):
     def to_dict(self):
         return {
             "id": self.id,
-            "user_id": self.user_id,
-            "ingredient_id": self.ingredient_id,
+            "user": User.query.get(self.user_id).to_dict(),
+            "ingredient": Ingredient.query.get(self.ingredient_id).to_dict(),
             "quantity": self.quantity,
             "is_accepted": self.is_accepted,
             "date": self.data
