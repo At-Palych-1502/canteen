@@ -2,17 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="281c2898-3d13-4459-a8ec-e45788dc05bd" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/backend/app/api/balance.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/backend/app/api/purchase_requests.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/app/api/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/api/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/app/api/auth.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/api/auth.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/app/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/db/canteen.db" beforeDir="false" afterPath="$PROJECT_DIR$/backend/db/canteen.db" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/migrations/README" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/migrations/alembic.ini" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/migrations/env.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/migrations/script.py.mako" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/migrations/versions/8e1720c6828e_.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/api/business.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/api/business.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -49,15 +42,15 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "dev",
-    "last_opened_file_path": "C:/Users/Honor/PycharmProjects/canteen-git/canteen"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;dev&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/Honor/PycharmProjects/canteen-git/canteen&quot;
   }
-}]]></component>
+}</component>
   <component name="RunManager">
     <configuration default="true" type="PythonConfigurationType" factoryName="Python">
       <option name="ENV_FILES" value="" />
