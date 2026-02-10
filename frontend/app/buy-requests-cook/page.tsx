@@ -13,9 +13,21 @@ import {
 import RequestsList from '../components/cook/BuyRequests/RequestsList/RequestsList';
 import Styles from './page.module.css';
 
+import { Popup } from '../components/Popup/Popup';
+import { useGetAllIngredientsQuery } from '../tools/redux/api/ingredients';
+// import { useCreateBuyRequestMutation } from '../tools/redux/api/buyRequests';
+
 const BuyRequestsPageCook: React.FC = () => {
 	const currentUser = useSelector(selectUser);
 	const [requests, setRequests] = useState<IBuyRequest[]>([]);
+	const [isOpenAddForm, setIsOpenAuthForm] = useState(false);
+
+	const {
+		data: ingredients,
+		isLoading: ingredientsLoading,
+		refetch: refetchIngredients,
+	} = useGetAllIngredientsQuery();
+	// const [createBuyRequest] = useCreateBuyRequestMutation();
 
 	useEffect(() => {
 		loadRequests();
@@ -48,6 +60,7 @@ const BuyRequestsPageCook: React.FC = () => {
 	};
 
 	return (
+		<>
 		<div className={Styles.container}>
 			<h1 className={Styles.title}>Заявки на покупки</h1>
 			<RequestsList
@@ -57,6 +70,27 @@ const BuyRequestsPageCook: React.FC = () => {
 				onQuantityChange={handleQuantityChange}
 			/>
 		</div>
+
+		{isOpenAddForm && !ingredientsLoading && (
+			<Popup closePopup={() => {setIsOpenAuthForm(false)}}>
+				<form>
+					<h1>Создание заявки на покупку</h1>
+					<div className={Styles["ingr_div"]}>
+						<h3>Ингредиент: </h3>
+						<select id="ingredient" name="ingredient">
+							{ingredients && ingredients.data?.map((ingredient, index) => {
+								return <option key={index} value={ingredient.id}>{ingredient.name}</option>
+							})}
+						</select>
+					</div>
+					<div className={Styles["ingr_div"]}>
+						<h3>Количество: </h3>
+						<input className={Styles['input']} type='text' id='quality' />
+					</div>
+				</form>
+			</Popup>
+		)}
+		</>
 	);
 };
 
