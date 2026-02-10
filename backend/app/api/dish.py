@@ -61,45 +61,48 @@ def dish(id):
 def add_dish():
     data = request.get_json()
     if not data:
-        return jsonify({"error": "Отсутствует тело запроса"}), 400
+        return jsonify({"error": "Bad request"}), 400
 
     name = data.get("name")
     weight = data.get("weight")
     ingredients = data.get("ingredients")
+    quantity = data.get("quantity")
 
     if not name or not weight:
-        return jsonify({"error": "Поля 'name' и 'weight' обязательны"}), 400
+        return jsonify({"error": "Bad request"}), 400
 
     if not isinstance(weight, int) or weight <= 0:
-        return jsonify({"error": "Вес должен быть положительным целым числом"}), 400
+        return jsonify({"error": "Invalid weight"}), 400
 
     if not isinstance(ingredients, list):
-        return jsonify({"error": "Поле 'ingredients' должно быть списком ID"}), 400
+        return jsonify({"error": "Invalid ingredients' ids"}), 400
 
     dish = Dish(
             name=name,
             weight=weight,
         )
+    if quantity:
+        dish.quantity = quantity
     db.session.add(dish)
     db.session.flush()
 
     dish_ingredient_objects = []
     for ing_id in ingredients:
         if not isinstance(ing_id, int):
-            return jsonify({"error": f"Некорректный ID ингредиента: {ing_id}"}), 400
+            return jsonify({"error": f"Invalid ingredients' id: {ing_id}"}), 400
 
         ingredient_exists = db.session.query(Ingredient.id).filter_by(id=ing_id).first()
         if not ingredient_exists:
-            return jsonify({"error": f"Ингредиент с ID {ing_id} не найден"}), 404
+            return jsonify({"error": f"Ingredient {ing_id} not found"}), 404
         dish_ingredient_objects.append(
             DishIngredient(dish_id=dish.id, ingredient_id=ing_id)
         )
     db.session.add_all(dish_ingredient_objects)
     db.session.commit()
     return jsonify({
-            "message": "Блюдо успешно добавлено",
+            "message": "Dish added",
             "dish": dish.to_dict(include_ingredients=True)
-        }), 201
+        }), 200
 
 @bp.route('/dishes', methods=['GET'])
 @jwt_required()
