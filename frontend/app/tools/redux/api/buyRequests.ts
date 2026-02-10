@@ -44,14 +44,14 @@ export const buyRequestsApi = createApi({
 		acceptBuyRequest: builder.mutation<void, number>({
 			query: (reqId: number) => ({
 				url: `${reqId}/accept`,
-				method: 'POST',
+				method: 'PUT',
 				body: {},
 			}),
 		}),
 		rejectBuyRequest: builder.mutation<void, number>({
 			query: (reqId: number) => ({
 				url: `${reqId}/reject`,
-				method: 'POST',
+				method: 'PUT',
 				body: {},
 			}),
 		}),
