@@ -3,7 +3,7 @@ export interface ICreateBuyRequestArg {
 	quantity: number;
 }
 
-export type BuyRequestStatus = boolean | null;
+export type BuyRequestStatus = boolean | null | 'pending';
 
 export interface IBuyRequest extends ICreateBuyRequestArg {
 	id: number;

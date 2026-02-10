@@ -17,7 +17,7 @@ const StatusBadge = ({ status }: Props) => {
 
 	return (
 		<span className={`${Styles.badge} ${Styles[s]}`}>
-			{statusLabels[status]}
+			{/* {statusLabels[status]} */}
 		</span>
 	);
 };
