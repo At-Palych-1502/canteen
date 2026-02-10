@@ -3,19 +3,19 @@ import RequestCard from '../RequestCard/RequestCard';
 import Styles from './RequestsList.module.css';
 import { IBuyRequest } from '@/app/tools/types/buyRequests';
 
-interface RequestsListProps {
+interface Props {
 	requests: IBuyRequest[];
 	onApprove: (requestId: number) => void;
 	onReject: (requestId: number) => void;
 	onQuantityChange: (requestId: number, newQuantity: number) => void;
 }
 
-const RequestsList: React.FC<RequestsListProps> = ({
+const RequestsList = ({
 	requests,
 	onApprove,
 	onReject,
 	onQuantityChange,
-}) => {
+}: Props) => {
 	const pendingRequests = requests.filter(r => r.is_accepted === null);
 	const processedRequests = requests.filter(r => r.is_accepted !== null);
 

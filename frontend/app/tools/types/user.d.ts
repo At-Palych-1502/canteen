@@ -35,3 +35,10 @@ export interface AuthInputs {
 	surname: string;
 	patronymic: string;
 }
+
+export type UserRole = 'user' | 'admin' | 'cook';
+
+export interface IChangeRole {
+	id: number;
+	role: UserRole;
+}

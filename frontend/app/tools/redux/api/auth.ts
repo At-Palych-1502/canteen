@@ -1,6 +1,7 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { endpoints } from '@/app/config/endpoints';
 import type {
+	IChangeRole,
 	ILoginArgs,
 	ILoginRes,
 	IRegisterArgs,
@@ -44,22 +45,29 @@ export const authApi = createApi({
 				body: data,
 			}),
 		}),
-		// такого эндпоинта пока нету
-		// logout: build.mutation<ILogoutRes, void>({
-		// 	query: () => ({
-		// 		url: '/logout',
-		// 		method: 'POST',
-		// 	}),
-		// 	onQueryStarted: async (_, { queryFulfilled }) => {
-		// 		try {
-		// 			await queryFulfilled;
-		// 		} catch (error) {
-		// 			console.warn(error);
-		// 		} finally {
-		// 			removeAccessToken();
-		// 		}
-		// 	},
-		// }),
+		deleteUser: build.mutation<void, number>({
+			query: (id: number) => ({
+				url: endpoints.users.delete + `/${id}`,
+				method: 'DELETE',
+			}),
+		}),
+		getAllUsers: build.query<{ data: IUser[] }, void>({
+			query: () => ({
+				url: endpoints.users.getAll,
+			}),
+		}),
+		getUserById: build.query<IUser, number>({
+			query: (id: number) => ({
+				url: endpoints.users.getUser + `/${id}`,
+			}),
+		}),
+		changeRole: build.mutation<IUser, IChangeRole>({
+			query: ({ id, role }: IChangeRole) => ({
+				url: endpoints.users.changeRole + `/${id}`,
+				body: { role },
+				method: 'PUT',
+			}),
+		}),
 		getUser: build.query<{ user: IUser }, void>({
 			query: () => ({
 				url: endpoints.auth.user,
@@ -68,5 +76,12 @@ export const authApi = createApi({
 	}),
 });
 
-export const { useLoginMutation, useRegisterMutation, useGetUserQuery } =
-	authApi;
+export const {
+	useLoginMutation,
+	useRegisterMutation,
+	useGetUserQuery,
+	useGetAllUsersQuery,
+	useChangeRoleMutation,
+	useGetUserByIdQuery,
+	useDeleteUserMutation,
+} = authApi;

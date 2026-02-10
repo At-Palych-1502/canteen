@@ -12,6 +12,12 @@ export const endpoints = {
 		register: '/auth/register',
 		user: '/user',
 	},
+	users: {
+		getAll: '/users',
+		getUser: '/user',
+		changeRole: '/change_role',
+		delete: '/user',
+	},
 	dishes: {
 		base: `${BASE_URL}/dishes`,
 		addIngredient: '/add-ingredient',

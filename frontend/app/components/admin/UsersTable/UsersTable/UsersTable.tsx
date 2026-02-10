@@ -1,13 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { selectUser } from '../../../../tools/redux/user';
-import { IUser, UserRole } from '../../../../tools/types/user';
-import { getUsers, changeRole, deleteUser } from '../../../../tools/mockData';
+import { UserRole } from '../../../../tools/types/user';
 import { UserRow } from '../UserRow/UserRow';
 import { RoleChangePopup } from '../RoleChangePopup/RoleChangePopup';
 import { DeleteConfirmPopup } from '../DeleteConfirmPopup/DeleteConfirmPopup';
 import Styles from './UsersTable.module.css';
 import FeedbackSection from '../FeedbackSection/FeedbackSection';
+import {
+	useChangeRoleMutation,
+	useDeleteUserMutation,
+	useGetAllUsersQuery,
+} from '@/app/tools/redux/api/auth';
 
 interface PopupState {
 	type: 'role' | 'delete' | null;
@@ -18,9 +22,11 @@ interface PopupState {
 
 const USERS_PER_PAGE = 8;
 
-const UsersTable: React.FC = () => {
+const UsersTable = () => {
+	const { data: users, refetch } = useGetAllUsersQuery();
+	const [changeRole] = useChangeRoleMutation();
+	const [deleteUser] = useDeleteUserMutation();
 	const currentUser = useSelector(selectUser);
-	const [users, setUsers] = useState<IUser[]>([]);
 	const [searchQuery, setSearchQuery] = useState('');
 	const [roleFilter, setRoleFilter] = useState<UserRole | 'all'>('all');
 	const [currentPage, setCurrentPage] = useState(1);
@@ -32,27 +38,14 @@ const UsersTable: React.FC = () => {
 	});
 
 	useEffect(() => {
-		loadUsers();
-	}, []);
-
-	// Сбрасываем страницу при изменении поискового запроса или фильтра
-	useEffect(() => {
 		setCurrentPage(1);
 	}, [searchQuery, roleFilter]);
 
-	// Проверка роли пользователя - компонент отображается только для администраторов
 	if (!currentUser || currentUser.role !== 'admin') {
 		return null;
 	}
 
-	const loadUsers = () => {
-		const loadedUsers = getUsers();
-		setUsers(loadedUsers);
-		setCurrentPage(1);
-	};
-
-	// Фильтрация пользователей по поисковому запросу и типу
-	const filteredUsers = users.filter(user => {
+	const filteredUsers = (users || { data: [] }).data.filter(user => {
 		const query = searchQuery.toLowerCase();
 		const matchesSearch =
 			user.username.toLowerCase().includes(query) ||
@@ -67,7 +60,7 @@ const UsersTable: React.FC = () => {
 	const currentUsers = filteredUsers.slice(startIndex, endIndex);
 
 	const handleOpenRolePopup = (userId: number) => {
-		const user = users.find(u => u.id === userId);
+		const user = currentUsers.find(u => u.id === userId);
 		if (user) {
 			setPopup({
 				type: 'role',
@@ -79,7 +72,7 @@ const UsersTable: React.FC = () => {
 	};
 
 	const handleOpenDeletePopup = (userId: number) => {
-		const user = users.find(u => u.id === userId);
+		const user = currentUsers.find(u => u.id === userId);
 		if (user) {
 			setPopup({
 				type: 'delete',
@@ -95,17 +88,13 @@ const UsersTable: React.FC = () => {
 	};
 
 	const handleSaveRole = (userId: number, newRole: UserRole) => {
-		const success = changeRole(userId, newRole);
-		if (success) {
-			loadUsers();
-		}
+		changeRole({ id: userId, role: newRole });
+		setTimeout(() => refetch(), 100);
 	};
 
 	const handleDeleteUser = (userId: number) => {
-		const success = deleteUser(userId);
-		if (success) {
-			loadUsers();
-		}
+		deleteUser(userId);
+		setTimeout(() => refetch(), 100);
 	};
 
 	const handlePrevPage = () => {

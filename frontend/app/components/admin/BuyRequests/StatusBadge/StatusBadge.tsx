@@ -1,9 +1,8 @@
 import React from 'react';
 import Styles from './StatusBadge.module.css';
-import { BuyRequestStatus } from '@/app/tools/types/buyRequests';
 
 interface Props {
-	status: BuyRequestStatus;
+	status: 'pending' | boolean;
 }
 
 const statusLabels = {
@@ -13,7 +12,8 @@ const statusLabels = {
 };
 
 const StatusBadge = ({ status }: Props) => {
-	const s = status === null ? 'pending' : status ? 'approved' : 'denied';
+	const s =
+		typeof status !== 'boolean' ? status : status ? 'approved' : 'denied';
 
 	return (
 		<span className={`${Styles.badge} ${Styles[s]}`}>{statusLabels[s]}</span>
