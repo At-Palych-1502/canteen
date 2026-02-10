@@ -15,19 +15,21 @@ import Styles from './page.module.css';
 
 import { Popup } from '../components/Popup/Popup';
 import { useGetAllIngredientsQuery } from '../tools/redux/api/ingredients';
-// import { useCreateBuyRequestMutation } from '../tools/redux/api/buyRequests';
+import { useCreateBuyRequestMutation } from '../tools/redux/api/buyRequests';
+import { Notification } from '../components/Notification/Notification';
 
 const BuyRequestsPageCook: React.FC = () => {
 	const currentUser = useSelector(selectUser);
 	const [requests, setRequests] = useState<IBuyRequest[]>([]);
 	const [isOpenAddForm, setIsOpenAuthForm] = useState(false);
+	const [notification, setNotification] = useState({ isOpen: false, ok: false, text: "" });
 
 	const {
 		data: ingredients,
 		isLoading: ingredientsLoading,
 		refetch: refetchIngredients,
 	} = useGetAllIngredientsQuery();
-	// const [createBuyRequest] = useCreateBuyRequestMutation();
+	const [createBuyRequest] = useCreateBuyRequestMutation();
 
 	useEffect(() => {
 		loadRequests();
@@ -59,6 +61,13 @@ const BuyRequestsPageCook: React.FC = () => {
 		}
 	};
 
+	const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+		e.preventDefault();
+		setNotification({ isOpen: true, ok: false, text: "Амёбv.dknvldfbvdlkfа" });
+
+		setIsOpenAuthForm(false);
+	}
+
 	return (
 		<>
 		<div className={Styles.container}>
@@ -76,22 +85,33 @@ const BuyRequestsPageCook: React.FC = () => {
 
 		{isOpenAddForm && !ingredientsLoading && (
 			<Popup closePopup={() => {setIsOpenAuthForm(false)}}>
-				<form>
+				<form onSubmit={handleSubmit}>
 					<h1>Создание заявки на покупку</h1>
 					<div className={Styles["ingr_div"]}>
-						<h3>Ингредиент: </h3>
-						<select id="ingredient" name="ingredient">
+						<h2>Ингредиент: </h2>
+						<select className={Styles["select"]} id="ingredient" name="ingredient">
 							{ingredients && ingredients.data?.map((ingredient, index) => {
 								return <option key={index} value={ingredient.id}>{ingredient.name}</option>
 							})}
 						</select>
 					</div>
 					<div className={Styles["ingr_div"]}>
-						<h3>Количество: </h3>
+						<h2>Количество: </h2>
 						<input className={Styles['input']} type='text' id='quality' />
+					</div>
+					<div className={Styles.button_div}>
+						<button className="button" type="submit">Отправить</button>
 					</div>
 				</form>
 			</Popup>
+		)}
+
+		{notification.isOpen && (
+			<Notification 
+				close={() => { setNotification({ ...notification, isOpen: false}) }}
+				ok={notification.ok}
+				text={notification.text}
+			/>
 		)}
 		</>
 	);
