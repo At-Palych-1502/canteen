@@ -14,8 +14,10 @@ import {
 import { AuthButtons } from './AuthButtons';
 import { UserMenu } from './UserMenu';
 import { AuthPopups } from './AuthPopups';
+import { useRouter } from 'next/navigation';
 
 export const Header = () => {
+	const router = useRouter();
 	const User: IUser | null = useSelector(selectUser);
 	const dispatch = useDispatch();
 	const [isLoginPopup, setIsLoginPopup] = useState(false);
@@ -26,7 +28,7 @@ export const Header = () => {
 		dispatch(setUser(null));
 		removeAccessToken();
 		removeUserLocalStorage();
-		dispatch(SetOrderCount(0));
+		router.push('/');
 	};
 
 	return (

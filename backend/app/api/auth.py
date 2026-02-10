@@ -40,8 +40,7 @@ def login():
 def user():
     user_id = get_jwt_identity()
     user = User.query.get_or_404(user_id)
-    if not user:
-        return jsonify({"error": "Not valid json token"}), 404
+
     return jsonify(user=user.to_dict()), 200
 
 @bp.route('/users', methods=['GET'])
@@ -53,12 +52,16 @@ def users():
     return jsonify({"data": [user.to_dict() for user in Users]}), 200
 
 
-@bp.route('/user/<int:id>', methods=['GET'])
+@bp.route('/user/<int:id>', methods=['GET', 'DELETE'])
 @jwt_required()
 @role_required(['cook', 'admin'])
 def user_id(id):
     user = User.query.get_or_404(id)
-    return jsonify(user=user.to_dict()), 200
+    if request.method == 'GET':
+        return jsonify(user=user.to_dict()), 200
+    else:
+        db.session.delete(user)
+        db.session.commit()
 
 @bp.route('/auth/register', methods=['POST'])
 def register():

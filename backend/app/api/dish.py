@@ -24,18 +24,35 @@ def dish(id):
             return jsonify({"error": "Dish not found"}), 404
         return jsonify({"data": dish.to_dict(include_ingredients=True)}), 200
     elif request.method == 'DELETE':
+        db.session.execute(
+            db.delete(DishIngredient).where(DishIngredient.dish_id == dish.id)
+        )
         db.session.delete(dish)
         db.session.commit()
         return jsonify({"message": "Dish deleted"}), 200
-    else:
+    elif request.method == 'PUT':
         data = request.get_json()
-        allowed_keys = ["name", "weight", "meal", "quantity"]
+        allowed_keys = ["name", "weight", "meal", "quantity", "ingredients"]
         if not all(key in allowed_keys for key in data.keys()):
             return jsonify({"error": "Not valid data"}), 400
+
         for key, value in data.items():
-            setattr(dish, key, value)
+            if key != 'ingredients':
+                setattr(dish, key, value)
+
+        if 'ingredients' in data:
+            db.session.query(DishIngredient).filter_by(dish_id=dish.id).delete()
+            for ing_id in data["ingredients"]:
+                ingredient = Ingredient.query.get_or_404(ing_id)
+                dish_ing = DishIngredient(
+                    ingredient_id=ingredient.id,
+                    dish_id=dish.id
+                )
+                db.session.add(dish_ing)
+
         db.session.commit()
         return jsonify({"message": "Dish updated"}), 200
+
 
 
 @bp.route('/dishes', methods=['POST'])
@@ -43,19 +60,46 @@ def dish(id):
 @role_required(["admin", "cook"])
 def add_dish():
     data = request.get_json()
-    f = data.get
-    name = f("name")
-    weight = f("weight")
-    quantity = f("quantity")
-    dish = Dish(
-        name=name,
-        weight=weight,
-        quantity=quantity
-    )
-    db.session.add(dish)
-    db.session.commit()
+    if not data:
+        return jsonify({"error": "Отсутствует тело запроса"}), 400
 
-    return jsonify({"data": dish.to_dict()}), 201
+    name = data.get("name")
+    weight = data.get("weight")
+    ingredients = data.get("ingredients")
+
+    if not name or not weight:
+        return jsonify({"error": "Поля 'name' и 'weight' обязательны"}), 400
+
+    if not isinstance(weight, int) or weight <= 0:
+        return jsonify({"error": "Вес должен быть положительным целым числом"}), 400
+
+    if not isinstance(ingredients, list):
+        return jsonify({"error": "Поле 'ingredients' должно быть списком ID"}), 400
+
+    dish = Dish(
+            name=name,
+            weight=weight,
+        )
+    db.session.add(dish)
+    db.session.flush()
+
+    dish_ingredient_objects = []
+    for ing_id in ingredients:
+        if not isinstance(ing_id, int):
+            return jsonify({"error": f"Некорректный ID ингредиента: {ing_id}"}), 400
+
+        ingredient_exists = db.session.query(Ingredient.id).filter_by(id=ing_id).first()
+        if not ingredient_exists:
+            return jsonify({"error": f"Ингредиент с ID {ing_id} не найден"}), 404
+        dish_ingredient_objects.append(
+            DishIngredient(dish_id=dish.id, ingredient_id=ing_id)
+        )
+    db.session.add_all(dish_ingredient_objects)
+    db.session.commit()
+    return jsonify({
+            "message": "Блюдо успешно добавлено",
+            "dish": dish.to_dict(include_ingredients=True)
+        }), 201
 
 @bp.route('/dishes', methods=['GET'])
 @jwt_required()
@@ -66,24 +110,4 @@ def dishes():
     for dish in dishes:
         sl.append(dish.to_dict())
     return jsonify({"data": sl}), 200
-
-@bp.route('/dishes/<int:dish_id>/add_ingredient/<int:ingredient_id>', methods=['POST'])
-@jwt_required()
-@role_required(["admin", "cook"])
-def add_ingredient_to_dish(dish_id, ingredient_id):
-    dish = Dish.query.get_or_404(dish_id)
-    ingredient = Ingredient.query.get_or_404(ingredient_id)
-    existing = db.session.query(DishIngredient).filter_by(
-        ingredient_id=ingredient.id,
-        dish_id=dish.id
-    ).first()
-    if existing:
-        return jsonify({"error": "Ingredient-dish relation already exists"}), 208
-    dish_ing = DishIngredient(
-        ingredient_id=ingredient.id,
-        dish_id=dish.id
-    )
-    db.session.add(dish_ing)
-    db.session.commit()
-    return jsonify({"message": "Ingredient added to dish"}), 201
 
