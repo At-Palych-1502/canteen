@@ -169,6 +169,7 @@ def set_meals_count():
         db.session.commit()
     return jsonify({"message": "meals updated"}), 200
 
+
 @bp.route('/purchase_requests', methods=['POST', 'GET'])
 @jwt_required()
 @role_required(['admin', 'cook'])
@@ -177,7 +178,7 @@ def purchase_request():
         return {"purchase_requests": [purch_req.to_dict() for purch_req in PurchaseRequest.query.all()]}
     data = request.get_json()
     purchase_req = PurchaseRequest(
-        user_id=get_jwt_identity(),
+        user=get_jwt_identity(),
         ingredient_id=data['ingredient_id'],
         quantity=data['quantity'],
     )
@@ -191,9 +192,8 @@ def purchase_request():
 def purch_req_accept(id):
     purch_req = PurchaseRequest.query.get_or_404(id)
     if purch_req.is_accepted is True or purch_req.is_accepted is False:
-        purch_req.is_accepted = True
-    else:
-        return jsonify({"error": ""}), 400
+        return jsonify({"error": "actions with this request were already done"}), 400
+    purch_req.is_accepted = True
     ingredient = Ingredient.query.get_or_404(purch_req.ingredient_id)
     ingredient.quantity += purch_req.quantity
     db.session.commit()

@@ -34,11 +34,12 @@ const RequestCard: React.FC<RequestCardProps> = ({
 		<div className={`${Styles.card} ${!isPending ? Styles.disabled : ''}`}>
 			<div className={Styles.header}>
 				<div className={Styles.authorInfo}>
-					<div className={Styles.username}>{request.user_id}</div>
+					<div className={Styles.username}>
+						ID пользователя {request.user_id}
+					</div>
 				</div>
 				<StatusBadge status={request.is_accepted ?? 'pending'} />
 			</div>
-
 			<div className={Styles.body}>
 				<div className={Styles.ingredientSection}>
 					<div className={Styles.ingredientName}>{request.ingredient_id}</div>
@@ -47,7 +48,6 @@ const RequestCard: React.FC<RequestCardProps> = ({
 							<span className={Styles.label}>Запрошено:</span>
 							<QuantityControl
 								value={request.quantity}
-								unit={request.ingredient_id}
 								onChange={newQuantity =>
 									onQuantityChange(request.id, newQuantity)
 								}
