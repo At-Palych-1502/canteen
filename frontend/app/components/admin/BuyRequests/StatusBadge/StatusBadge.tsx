@@ -8,17 +8,15 @@ interface Props {
 
 const statusLabels = {
 	pending: 'Ожидает',
-	true: 'Одобрено',
-	false: 'Отклонено',
+	approved: 'Одобрено',
+	denied: 'Отклонено',
 };
 
 const StatusBadge = ({ status }: Props) => {
 	const s = status === null ? 'pending' : status ? 'approved' : 'denied';
 
 	return (
-		<span className={`${Styles.badge} ${Styles[s]}`}>
-			{/* {statusLabels[status]} */}
-		</span>
+		<span className={`${Styles.badge} ${Styles[s]}`}>{statusLabels[s]}</span>
 	);
 };
 

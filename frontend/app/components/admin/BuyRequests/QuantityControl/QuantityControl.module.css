@@ -9,7 +9,7 @@
 	padding: 4px 8px;
 	border: 1px solid #e0e0e0;
 	border-radius: 4px;
-	font-size: 14px;
+	font-size: 20px;
 	text-align: center;
 }
 
@@ -52,13 +52,14 @@
 }
 
 .displayContainer {
+  margin-left: 4px;
 	display: flex;
-	align-items: center;
-	gap: 8px;
+  align-items: center;
+	gap: 4px;
 }
 
 .value {
-	font-size: 14px;
+	font-size: 18px;
 	font-weight: 500;
 	color: #333;
 }

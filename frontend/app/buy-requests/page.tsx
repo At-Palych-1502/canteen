@@ -4,12 +4,6 @@ import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { selectUser } from '../tools/redux/user';
 import { IBuyRequest } from '../tools/types/mock';
-import {
-	getBuyRequests,
-	approveBuyRequest,
-	rejectBuyRequest,
-	updateBuyRequestQuantity,
-} from '../tools/mockData';
 import RequestsList from '../components/admin/BuyRequests/RequestsList/RequestsList';
 import Styles from './page.module.css';
 import {
@@ -17,50 +11,33 @@ import {
 	useCreateBuyRequestMutation,
 	useGetAllBuyRequestsQuery,
 	useRejectBuyRequestMutation,
+	useUpdateBuyRequestMutation,
 } from '../tools/redux/api/buyRequests';
 
 const BuyRequestsPage: React.FC = () => {
 	const currentUser = useSelector(selectUser);
 	const [requests, setRequests] = useState<IBuyRequest[]>([]);
 
-	const { data, isLoading } = useGetAllBuyRequestsQuery();
+	const { data, isLoading, refetch } = useGetAllBuyRequestsQuery();
 	const [acceptBuyRequest] = useAcceptBuyRequestMutation();
-	const [rejecyBuyRequest] = useRejectBuyRequestMutation();
+	const [rejectBuyRequest] = useRejectBuyRequestMutation();
+	const [updateBuyRequest] = useUpdateBuyRequestMutation();
 
 	console.log(data, isLoading);
 
-	useEffect(() => {
-		loadRequests();
-	}, []);
-
-	if (!currentUser || currentUser.role !== 'admin') {
-		return null;
-	}
-
-	const loadRequests = () => {
-		const loadedRequests = getBuyRequests();
-		setRequests(loadedRequests);
-	};
-
 	const handleApprove = (requestId: number) => {
-		const success = approveBuyRequest(requestId);
-		if (success) {
-			loadRequests();
-		}
+		acceptBuyRequest(requestId);
+		refetch();
 	};
 
 	const handleReject = (requestId: number) => {
-		const success = rejectBuyRequest(requestId);
-		if (success) {
-			loadRequests();
-		}
+		rejectBuyRequest(requestId);
+		refetch();
 	};
-
+	refetch;
 	const handleQuantityChange = (requestId: number, newQuantity: number) => {
-		const success = updateBuyRequestQuantity(requestId, newQuantity);
-		if (success) {
-			loadRequests();
-		}
+		updateBuyRequest({ id: requestId, data: { quantity: newQuantity } });
+		refetch();
 	};
 
 	return (
