@@ -3,7 +3,7 @@ import Styles from './QuantityControl.module.css';
 
 interface QuantityControlProps {
 	value: number;
-	unit: string;
+	unit: number;
 	onChange: (newValue: number) => void;
 	disabled?: boolean;
 }

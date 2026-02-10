@@ -41,41 +41,25 @@ const RequestCard: React.FC<RequestCardProps> = ({
 
 			<div className={Styles.body}>
 				<div className={Styles.ingredientSection}>
-					<div className={Styles.ingredientName}>{request.ingredient.name}</div>
+					<div className={Styles.ingredientName}>{request.ingredient_id}</div>
 					<div className={Styles.quantityInfo}>
 						<div className={Styles.quantityRow}>
 							<span className={Styles.label}>Запрошено:</span>
 							<QuantityControl
-								value={request.requestedQuantity}
-								unit={request.unit}
+								value={request.quantity}
+								unit={request.ingredient_id}
 								onChange={newQuantity =>
 									onQuantityChange(request.id, newQuantity)
 								}
 								disabled={!isPending}
 							/>
 						</div>
-						<div className={Styles.quantityRow}>
-							<span className={Styles.label}>В наличии:</span>
-							<span className={Styles.stockValue}>
-								{request.currentStock} {request.unit}
-							</span>
-						</div>
 					</div>
 				</div>
 
 				<div className={Styles.dateInfo}>
 					<span className={Styles.dateLabel}>Создано:</span>
-					<span className={Styles.dateValue}>
-						{formatDate(request.createdAt)}
-					</span>
-					{request.updatedAt && (
-						<>
-							<span className={Styles.dateLabel}>Обновлено:</span>
-							<span className={Styles.dateValue}>
-								{formatDate(request.updatedAt)}
-							</span>
-						</>
-					)}
+					<span className={Styles.dateValue}>{formatDate(request.date)}</span>
 				</div>
 			</div>
 

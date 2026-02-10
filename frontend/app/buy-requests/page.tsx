@@ -12,13 +12,20 @@ import {
 } from '../tools/mockData';
 import RequestsList from '../components/admin/BuyRequests/RequestsList/RequestsList';
 import Styles from './page.module.css';
-import { useGetAllBuyRequestsQuery } from '../tools/redux/api/buyRequests';
+import {
+	useAcceptBuyRequestMutation,
+	useCreateBuyRequestMutation,
+	useGetAllBuyRequestsQuery,
+	useRejectBuyRequestMutation,
+} from '../tools/redux/api/buyRequests';
 
 const BuyRequestsPage: React.FC = () => {
 	const currentUser = useSelector(selectUser);
 	const [requests, setRequests] = useState<IBuyRequest[]>([]);
 
 	const { data, isLoading } = useGetAllBuyRequestsQuery();
+	const [acceptBuyRequest] = useAcceptBuyRequestMutation();
+	const [rejecyBuyRequest] = useRejectBuyRequestMutation();
 
 	console.log(data, isLoading);
 
