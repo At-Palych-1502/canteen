@@ -5,6 +5,7 @@ import { ingredientsApi } from './api/ingredients';
 import { userSlice } from './user';
 import { mealsApi } from './api/meals';
 import { buyRequestsApi } from './api/buyRequests';
+import { reviewsApi } from './api/reviews';
 
 export const store = configureStore({
 	reducer: {
@@ -13,6 +14,7 @@ export const store = configureStore({
 		[ingredientsApi.reducerPath]: ingredientsApi.reducer,
 		[mealsApi.reducerPath]: mealsApi.reducer,
 		[buyRequestsApi.reducerPath]: buyRequestsApi.reducer,
+		[reviewsApi.reducerPath]: reviewsApi.reducer,
 		[userSlice.name]: userSlice.reducer,
 	},
 
@@ -23,6 +25,7 @@ export const store = configureStore({
 			ingredientsApi.middleware,
 			mealsApi.middleware,
 			buyRequestsApi.middleware,
+			reviewsApi.middleware,
 		),
 });
 

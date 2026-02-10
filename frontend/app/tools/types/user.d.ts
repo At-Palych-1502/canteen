@@ -42,3 +42,16 @@ export interface IChangeRole {
 	id: number;
 	role: UserRole;
 }
+
+export interface IBalanceRes {
+	user_id: number;
+	new_balance: number;
+}
+
+export interface IFilterUsersReq {
+	per_page?: number;
+	page?: number;
+	username?: string;
+	email?: string;
+	role?: string;
+}
