@@ -79,6 +79,7 @@ class Dish(Base):
             "id": self.id,
             "name": self.name,
             "weight": self.weight,
+            "quantity": self.quantity
         }
 
 
