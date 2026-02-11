@@ -58,7 +58,7 @@ class Dish(Base):
     quantity = Column(Integer)
 
     dish_ingredients = relationship("DishIngredient", back_populates="dish")
-    meals = relationship("Meal", secondary="meal_ingredients", back_populates="dishes"
+    meals = relationship("Meal", secondary="meal_dishes", back_populates="dishes"
                         )
     reviews = relationship("Review", back_populates="dish")
 
@@ -145,7 +145,7 @@ class Meal(Base):
     quantity = Column(Integer)
     type = Column(String(20), nullable=False)
 
-    dishes = relationship("Dish", secondary="meal_ingredients", back_populates="meals")
+    dishes = relationship("Dish", secondary="meal_dishes", back_populates="meals")
     orders = relationship("Order", secondary='orders_meals', back_populates='meals')
 
     def to_dict(self):
@@ -211,7 +211,7 @@ class OrderMeal(Base):
 
 
 class MealDish(Base):
-    __tablename__ = 'meal_ingredients'
+    __tablename__ = 'meal_dishes'
 
     meal_id = Column(Integer, ForeignKey('meals.id'), primary_key=True)
     dish_id = Column(Integer, ForeignKey('dishes.id'), primary_key=True)
