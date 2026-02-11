@@ -1,7 +1,9 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { endpoints } from '@/app/config/endpoints';
 import type {
+	IBalanceRes,
 	IChangeRole,
+	IFilterUsersReq,
 	ILoginArgs,
 	ILoginRes,
 	IRegisterArgs,
@@ -73,6 +75,30 @@ export const authApi = createApi({
 				url: endpoints.auth.user,
 			}),
 		}),
+		addAllergicIngredient: build.mutation<void, number>({
+			query: (ingredientId: number) => ({
+				url: `/add_allergic_ingredient/${ingredientId}`,
+			}),
+		}),
+		topupBalance: build.mutation<IBalanceRes, void>({
+			query: () => ({
+				url: `/balance/topup`,
+				method: 'PUT',
+			}),
+		}),
+		deductBalance: build.mutation<IBalanceRes, void>({
+			query: () => ({
+				url: `/balance/deduct`,
+				method: 'PUT',
+			}),
+		}),
+		filterUsers: build.query<{ users: IUser[] }, IFilterUsersReq>({
+			query: (filters: IFilterUsersReq) => ({
+				url: `/users/filter?${Object.keys(filters)
+					.map((key, index) => `${key}=${Object.values(filters)[index]}`)
+					.join('&')}`,
+			}),
+		}),
 	}),
 });
 
@@ -84,4 +110,7 @@ export const {
 	useChangeRoleMutation,
 	useGetUserByIdQuery,
 	useDeleteUserMutation,
+	useAddAllergicIngredientMutation,
+	useDeductBalanceMutation,
+	useTopupBalanceMutation,
 } = authApi;

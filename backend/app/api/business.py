@@ -35,14 +35,12 @@ def add_transaction(user_id, amount, description):
 @bp.route('/menu', methods=['GET'])
 @jwt_required()
 def get_menu():
-    day_of_week = request.get_json()['day_of_week']
+    day_of_week = request.args.get('day_of_week')
+    print(day_of_week)
     meals = Meal.query.filter_by(day_of_week=day_of_week).all()
     if not meals:
         return jsonify({"error": "There are no meals on this date"}), 400
-    sl = []
-    for meal in meals:
-        sl.append(meal.to_dict())
-    return jsonify(sl), 200
+    return jsonify({"meals": [meal.to_dict() for meal in meals]})
 
 @bp.route('/users/filter')
 @jwt_required()
