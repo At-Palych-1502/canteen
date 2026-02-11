@@ -59,7 +59,7 @@ class Dish(Base):
 
     dish_ingredients = relationship("DishIngredient", back_populates="dish")
     meals = relationship("Meal", secondary="meal_dishes", back_populates="dishes"
-                        )
+                         )
     reviews = relationship("Review", back_populates="dish")
 
     def to_dict(self, include_ingredients=False):
@@ -89,7 +89,7 @@ class Ingredient(Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String(80), nullable=False)
     quantity = Column(Integer)
-
+    unit = Column(String(20))
 
     dish_ingredients = relationship('DishIngredient', back_populates='ingredient', cascade='all, delete-orphan')
     allergic_users = relationship("User", secondary="user_allergies", back_populates="allergies")
@@ -104,8 +104,8 @@ class Ingredient(Base):
             for dish in self.dish_ingredients:
                 dish = Dish.query.get(dish.dish_id)
                 sl.append(dish.to_dict())
-            return {'id': self.id, 'name': self.name, 'quantity': self.quantity, 'dishes': sl}
-        return {'id': self.id, 'quantity': self.quantity, 'name': self.name}
+            return {'id': self.id, 'name': self.name, 'quantity': self.quantity, 'dishes': sl, "unit": self.unit}
+        return {'id': self.id, 'quantity': self.quantity, 'name': self.name, "unit": self.unit}
 
 
 class DishIngredient(Base):
@@ -183,6 +183,7 @@ class Order(Base):
             "meals": sl
         }
 
+
 class Review(Base):
     __tablename__ = 'reviews'
 
@@ -226,7 +227,7 @@ class PurchaseRequest(Base):
     ingredient_id = Column(Integer, ForeignKey('ingredients.id'), nullable=False)
     quantity = Column(Integer, nullable=False)
     is_accepted = Column(Boolean)
-    data=Column(DateTime, nullable=False, default=datetime.datetime.now())
+    data = Column(DateTime, nullable=False, default=datetime.datetime.now())
 
     user = relationship("User", back_populates="purchase_requests")
     ingredient = relationship("Ingredient", back_populates="purchase_requests")
@@ -241,6 +242,7 @@ class PurchaseRequest(Base):
             "date": self.data
         }
 
+
 class Subscription(Base):
     __tablename__ = 'subscriptions'
 
@@ -253,7 +255,7 @@ class Subscription(Base):
 
     @property
     def active(self):
-         return self.duration > 0
+        return self.duration > 0
 
     def to_dict(self):
         return {
