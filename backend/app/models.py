@@ -184,7 +184,6 @@ class Order(Base):
             "meals": sl
         }
 
-
 class Review(Base):
     __tablename__ = 'reviews'
 
@@ -243,7 +242,6 @@ class PurchaseRequest(Base):
             "date": self.data
         }
 
-
 class Subscription(Base):
     __tablename__ = 'subscriptions'
 
@@ -256,7 +254,7 @@ class Subscription(Base):
 
     @property
     def active(self):
-        return self.duration > 0
+         return self.duration > 0
 
     def to_dict(self):
         return {

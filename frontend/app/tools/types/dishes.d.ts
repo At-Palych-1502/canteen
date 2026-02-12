@@ -36,3 +36,18 @@ export interface IAddIngredientArg {
 export interface IGetAllDishes {
 	data: IDish[];
 }
+
+export interface IOffQuantity {
+	dish_id: number;
+	quantity: number;
+}
+
+export interface IUpQuantity {
+	dish_id: number;
+	quantity: number;
+	off_ingredients: number[];
+}
+
+export interface IChangeQuantityRes {
+	dish: IDish;
+}
