@@ -147,7 +147,7 @@ class Meal(Base):
     type = Column(String(20), nullable=False)
 
     dishes = relationship("Dish", secondary="meal_dishes", back_populates="meals")
-    orders = relationship("Order", secondary='orders_meals', back_populates='meals')
+    orders = relationship("Order", back_populates='meal')
 
     def to_dict(self):
         sl = []
@@ -169,10 +169,11 @@ class Order(Base):
 
     id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey("users.id"), nullable=True)
+    meal_id = Column(Integer, ForeignKey('meals.id'), nullable=True)
     date = Column(Date, nullable=False)
 
     user = relationship("User", back_populates="orders")
-    meals = relationship("Meal", secondary='orders_meals', back_populates="orders")
+    meal = relationship("Meal",  back_populates="orders")
 
     def to_dict(self):
         sl = [meal.to_dict() for meal in self.meals]

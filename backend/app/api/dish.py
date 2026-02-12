@@ -139,14 +139,16 @@ def dishes_up():
     dish_id = data['dish_id']
     off_ingredients = data['off_ingredients']
     dish = Dish.query.get_or_404(dish_id)
+    not_enough_ingredients = []
     if off_ingredients:
         dish_ingredients = DishIngredient.query.filter_by(dish_id=dish_id).all()
         ingredients = [Ingredient.query.get(dish_ingredient.ingredient_id) for dish_ingredient in dish_ingredients]
         for ingredient in ingredients:
             to_off = quantity * DishIngredient.query.filter_by(ingredient_id=ingredient.id, dish_id=dish_id).first().weight
             if ingredient.quantity < to_off:
-                return jsonify({"error": "There's no enough ingredients quantity", "ingredient": ingredient.to_dict()}), 400
-            ingredient.quantity -= to_off
+                not_enough_ingredients.append(ingredient.to_dict())
+    if len(not_enough_ingredients):
+        return jsonify({"error": "Not enough ingredients", "ingredients": not_enough_ingredients}), 400
     dish.quantity += quantity
     db.session.commit()
     return jsonify({"message": "success", "dish": dish.to_dict()}), 200

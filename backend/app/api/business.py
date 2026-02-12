@@ -99,12 +99,10 @@ def order():
         if not (subsc and subsc.active):
             return jsonify({"error": "Subscription not active"}), 400
 
-        # Создаём заказ
         order = Order(user_id=user_id, date=date)
         db.session.add(order)
-        db.session.flush()  # ← получаем order.id
+        db.session.flush()
 
-        # Связываем блюда
         for meal in meals:
             ord_meal = OrderMeal(order_id=order.id, meal_id=meal.id)
             db.session.add(ord_meal)
@@ -113,7 +111,7 @@ def order():
         add_transaction(user_id, total_price,
                         description=f"Произведен заказ питания на дату {data['date']}, общая цена: {total_price}, оплата абонементом")
         db.session.commit()
-        return jsonify({"message": "success"}), 200  # ← добавлен return!
+        return jsonify({"message": "success"}), 200
 
     else:  # balance
         if user.balance < total_price:
