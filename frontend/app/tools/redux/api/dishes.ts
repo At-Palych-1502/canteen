@@ -2,10 +2,13 @@ import { endpoints } from '@/app/config/endpoints';
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import type {
 	IAddIngredientArg,
+	IChangeQuantityRes,
 	IDishArg,
 	IDishUpdate,
 	IGetAllDishes,
 	IGetDishRes,
+	IOffQuantity,
+	IUpQuantity,
 } from '../../types/dishes';
 import { getAccessToken } from '../../utils/auth';
 
@@ -52,7 +55,20 @@ export const dishesApi = createApi({
 			query: ({ dishId, ingredientId }: IAddIngredientArg) => ({
 				url: `${dishId}/add_ingredient/${ingredientId}`,
 				method: 'POST',
-				body: {},
+			}),
+		}),
+		off: builder.mutation<IChangeQuantityRes, IOffQuantity>({
+			query: (data: IOffQuantity) => ({
+				url: `/off`,
+				method: 'PUT',
+				body: data,
+			}),
+		}),
+		upp: builder.mutation<IChangeQuantityRes, IUpQuantity>({
+			query: (data: IOffQuantity) => ({
+				url: `/off`,
+				method: 'PUT',
+				body: data,
 			}),
 		}),
 	}),
