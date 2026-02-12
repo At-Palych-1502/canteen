@@ -1,5 +1,8 @@
 from flask import send_file, render_template, Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
+from fpdf import FPDF
+from reportlab.pdfgen import canvas
+
 from ..models import Meal, User, Order, Subscription, OrderMeal, Transaction, PurchaseRequest, Ingredient
 import datetime
 from datetime import timedelta
@@ -7,7 +10,7 @@ from .. import db
 from ..utils import role_required
 from sqlalchemy import or_
 from io import BytesIO
-from fpdf import FPDF
+
 bp = Blueprint('business', __name__)
 
 
@@ -28,12 +31,11 @@ def add_transaction(user_id, amount, description):
 @bp.route('/menu', methods=['GET'])
 @jwt_required()
 def get_menu():
-    day_of_week = request.get_json()['day_of_week']
+    day_of_week = request.args.get('day_of_week')
     meals = Meal.query.filter_by(day_of_week=day_of_week).all()
     if not meals:
         return jsonify({"error": "There are no meals on this date"}), 400
     return jsonify({"meals": [meal.to_dict() for meal in meals]})
-
 
 @bp.route('/users/filter')
 @jwt_required()
@@ -119,7 +121,21 @@ def order():
         if user.balance < total_price:
             return jsonify({"error": "You don't have enough money"}), 400
 
-@bp.route('/orders_by_meal')
+        order = Order(user_id=user_id, date=date)
+        db.session.add(order)
+        db.session.flush()
+
+        for meal in meals:
+            ord_meal = OrderMeal(order_id=order.id, meal_id=meal.id)
+            db.session.add(ord_meal)
+
+        add_transaction(user_id, total_price,
+                        description=f"Произведен заказ питания на дату {data['date']}, общая цена: {total_price}")
+        db.session.commit()
+        return jsonify({"message": "success"}), 200
+
+
+@bp.route('/orders', methods=['GET'])
 @jwt_required()
 @role_required(['admin', 'cook'])
 def orders_by_meal():
@@ -172,12 +188,97 @@ def subscriptions():
 @jwt_required()
 @role_required(['admin'])
 def generate_orders_report():
-    pdf = FPDF()
-    pdf.add_page()
+    days = int(request.args.get('days'))
 
+    if days not in {1, 3, 7}:
+        return {"error": "Недопустимый период. Укажите 1, 3 или 7 дней."}, 400
+
+    now = datetime.datetime.utcnow()
+    start_date = (now - timedelta(days=days)).replace(hour=0, minute=0, second=0, microsecond=0)
+
+    orders = Order.query.filter(Order.date >= start_date).order_by(Order.date.desc()).all()
+
+    total_orders = len(orders)
+    total_meals = sum(len(order.meals) for order in orders)
+    unique_users = len(set(order.user_id for order in orders))
+
+    # Создаём PDF в памяти
+    buffer = BytesIO()
+    doc = SimpleDocTemplate(buffer, pagesize=A4, topMargin=0.8 * inch, bottomMargin=0.6 * inch)
+    styles = getSampleStyleSheet()
+    story = []
+
+    # Заголовок
+    title_style = ParagraphStyle(
+        'CustomTitle',
+        parent=styles['Heading1'],
+        fontSize=16,
+        spaceAfter=12,
+        alignment=1  # center
+    )
+    story.append(Paragraph("Отчёт по заказам", title_style))
+    story.append(Spacer(1, 12))
+
+    # Сводная информация
+    summary_data = [
+        ["Период:", f"{days} день(дней)"],
+        ["С:", start_date.strftime("%d.%m.%Y")],
+        ["По:", now.strftime("%d.%m.%Y %H:%M")],
+        ["Всего заказов:", str(total_orders)],
+        ["Всего блюд:", str(total_meals)],
+        ["Уникальных учеников:", str(unique_users)],
+    ]
+
+    summary_table = Table(summary_data, colWidths=[2 * inch, 3 * inch])
+    summary_table.setStyle(TableStyle([
+        ('FONTNAME', (0, 0), (-1, -1), 'Helvetica'),
+        ('FONTSIZE', (0, 0), (-1, -1), 10),
+        ('ALIGN', (0, 0), (0, -1), 'LEFT'),
+        ('ALIGN', (1, 0), (1, -1), 'LEFT'),
+        ('BOTTOMPADDING', (0, 0), (-1, -1), 6),
+    ]))
+    story.append(summary_table)
+    story.append(Spacer(1, 18))
+
+    # Таблица заказов
+    if orders:
+        story.append(Paragraph("Список заказов", styles['Heading2']))
+        story.append(Spacer(1, 10))
+
+        table_data = [["ID", "Дата", "Ученик (ID)", "Блюда"]]
+        for order in orders:
+            meals_str = ", ".join(meal.name for meal in order.meals) if order.meals else "—"
+            table_data.append([
+                str(order.id),
+                order.date.strftime("%d.%m.%Y %H:%M"),
+                str(order.user_id),
+                meals_str
+            ])
+
+        # Автоподбор ширины колонок
+        col_widths = [0.6 * inch, 1.5 * inch, 1.2 * inch, 3.2 * inch]
+        orders_table = Table(table_data, colWidths=col_widths)
+        orders_table.setStyle(TableStyle([
+            ('BACKGROUND', (0, 0), (-1, 0), colors.lightgrey),
+            ('TEXTCOLOR', (0, 0), (-1, 0), colors.black),
+            ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
+            ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+            ('FONTSIZE', (0, 0), (-1, -1), 9),
+            ('GRID', (0, 0), (-1, -1), 0.5, colors.grey),
+            ('VALIGN', (0, 0), (-1, -1), 'TOP'),
+        ]))
+        story.append(orders_table)
+    else:
+        story.append(Paragraph("За указанный период заказов не найдено.", styles['Normal']))
+
+    # Генерация PDF
+    doc.build(story)
+    buffer.seek(0)
+
+    filename = f"Отчёт_по_заказам_{days}дн_{now.strftime('%Y%m%d')}.pdf"
     return send_file(
-    BytesIO(pdf.output()),
-    mimetype='application/pdf',
-    as_attachment=False,
-    download_name='empty.pdf'
+        buffer,
+        mimetype='application/pdf',
+        as_attachment=True,
+        download_name=filename
     )
