@@ -25,7 +25,7 @@ def add_transaction(user_id, amount, description):
 @jwt_required()
 def order():
     data = request.get_json()
-    date = datetime.datetime.strptime(data['date'], '%Y-%m-%d')
+    date = datetime.date.strptime(data['date'], '%Y-%m-%d')
     meal_ids = data['meals']
     meals = [Meal.query.get_or_404(id) for id in meal_ids]
     total_price = sum(meal.price for meal in meals)
@@ -41,12 +41,10 @@ def order():
         if not (subsc and subsc.active):
             return jsonify({"error": "Subscription not active"}), 400
 
-        # Создаём заказ
         order = Order(user_id=user_id, date=date)
         db.session.add(order)
-        db.session.flush()  # ← получаем order.id
+        db.session.flush()
 
-        # Связываем блюда
         for meal in meals:
             ord_meal = OrderMeal(order_id=order.id, meal_id=meal.id)
             db.session.add(ord_meal)
@@ -55,9 +53,9 @@ def order():
         add_transaction(user_id, total_price,
                         description=f"Произведен заказ питания на дату {data['date']}, общая цена: {total_price}, оплата абонементом")
         db.session.commit()
-        return jsonify({"message": "success"}), 200  # ← добавлен return!
+        return jsonify({"message": "success"}), 200
 
-    else:  # balance
+    else:
         if user.balance < total_price:
             return jsonify({"error": "You don't have enough money"}), 400
 
