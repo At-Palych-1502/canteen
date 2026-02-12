@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
-from ..models import User, Order, Meal, Subscription, Transaction, OrderMeal
+from ..models import User, Order, Meal, Subscription, Transaction
 import datetime
 
 from .. import db
@@ -26,9 +26,8 @@ def add_transaction(user_id, amount, description):
 def order():
     data = request.get_json()
     date = datetime.date.strptime(data['date'], '%Y-%m-%d')
-    meal_ids = data['meals']
-    meals = [Meal.query.get_or_404(id) for id in meal_ids]
-    total_price = sum(meal.price for meal in meals)
+    meal_id = data['meal_id']
+    meal = Meal.query.get_or_404(meal_id)
     user_id = get_jwt_identity()
     user = User.query.get_or_404(user_id)
 
@@ -37,38 +36,33 @@ def order():
         return jsonify({"error": "Invalid payment type"}), 400
 
     if payment_type == 'subscription':
-        subsc = Subscription.query.filter_by(user_id=user.id).first()
-        if not (subsc and subsc.active):
+        subsc = Subscription.query.filter_by(user_id=user.id, type=meal.type).first()
+        if not subsc:
+            return jsonify({"error": "Subscription not found"}), 400
+        if not subsc.is_active():
             return jsonify({"error": "Subscription not active"}), 400
 
-        order = Order(user_id=user_id, date=date)
+        order = Order(user_id=user_id, date=date, meal_id=meal.id)
         db.session.add(order)
         db.session.flush()
 
-        for meal in meals:
-            ord_meal = OrderMeal(order_id=order.id, meal_id=meal.id)
-            db.session.add(ord_meal)
-
         subsc.duration -= 1
-        add_transaction(user_id, total_price,
-                        description=f"Произведен заказ питания на дату {data['date']}, общая цена: {total_price}, оплата абонементом")
+        add_transaction(user_id, meal.price,
+                            description=f"Произведен заказ питания на дату {data['date']}, общая цена: {meal.price}, оплата абонементом")
         db.session.commit()
         return jsonify({"message": "success"}), 200
 
     else:
-        if user.balance < total_price:
+        if meal.price > user.balance:
             return jsonify({"error": "You don't have enough money"}), 400
 
-        order = Order(user_id=user_id, date=date)
+        order = Order(user_id=user_id, date=date, meal_id=meal.id)
         db.session.add(order)
         db.session.flush()
+        user.balance -= meal.price
 
-        for meal in meals:
-            ord_meal = OrderMeal(order_id=order.id, meal_id=meal.id)
-            db.session.add(ord_meal)
-
-        add_transaction(user_id, total_price,
-                        description=f"Произведен заказ питания на дату {data['date']}, общая цена: {total_price}")
+        add_transaction(user_id, meal.price,
+                            description=f"Произведен заказ питания на дату {data['date']}, общая цена: {meal.price}, оплата балансом")
         db.session.commit()
         return jsonify({"message": "success"}), 200
 
