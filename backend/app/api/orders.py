@@ -31,6 +31,9 @@ def order():
     user_id = get_jwt_identity()
     user = User.query.get_or_404(user_id)
 
+    if datetime.datetime.strftime(date, "%A").lower() != meal.day_of_week:
+        return jsonify({"error": "This meal can't be ordered on this date", "meal": meal.to_dict()}), 400
+
     payment_type = data['payment_type'].lower()
     if payment_type not in ['subscription', 'balance']:
         return jsonify({"error": "Invalid payment type"}), 400
