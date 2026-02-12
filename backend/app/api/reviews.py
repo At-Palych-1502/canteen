@@ -55,3 +55,11 @@ def create_review(dish_id):
     db.session.add(review)
     db.session.commit()
     return jsonify({"review": review.to_dict()}), 200
+
+
+@bp.route('/reviews', methods=['GET'])
+@jwt_required()
+@role_required(['admin'])
+def reviews():
+    reviews = Review.query.all()
+    return jsonify({"reviews": [review.to_dict() for review in reviews]})

@@ -33,4 +33,7 @@ export const endpoints = {
 		getMealsDayOfWeek: `${BASE_URL}/meals_by_day`,
 		setMealsCount: `${BASE_URL}/set_meals_count`,
 	},
+	reviews: {
+		base: '/reviews',
+	},
 };

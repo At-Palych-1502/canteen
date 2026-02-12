@@ -3,6 +3,7 @@ from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identi
 from ..models import User, Dish, Ingredient, DishIngredient
 from ..utils import role_required
 from .. import db
+
 bp = Blueprint('dish', __name__)
 
 
@@ -54,7 +55,6 @@ def dish(id):
         return jsonify({"message": "Dish updated"}), 200
 
 
-
 @bp.route('/dishes', methods=['POST'])
 @jwt_required()
 @role_required(["admin", "cook"])
@@ -78,9 +78,9 @@ def add_dish():
         return jsonify({"error": "Invalid ingredients' ids"}), 400
 
     dish = Dish(
-            name=name,
-            weight=weight,
-        )
+        name=name,
+        weight=weight,
+    )
     if quantity:
         dish.quantity = quantity
     db.session.add(dish)
@@ -100,9 +100,10 @@ def add_dish():
     db.session.add_all(dish_ingredient_objects)
     db.session.commit()
     return jsonify({
-            "message": "Dish added",
-            "dish": dish.to_dict(include_ingredients=True)
-        }), 200
+        "message": "Dish added",
+        "dish": dish.to_dict(include_ingredients=True)
+    }), 200
+
 
 @bp.route('/dishes', methods=['GET'])
 @jwt_required()
@@ -114,3 +115,38 @@ def dishes():
         sl.append(dish.to_dict())
     return jsonify({"data": sl}), 200
 
+
+
+@bp.route('/dishes/off', methods=['PUT'])
+@role_required(['cook', 'admin'])
+def dishes_offs():
+    data = request.get_json()
+    quantity = data['quantity']
+    dish_id = data['dish_id']
+    dish = Dish.query.get_or_404(dish_id)
+    if dish.quantity < quantity:
+        return jsonify({"error": "There're no enough dishes to off"}), 400
+    dish.quantity -= quantity
+    db.session.commit()
+    return jsonify({"message": "success", "dish": dish.to_dict()}), 200
+
+
+@bp.route('/dishes/up', methods=['PUT'])
+@role_required(['admin', 'cook'])
+def dishes_up():
+    data = request.get_json()
+    quantity = data['quantity']
+    dish_id = data['dish_id']
+    off_ingredients = data['off_ingredients']
+    dish = Dish.query.get_or_404(dish_id)
+    if off_ingredients:
+        dish_ingredients = DishIngredient.query.filter_by(dish_id=dish_id).all()
+        ingredients = [Ingredient.query.get(dish_ingredient.ingredient_id) for dish_ingredient in dish_ingredients]
+        for ingredient in ingredients:
+            to_off = quantity * DishIngredient.query.filter_by(ingredient_id=ingredient.id, dish_id=dish_id).first().weight
+            if ingredient.quantity < to_off:
+                return jsonify({"error": "There's no enough ingredients quantity", "ingredient": ingredient.to_dict()}), 400
+            ingredient.quantity -= to_off
+    dish.quantity += quantity
+    db.session.commit()
+    return jsonify({"message": "success", "dish": dish.to_dict()}), 200
