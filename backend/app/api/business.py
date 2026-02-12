@@ -1,5 +1,8 @@
 from flask import send_file, render_template, Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
+from fpdf import FPDF
+from reportlab.pdfgen import canvas
+
 from ..models import Meal, User, Order, Subscription, OrderMeal, Transaction, PurchaseRequest, Ingredient
 import datetime
 from datetime import timedelta
@@ -7,13 +10,6 @@ from .. import db
 from ..utils import role_required
 from sqlalchemy import or_
 from io import BytesIO
-from reportlab.lib import colors
-from reportlab.lib.pagesizes import A4
-from reportlab.platypus import (
-    SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, PageBreak
-)
-from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
-from reportlab.lib.units import inch
 
 bp = Blueprint('business', __name__)
 
@@ -35,14 +31,11 @@ def add_transaction(user_id, amount, description):
 @bp.route('/menu', methods=['GET'])
 @jwt_required()
 def get_menu():
-    day_of_week = request.get_json()['day_of_week']
+    day_of_week = request.args.get('day_of_week')
     meals = Meal.query.filter_by(day_of_week=day_of_week).all()
     if not meals:
         return jsonify({"error": "There are no meals on this date"}), 400
-    sl = []
-    for meal in meals:
-        sl.append(meal.to_dict())
-    return jsonify(sl), 200
+    return jsonify({"meals": [meal.to_dict() for meal in meals]})
 
 @bp.route('/users/filter')
 @jwt_required()
@@ -145,18 +138,16 @@ def order():
 @bp.route('/orders', methods=['GET'])
 @jwt_required()
 @role_required(['admin', 'cook'])
-def orders():
-    orders = Order.query.all()
-    return jsonify({"data": [order.to_dict() for order in orders]}), 200
-
-
-@bp.route('/orders/<int:id>', methods=['GET'])
-@jwt_required()
-def order_by_id(id):
-    if request.method == 'GET':
-        order = Order.query.get_or_404(id)
-        return jsonify({"order": order.to_dict()})
-
+def orders_by_meal():
+    args = request.args
+    meal_id = args.get('meal_id')
+    date = datetime.date.today()
+    orders_meals = OrderMeal.query.filter_by(meal_id=meal_id).all()
+    count = 0
+    for order_meal in orders_meals:
+        if Order.query.get_or_404(order_meal.order_id).first().date == date:
+            count += 1
+    return jsonify({"count": count})
 
 @bp.route('/set_meals_count', methods=['PUT'])
 @jwt_required()
