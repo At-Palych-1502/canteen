@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, ForeignKey, DateTime, JSON, Float, Boolean
+from sqlalchemy import Column, Integer, Date, String, ForeignKey, DateTime, JSON, Float, Boolean
 from sqlalchemy.orm import relationship
 from .extensions import db
 import datetime
@@ -168,7 +168,7 @@ class Order(Base):
 
     id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey("users.id"), nullable=True)
-    date = Column(DateTime, nullable=False)
+    date = Column(Date, nullable=False)
 
     user = relationship("User", back_populates="orders")
     meals = relationship("Meal", secondary='orders_meals', back_populates="orders")
