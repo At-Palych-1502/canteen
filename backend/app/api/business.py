@@ -7,14 +7,7 @@ from .. import db
 from ..utils import role_required
 from sqlalchemy import or_
 from io import BytesIO
-from reportlab.lib import colors
-from reportlab.lib.pagesizes import A4
-from reportlab.platypus import (
-    SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, PageBreak
-)
-from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
-from reportlab.lib.units import inch
-
+from fpdf import FPDF
 bp = Blueprint('business', __name__)
 
 
