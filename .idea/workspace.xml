@@ -14,17 +14,7 @@
       <change beforePath="$PROJECT_DIR$/backend/migrations/alembic.ini" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/migrations/env.py" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/migrations/script.py.mako" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/migrations/versions/015fb305985e_.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/migrations/versions/0f7821ead070_.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/migrations/versions/3fefeb77a012_.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/migrations/versions/48ae280f7a14_.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/migrations/versions/5ed895aeb11b_.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/migrations/versions/86fc02189d5d_.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/migrations/versions/90313bff2b9f_.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/migrations/versions/f3966e5d3c08_.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/migrations/versions/f55cdafa0c4c_.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/migrations/versions/fbd2fb768cb6_.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/migrations/versions/fc009ccb85b8_.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/migrations/versions/74453482bc30_.py" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -61,16 +51,16 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Python.test.executor": "Run",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "dev",
-    "last_opened_file_path": "C:/Users/Honor/PycharmProjects/canteen-git/canteen"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Python.test.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;dev&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/Honor/PycharmProjects/canteen-git/canteen&quot;
   }
-}]]></component>
+}</component>
   <component name="RunManager">
     <configuration default="true" type="PythonConfigurationType" factoryName="Python">
       <option name="ENV_FILES" value="" />
@@ -208,6 +198,17 @@
       <updated>1770097643862</updated>
     </task>
     <servers />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

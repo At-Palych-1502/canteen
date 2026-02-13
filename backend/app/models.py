@@ -48,17 +48,25 @@ class User(Base):
         return f"User('{self.username}', '{self.email}', '{self.role}')"
 
 
+class MealDishes(Base):
+    __tablename__ = 'meals_dishes'
+
+    meal_id = Column(Integer, ForeignKey("meals.id"), primary_key=True)
+    dish_id = Column(Integer, ForeignKey("dishes.id"), primary_key=True)
+
+
+
 class Dish(Base):
     __tablename__ = 'dishes'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String(80), nullable=False)
     weight = Column(Integer, nullable=False)
-    created_at = Column(DateTime, nullable=False, default=datetime.datetime.now())
+    created_at = Column(DateTime, nullable=False, default=datetime.datetime.now)
     quantity = Column(Integer)
 
     dish_ingredients = relationship("DishIngredient", back_populates="dish")
-    meals = relationship("Meal", secondary="meal_dishes", back_populates="dishes"
+    meals = relationship("Meal", secondary="meals_dishes", back_populates="dishes"
                          )
     reviews = relationship("Review", back_populates="dish")
 
@@ -124,7 +132,7 @@ class Transaction(Base):
     user_id = Column(Integer, ForeignKey('users.id'), nullable=True)
     amount = Column(Float, nullable=False)
     description = Column(String(200), nullable=False)
-    created_at = Column(DateTime, nullable=False, default=datetime.datetime.now())
+    created_at = Column(DateTime, nullable=False, default=datetime.datetime.now)
 
     user = relationship("User", back_populates="transactions")
 
@@ -146,7 +154,7 @@ class Meal(Base):
     quantity = Column(Integer)
     type = Column(String(20), nullable=False)
 
-    dishes = relationship("Dish", secondary="meal_dishes", back_populates="meals")
+    dishes = relationship("Dish", secondary="meals_dishes", back_populates="meals")
     orders = relationship("Order", back_populates='meal')
 
     def to_dict(self):
@@ -171,17 +179,21 @@ class Order(Base):
     user_id = Column(Integer, ForeignKey("users.id"), nullable=True)
     meal_id = Column(Integer, ForeignKey("meals.id"), nullable=True)
     date = Column(Date, nullable=False)
+    price = Column(Integer, nullable=False)
+    is_given = Column(Boolean, default=False, nullable=True)
+    payment_type = Column(String(20), nullable=False)
 
     user = relationship("User", back_populates="orders")
     meal = relationship("Meal", back_populates="orders")
 
     def to_dict(self):
-        sl = [meal.to_dict() for meal in self.meals]
         return {
             "id": self.id,
             "user_id": self.user_id,
             "date": self.date,
-            "meals": sl
+            "meal": self.meal.to_dict(),
+            "price": self.price,
+            "is_given": self.is_given
         }
 
 class Review(Base):
@@ -205,12 +217,6 @@ class Review(Base):
         }
 
 
-class MealDish(Base):
-    __tablename__ = 'meal_dishes'
-
-    meal_id = Column(Integer, ForeignKey('meals.id'), primary_key=True)
-    dish_id = Column(Integer, ForeignKey('dishes.id'), primary_key=True)
-
 
 class PurchaseRequest(Base):
     __tablename__ = 'purchase_requests'
@@ -220,7 +226,7 @@ class PurchaseRequest(Base):
     ingredient_id = Column(Integer, ForeignKey('ingredients.id'), nullable=False)
     quantity = Column(Integer, nullable=False)
     is_accepted = Column(Boolean)
-    data = Column(DateTime, nullable=False, default=datetime.datetime.now())
+    data = Column(DateTime, nullable=False, default=datetime.datetime.now)
 
     user = relationship("User", back_populates="purchase_requests")
     ingredient = relationship("Ingredient", back_populates="purchase_requests")

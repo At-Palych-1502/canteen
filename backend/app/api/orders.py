@@ -34,6 +34,8 @@ def order():
     if datetime.datetime.strftime(date, "%A").lower() != meal.day_of_week:
         return jsonify({"error": "This meal can't be ordered on this date", "meal": meal.to_dict()}), 400
 
+    if meal.day_of_week != datetime.datetime.strftime(date, '%A').lower():
+        return jsonify({"error": "This meal can't be ordered on this date"}), 400
     payment_type = data['payment_type'].lower()
     if payment_type not in ['subscription', 'balance']:
         return jsonify({"error": "Invalid payment type"}), 400
@@ -45,7 +47,7 @@ def order():
         if not subsc.is_active():
             return jsonify({"error": "Subscription not active"}), 400
 
-        order = Order(user_id=user_id, date=date, meal_id=meal.id)
+        order = Order(user_id=user_id, date=date, meal_id=meal.id, payment_type=payment_type)
         db.session.add(order)
         db.session.flush()
 
@@ -59,7 +61,7 @@ def order():
         if meal.price > user.balance:
             return jsonify({"error": "You don't have enough money"}), 400
 
-        order = Order(user_id=user_id, date=date, meal_id=meal.id)
+        order = Order(user_id=user_id, date=date, meal_id=meal.id, payment_type=payment_type, price=meal.price)
         db.session.add(order)
         db.session.flush()
         user.balance -= meal.price
@@ -76,9 +78,18 @@ def orders():
     orders = Order.query.all()
     return jsonify({"data": [order.to_dict() for order in orders]}), 200
 
-@bp.route('/orders/<int:id>', methods=['GET'])
+@bp.route('/orders/<int:id>', methods=['GET', 'DELETE'])
 @jwt_required()
 def order_by_id(id):
     if request.method == 'GET':
         order = Order.query.get_or_404(id)
         return jsonify({"order": order.to_dict()})
+    if request.method == 'DELETE':
+        order = Order.query.get_or_404(id)
+        if order.date <= datetime.datetime.today().date():
+            return jsonify({"error": "Order on today or days before can't be deleted"}), 400
+        user = User.query.get_or_404(get_jwt_identity())
+        user.balance += order.price
+        db.session.delete(order)
+        db.session.commit()
+        return jsonify({"message": "success"}), 200
