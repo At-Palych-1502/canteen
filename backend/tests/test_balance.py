@@ -26,8 +26,11 @@ def test_balance_topup_success(client, app):
         }, headers={'Authorization': f'Bearer {access_token}'})
 
         assert response.status_code == 200
-        # assert 'new_balance' in response.json
-        # assert response.json['new_balance'] == 1000
+
+
+
+
+        # Тут нужно вытащить баланс сейчас и сверить что он равен 1000
 
 
 
