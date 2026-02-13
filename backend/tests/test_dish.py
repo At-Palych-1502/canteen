@@ -8,7 +8,8 @@ def test_user_becomes_admin_and_adds_dish(client, app):
         # Логинимся как администратор с предопределенными учетными данными
         admin_login = client.post('/api/auth/login', json={
             'username': 'admin',
-            'password': 'password'
+            'password': 'password',
+            "remember_me": True
         })
 
         assert 'access_token' in admin_login.json
