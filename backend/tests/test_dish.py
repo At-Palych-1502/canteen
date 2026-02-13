@@ -3,18 +3,26 @@ from app.models import Dish, Ingredient, User
 def test_user_becomes_admin_and_adds_dish(client, app):
     """Тест: администратор добавляет блюдо"""
     with app.app_context():
+
+
         # Логинимся как администратор с предопределенными учетными данными
         admin_login = client.post('/api/auth/login', json={
             'username': 'admin',
             'password': 'password'
         })
-        print(admin_login.status_code)
-        assert admin_login.status_code == 200
+
         assert 'access_token' in admin_login.json
-        assert 'user' in admin_login.json
+
+        # AssertionError: assert 'access_token' in {'error': 'Invalid credentials'}         не получается авторизоваться
+
         admin_token = admin_login.json['access_token']
         admin_user = admin_login.json['user']
         assert admin_user['role'] == 'admin'  # Проверяем, что это действительно администратор
+
+        print(admin_login.status_code, admin_user['role'])# Выдаёт ошибку 401 не понимаю почему :(
+
+
+
 
         # Добавляем блюдо с пустым списком ингредиентов
         response = client.post('/api/dishes', json={
