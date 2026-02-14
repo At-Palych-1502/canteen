@@ -61,7 +61,7 @@ export default function FeedbackPage() {
 				<FeadBackForm onSubmit={onSubmit} showNotification={showNotification} />
 			</div>
 
-			<FeadBackList userFeedbacks={userFeedbacks} />
+			<FeadBackList userFeedbacks={userFeedbacks} changeFeedback={() => {}}/>
 		</div>
 		
 		{notification.isOpen && (
