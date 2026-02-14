@@ -15,7 +15,7 @@ def purchase_request():
         return {"purchase_requests": [purch_req.to_dict() for purch_req in PurchaseRequest.query.all()]}
     data = request.get_json()
     purchase_req = PurchaseRequest(
-        user=get_jwt_identity(),
+        user_id=get_jwt_identity(),
         ingredient_id=data['ingredient_id'],
         quantity=data['quantity'],
     )
