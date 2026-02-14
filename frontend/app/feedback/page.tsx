@@ -7,6 +7,7 @@ import { IFeedback } from '@/app/tools/types/mock';
 import { useRouter } from 'next/navigation';
 import { useSelector } from 'react-redux';
 import { selectUser } from '../tools/redux/user';
+import { useGetAllDishesQuery } from '../tools/redux/api/dishes';
 
 // ID текущего пользователя (в реальном приложении берется из Redux)
 const CURRENT_USER_ID = 'user1';
@@ -21,12 +22,18 @@ export default function FeedbackPage() {
 	const router = useRouter();
 	const User = useSelector(selectUser);
 
+	const {
+		data: dishes,
+		isLoading: dishesLoading,
+		refetch: refetchDishes,
+	} = useGetAllDishesQuery();
+
 	useEffect(() => {
-		if (User && User.role !== 'student') router.push('/');
+		if (!User || User.role !== 'student') router.push('/');
 	}, [User, router]);
 
 	// Фильтруем отзывы только для текущего пользователя
-	const userFeedbacks = feedbacks.filter(f => f.userId === CURRENT_USER_ID);
+	const userFeedbacks = feedbacks.filter(f => f.userId === CURRENT_USER_ID);	
 
 	const handleRatingClick = (value: number) => {
 		setRating(value);
@@ -117,14 +124,13 @@ export default function FeedbackPage() {
 							required
 						>
 							<option value=''>Выберите блюдо...</option>
-							{mockDishes
-								.filter(dish => dish.available)
+							{dishes?.data
 								.sort((a, b) => a.name.localeCompare(b.name, 'ru'))
 								.map(dish => (
 									<option key={dish.id} value={dish.id}>
-										{dish.name} - {dish.price} ₽
+										{dish.name}
 									</option>
-								))}
+								))}	
 						</select>
 					</div>
 
