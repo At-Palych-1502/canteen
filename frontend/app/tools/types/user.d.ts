@@ -5,6 +5,7 @@ export interface IUser {
 	username: string;
 	id: number;
 	role: UserRole;
+	name: string
 }
 
 export interface ILoginArgs {
