@@ -17,11 +17,16 @@ import { Popup } from '../components/Popup/Popup';
 import { useGetAllIngredientsQuery } from '../tools/redux/api/ingredients';
 import { useCreateBuyRequestMutation } from '../tools/redux/api/buyRequests';
 import { Notification } from '../components/Notification/Notification';
+import { IIngredient } from '../tools/types/ingredients';
+import { isNumberObject } from 'util/types';
+import { putIngridientsRequest } from '../tools/utils/ingriduents';
 
 const BuyRequestsPageCook: React.FC = () => {
 	const currentUser = useSelector(selectUser);
 	const [requests, setRequests] = useState<IBuyRequest[]>([]);
 	const [isOpenAddForm, setIsOpenAuthForm] = useState(false);
+	const [curIngridient, setCurIngridient] = useState<number>();
+	const [curQuality, setCurQuality] = useState<number>();
 	const [notification, setNotification] = useState({ isOpen: false, ok: false, text: "" });
 
 	const {
@@ -34,6 +39,12 @@ const BuyRequestsPageCook: React.FC = () => {
 	useEffect(() => {
 		loadRequests();
 	}, []);
+
+	useEffect(() => {
+		if (isOpenAddForm) {
+			setCurIngridient(ingredients?.data[0]?.id ?? 0);
+		}
+	}, [isOpenAddForm]);
 
 	const loadRequests = () => {
 		const loadedRequests = getBuyRequests();
@@ -61,11 +72,34 @@ const BuyRequestsPageCook: React.FC = () => {
 		}
 	};
 
-	const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-		e.preventDefault();
-		setNotification({ isOpen: true, ok: false, text: "Амёбv.dknvldfbvdlkfа" });
+	const selectHandler = (e: React.ChangeEvent<HTMLSelectElement>) => {
+		setCurIngridient(Number(e.currentTarget.value));
+	}
 
-		setIsOpenAuthForm(false);
+	const qualityChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+		if (Number(e.target.value)) {
+			setCurQuality(Number(e.target.value));
+		} else {
+			setNotification({ isOpen: true, ok: false, text: "Некоректный ввод количества товара" });
+		}
+	}
+
+	const handleSubmit = async(e: React.FormEvent<HTMLFormElement>) => {
+		e.preventDefault();
+
+		if (curQuality) {
+			const data = { ingredient_id: curIngridient ?? 1, quantity: curQuality };
+			
+			const response = await putIngridientsRequest(data);
+			setNotification({ isOpen: true, ...response });
+
+			setIsOpenAuthForm(false);
+		} else {
+			setNotification({ isOpen: true, ok: false, text: "Введите количество товара!" });
+		}
+		
+		
+
 	}
 
 	return (
@@ -89,7 +123,7 @@ const BuyRequestsPageCook: React.FC = () => {
 					<h1>Создание заявки на покупку</h1>
 					<div className={Styles["ingr_div"]}>
 						<h2>Ингредиент: </h2>
-						<select className={Styles["select"]} id="ingredient" name="ingredient">
+						<select onChange={selectHandler} className={Styles["select"]} id="ingredient" name="ingredient">
 							{ingredients && ingredients.data?.map((ingredient, index) => {
 								return <option key={index} value={ingredient.id}>{ingredient.name}</option>
 							})}
@@ -97,7 +131,7 @@ const BuyRequestsPageCook: React.FC = () => {
 					</div>
 					<div className={Styles["ingr_div"]}>
 						<h2>Количество: </h2>
-						<input className={Styles['input']} type='text' id='quality' />
+						<input onChange={qualityChangeHandler} className={Styles['input']} type='number' id='quality' />
 					</div>
 					<div className={Styles.button_div}>
 						<button className="button" type="submit">Отправить</button>

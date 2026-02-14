@@ -55,6 +55,9 @@
 .input:hover{
 	border-bottom: 1px solid #000;
 }
+.input:focus{
+	border-bottom: 1px solid #000;
+}
 .button_div{
 	display: flex;
 	justify-content: center;

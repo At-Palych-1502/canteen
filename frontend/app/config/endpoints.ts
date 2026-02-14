@@ -18,6 +18,7 @@ export const endpoints = {
 	},
 	ingredients: {
 		base: `${BASE_URL}/ingredients`,
+		putIngridientsRequest: `${BASE_URL}/purchase_request`,
 	},
 	meals: {
 		base: `${BASE_URL}/meals`,
