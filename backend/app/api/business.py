@@ -11,6 +11,7 @@ from ..utils import role_required
 from sqlalchemy import or_
 from io import BytesIO
 
+
 bp = Blueprint('business', __name__)
 
 
@@ -36,6 +37,7 @@ def get_menu():
     if not meals:
         return jsonify({"error": "There are no meals on this date"}), 400
     return jsonify({"meals": [meal.to_dict() for meal in meals]})
+
 
 @bp.route('/users/filter')
 @jwt_required()
