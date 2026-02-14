@@ -1,21 +1,15 @@
 import React from 'react';
-import { IBuyRequest } from '@/app/tools/types/mock';
 import StatusBadge from '../StatusBadge/StatusBadge';
 import QuantityControl from '../QuantityControl/QuantityControl';
 import Styles from './RequestCard.module.css';
+import { IBuyRequest } from '@/app/tools/types/buyRequests';
 
 interface RequestCardProps {
 	request: IBuyRequest;
-	onApprove: (requestId: number) => void;
-	onReject: (requestId: number) => void;
-	onQuantityChange: (requestId: number, newQuantity: number) => void;
 }
 
 const RequestCard: React.FC<RequestCardProps> = ({
 	request,
-	onApprove,
-	onReject,
-	onQuantityChange,
 }) => {
 	const formatDate = (dateString: string) => {
 		const date = new Date(dateString);
@@ -28,16 +22,16 @@ const RequestCard: React.FC<RequestCardProps> = ({
 		});
 	};
 
-	const isPending = request.status === 'pending';
+	const isPending = typeof(request.is_accepted) !== 'boolean';
 
 	return (
 		<div className={`${Styles.card} ${!isPending ? Styles.disabled : ''}`}>
 			<div className={Styles.header}>
 				<div className={Styles.authorInfo}>
-					<div className={Styles.username}>{request.author.username}</div>
-					<div className={Styles.fullName}>{request.author.fullName}</div>
+					<div className={Styles.username}>{`Имя: ${request?.user?.name ?? "Аноним"}`}</div>
+					<div className={Styles.fullName}>{`Имя пользователя: ${request?.user?.username ?? "Аноним"}`}</div>
 				</div>
-				<StatusBadge status={request.status} />
+				<StatusBadge status={isPending ? 'pending' : request.is_accepted ?? false} />
 			</div>
 
 			<div className={Styles.body}>
@@ -46,20 +40,7 @@ const RequestCard: React.FC<RequestCardProps> = ({
 					<div className={Styles.quantityInfo}>
 						<div className={Styles.quantityRow}>
 							<span className={Styles.label}>Запрошено:</span>
-							<QuantityControl
-								value={request.requestedQuantity}
-								unit={request.unit}
-								onChange={newQuantity =>
-									onQuantityChange(request.id, newQuantity)
-								}
-								disabled={!isPending}
-							/>
-						</div>
-						<div className={Styles.quantityRow}>
-							<span className={Styles.label}>В наличии:</span>
-							<span className={Styles.stockValue}>
-								{request.currentStock} {request.unit}
-							</span>
+							<h5>{request.quantity}</h5>
 						</div>
 					</div>
 				</div>
@@ -67,16 +48,8 @@ const RequestCard: React.FC<RequestCardProps> = ({
 				<div className={Styles.dateInfo}>
 					<span className={Styles.dateLabel}>Создано:</span>
 					<span className={Styles.dateValue}>
-						{formatDate(request.createdAt)}
+						{formatDate(request.date)}
 					</span>
-					{request.updatedAt && (
-						<>
-							<span className={Styles.dateLabel}>Обновлено:</span>
-							<span className={Styles.dateValue}>
-								{formatDate(request.updatedAt)}
-							</span>
-						</>
-					)}
 				</div>
 			</div>
 		</div>
