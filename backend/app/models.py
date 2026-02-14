@@ -214,6 +214,7 @@ class Review(Base):
             "username": self.user.username,
             "score": self.score,
             "comment": self.comment,
+            "dish": self.dish.to_dict()
         }
 
 
