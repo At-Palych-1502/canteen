@@ -15,7 +15,7 @@ import Styles from './page.module.css';
 
 import { Popup } from '../components/Popup/Popup';
 import { useGetAllIngredientsQuery } from '../tools/redux/api/ingredients';
-import { useCreateBuyRequestMutation } from '../tools/redux/api/buyRequests';
+import { useCreateBuyRequestMutation, useGetAllBuyRequestsQuery } from '../tools/redux/api/buyRequests';
 import { Notification } from '../components/Notification/Notification';
 import { IIngredient } from '../tools/types/ingredients';
 import { isNumberObject } from 'util/types';
@@ -35,9 +35,11 @@ const BuyRequestsPageCook: React.FC = () => {
 		refetch: refetchIngredients,
 	} = useGetAllIngredientsQuery();
 	const [createBuyRequest] = useCreateBuyRequestMutation();
+	const { data, refetch } = useGetAllBuyRequestsQuery();
 
 	useEffect(() => {
 		loadRequests();
+		console.log(data);
 	}, []);
 
 	useEffect(() => {
@@ -97,9 +99,6 @@ const BuyRequestsPageCook: React.FC = () => {
 		} else {
 			setNotification({ isOpen: true, ok: false, text: "Введите количество товара!" });
 		}
-		
-		
-
 	}
 
 	return (
@@ -109,12 +108,11 @@ const BuyRequestsPageCook: React.FC = () => {
 				<h1 className={Styles.title}>Заявки на покупки</h1>
 				<button onClick={() => {setIsOpenAuthForm(true)}} className={Styles["button"]}>Добавить</button>
 			</div>
-			<RequestsList
-				requests={requests}
-				onApprove={handleApprove}
-				onReject={handleReject}
-				onQuantityChange={handleQuantityChange}
-			/>
+			{data && (
+				<RequestsList
+					requests={data.purchase_requests}
+				/>
+			)}
 		</div>
 
 		{isOpenAddForm && !ingredientsLoading && (

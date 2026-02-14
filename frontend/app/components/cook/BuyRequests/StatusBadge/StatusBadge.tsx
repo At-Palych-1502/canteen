@@ -1,22 +1,22 @@
 import React from 'react';
-import { BuyRequestStatus } from '@/app/tools/types/mock';
 import Styles from './StatusBadge.module.css';
 
-interface StatusBadgeProps {
-	status: BuyRequestStatus;
+interface Props {
+	status: 'pending' | boolean;
 }
 
-const statusLabels: Record<BuyRequestStatus, string> = {
+const statusLabels = {
 	pending: 'Ожидает',
 	approved: 'Одобрено',
-	rejected: 'Отклонено',
+	denied: 'Отклонено',
 };
 
-const StatusBadge: React.FC<StatusBadgeProps> = ({ status }) => {
+const StatusBadge = ({ status }: Props) => {
+	const s =
+		typeof status !== 'boolean' ? status : status ? 'approved' : 'denied';
+
 	return (
-		<span className={`${Styles.badge} ${Styles[status]}`}>
-			{statusLabels[status]}
-		</span>
+		<span className={`${Styles.badge} ${Styles[s]}`}>{statusLabels[s]}</span>
 	);
 };
 
