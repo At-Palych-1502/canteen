@@ -16,7 +16,8 @@ def test_add_ingredient_success(client, app):
 
         # Добавляем ингредиент с авторизацией
         response = client.post('/api/ingredients', json={
-            'name': 'Test Ingredient'
+            'name': 'Test Ingredient',
+            'quantity': '1'
         }, headers={'Authorization': f'Bearer {access_token}'})
 
         assert response.status_code == 201 # почему 201???
@@ -43,12 +44,14 @@ def test_add_ingredient_duplicate_name(client, app):
 
         # Первое добавление
         client.post('/api/ingredients', json={
-            'name': 'Test Ingredient'
+            'name': 'Test Ingredient',
+            'quantity': '1'
         }, headers={'Authorization': f'Bearer {access_token}'})
 
         # Попытка добавить с тем же именем
         response = client.post('/api/ingredients', json={
-            'name': 'Test Ingredient'
+            'name': 'Test Ingredient',
+            'quantity': '1'
         }, headers={'Authorization': f'Bearer {access_token}'})
 
         assert response.status_code == 201
@@ -80,8 +83,10 @@ def test_add_allergic_ingredient_success(client, app):
 
 
         response = client.post('/api/ingredients', json={
-            'name': 'Test Allergic Ingredient'
+            'name': 'Test Allergic Ingredient',
+            'quantity': '1'
         }, headers={'Authorization': f'Bearer {admin_token}'})
+
         assert response.status_code == 201
         assert 'ingredient' in response.json
         ingredient_id = response.json['ingredient']['id']

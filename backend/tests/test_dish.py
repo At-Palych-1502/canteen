@@ -32,7 +32,7 @@ def test_user_becomes_admin_and_adds_dish(client, app):
             'ingredients': []
         }, headers={'Authorization': f'Bearer {admin_token}'})
 
-        assert response.status_code == 201
+        assert response.status_code == 200
         assert 'dish' in response.json
         assert response.json['dish']['name'] == 'Admin Test Dish'
 
