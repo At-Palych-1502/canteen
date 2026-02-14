@@ -232,3 +232,6 @@
 		}
 	}
 }
+.inactive{
+	color: rgb(31, 31, 31) !important;
+}
