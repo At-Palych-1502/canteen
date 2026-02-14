@@ -214,7 +214,7 @@ class Review(Base):
             "username": self.user.username,
             "score": self.score,
             "comment": self.comment,
-            "dish": self.dish.to_dict()
+            "dish": self.dish.to_dict() if self.dish else None
         }
 
 

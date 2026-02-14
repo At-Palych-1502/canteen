@@ -8,6 +8,7 @@ from ..utils import role_required
 
 bp = Blueprint('orders', __name__)
 
+
 def add_transaction(user_id, amount, description):
     user = User.query.get(user_id)
     if not user:
@@ -20,6 +21,7 @@ def add_transaction(user_id, amount, description):
     db.session.add(transaction)
     db.session.commit()
     return True
+
 
 @bp.route('/order', methods=['POST'])
 @jwt_required()
@@ -53,7 +55,7 @@ def order():
 
         subsc.duration -= 1
         add_transaction(user_id, meal.price,
-                            description=f"Произведен заказ питания на дату {data['date']}, общая цена: {meal.price}, оплата абонементом")
+                        description=f"Произведен заказ питания на дату {data['date']}, общая цена: {meal.price}, оплата абонементом")
         db.session.commit()
         return jsonify({"message": "success"}), 200
 
@@ -67,9 +69,10 @@ def order():
         user.balance -= meal.price
 
         add_transaction(user_id, meal.price,
-                            description=f"Произведен заказ питания на дату {data['date']}, общая цена: {meal.price}, оплата балансом")
+                        description=f"Произведен заказ питания на дату {data['date']}, общая цена: {meal.price}, оплата балансом")
         db.session.commit()
         return jsonify({"message": "success"}), 200
+
 
 @bp.route('/orders', methods=['GET'])
 @jwt_required()
@@ -77,6 +80,7 @@ def order():
 def orders():
     orders = Order.query.all()
     return jsonify({"data": [order.to_dict() for order in orders]}), 200
+
 
 @bp.route('/orders/<int:id>', methods=['GET', 'DELETE'])
 @jwt_required()
@@ -93,3 +97,16 @@ def order_by_id(id):
         db.session.delete(order)
         db.session.commit()
         return jsonify({"message": "success"}), 200
+
+
+@bp.route("/orders/<int:id>/set_given")
+@jwt_required()
+@role_required(['admin', 'cook'])
+def set_given(id):
+    order = Order.query.get_or_404(id)
+    if order.is_given is False:
+        order.is_given = True
+    else:
+        return jsonify({"error": "this order was already given"}), 400
+    db.session.commit()
+    return jsonify({"message": "Order given", "order": order.to_dict()})
