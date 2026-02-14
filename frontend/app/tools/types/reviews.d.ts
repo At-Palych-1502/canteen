@@ -1,3 +1,5 @@
+import { IDish } from "./dishes";
+
 export interface IReview {
 	comment: string;
 	score: number;
@@ -22,4 +24,11 @@ export interface IUpdateReviewRes {
 
 export interface IGetReviewsByMealIdRes {
 	reviews: IReview[];
+}
+
+export interface IGetReview extends IReview {
+	dish: IDish
+}
+export interface IGetReviewRes {
+	reviews: IGetReview[]
 }

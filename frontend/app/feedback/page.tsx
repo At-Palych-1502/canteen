@@ -2,24 +2,19 @@
 
 import React, { useEffect, useState } from 'react';
 import Styles from './page.module.css';
-import { mockDishes, mockFeedbacks } from '@/app/tools/mockData';
 import { useRouter } from 'next/navigation';
 import { useSelector } from 'react-redux';
 import { selectUser } from '../tools/redux/user';
 import { useGetAllDishesQuery } from '../tools/redux/api/dishes';
-import { IAddReview } from '../tools/types/reviews';
+import { IAddReview, IGetReview } from '../tools/types/reviews';
 import { IFeedback } from '../tools/types/mock';
-import { useAddReviewMutation } from '../tools/redux/api/reviews';
+import { useAddReviewMutation, useGetReviewsByUserQuery } from '../tools/redux/api/reviews';
 import { Notification } from '../components/Notification/Notification';
-
-// ID текущего пользователя (в реальном приложении берется из Redux)
-const CURRENT_USER_ID = 'user1';
 
 export default function FeedbackPage() {
 	const [selectedDish, setSelectedDish] = useState<string>('');
 	const [rating, setRating] = useState<number>(0);
 	const [comment, setComment] = useState<string>('');
-	const [feedbacks, setFeedbacks] = useState<IFeedback[]>(mockFeedbacks);
 	const [submitted, setSubmitted] = useState(false);
 	const [notification, setNotification] = useState({ isOpen: false, ok: false, text: "" });
 
@@ -27,6 +22,7 @@ export default function FeedbackPage() {
 
 	const router = useRouter();
 	const User = useSelector(selectUser);
+	const userFeedbacks = useGetReviewsByUserQuery();	
 
 	const [addReview] = useAddReviewMutation();
 	const {
@@ -38,9 +34,6 @@ export default function FeedbackPage() {
 	useEffect(() => {
 		if (!User || User.role !== 'student') router.push('/');
 	}, [User, router]);
-
-	// Фильтруем отзывы только для текущего пользователя
-	const userFeedbacks = feedbacks.filter(f => f.userId === CURRENT_USER_ID);	
 
 	const handleRatingClick = (value: number) => {
 		setRating(value);
@@ -71,6 +64,7 @@ export default function FeedbackPage() {
 		}
 
 		setSubmitted(true);
+		userFeedbacks.refetch();
 
 		// Сброс формы
 		setSelectedDish('');
@@ -168,21 +162,20 @@ export default function FeedbackPage() {
 				<div className={Styles['feedbacks-header']}>
 					<h2>Мои отзывы</h2>
 				</div>
-				{userFeedbacks.length > 0 ? (
-					userFeedbacks.map(feedback => (
+				{!userFeedbacks?.isLoading ? (
+					userFeedbacks?.data?.reviews?.map((feedback: IGetReview) => (
 						<div key={feedback.id} className={Styles['feedback-card']}>
 							<div className={Styles['feedback-header']}>
 								<span className={Styles['feedback-dish-name']}>
-									{feedback.dishName}
+									{feedback?.dish?.name}
 								</span>
-								<span className={Styles['feedback-date']}>{feedback.date}</span>
 							</div>
 							<div className={Styles['feedback-rating']}>
 								{[1, 2, 3, 4, 5].map(star => (
 									<span
 										key={star}
 										className={`${Styles.star} ${
-											star <= feedback.rating ? '' : Styles.inactive
+											star <= feedback.score ? '' : Styles.inactive
 										}`}
 									>
 										★

@@ -3,6 +3,7 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { getAccessToken } from '../../utils/auth';
 import {
 	IAddReview,
+	IGetReviewRes,
 	IGetReviewsByMealIdRes,
 	IReview,
 	IUpdateReviewReq,
@@ -48,6 +49,11 @@ export const reviewsApi = createApi({
 				body: data,
 			}),
 		}),
+		getReviewsByUser: builder.query<IGetReviewRes, void>({
+			query: () => ({
+				url: '/reviews_by_user'
+			})
+		})
 	}),
 });
 
@@ -56,4 +62,5 @@ export const {
 	useDeleteReviewMutation,
 	useGetReviewByIdQuery,
 	useGetReviewsByMealIdQuery,
+	useGetReviewsByUserQuery
 } = reviewsApi;
