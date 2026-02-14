@@ -179,9 +179,9 @@ class Order(Base):
     user_id = Column(Integer, ForeignKey("users.id"), nullable=True)
     meal_id = Column(Integer, ForeignKey("meals.id"), nullable=True)
     date = Column(Date, nullable=False)
-    price = Column(Integer, nullable=False)
+    price = Column(Integer)
     is_given = Column(Boolean, default=False, nullable=True)
-    payment_type = Column(String(20), nullable=False)
+    payment_type = Column(String(20))
 
     user = relationship("User", back_populates="orders")
     meal = relationship("Meal", back_populates="orders")
