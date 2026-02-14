@@ -1,17 +1,18 @@
 import { endpoints } from '@/app/config/endpoints';
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { getAccessToken } from '../../utils/auth';
+
 import {
-	IMeal,
-	IMealCreateArg,
-	IMealsGet,
-	IMealUpdateReq,
-} from '../../types/meals';
+	ICreateReportArg,
+	IGetAllOrders,
+	IGetOrderById,
+	IOrderCreateArg,
+} from '../../types/business';
 
 export const ordersApi = createApi({
 	reducerPath: 'ordersApi',
 	baseQuery: fetchBaseQuery({
-		baseUrl: endpoints.meals.base,
+		baseUrl: endpoints.base,
 		prepareHeaders: headers => {
 			const token = getAccessToken();
 
@@ -21,39 +22,31 @@ export const ordersApi = createApi({
 		},
 	}),
 	endpoints: builder => ({
-		getAllMeals: builder.query<IMealsGet, void>({
-			query: () => '',
-		}),
-		getMealById: builder.query<IMeal, number>({
-			query: (id: number) => `/${id}`,
-		}),
-		deleteMeal: builder.mutation<void, number>({
-			query: (id: number) => ({
-				url: `/${id}`,
-				method: 'DELETE',
-			}),
-		}),
-		updateMeal: builder.mutation<IMeal, IMealUpdateReq>({
-			query: ({ id, data }) => ({
-				url: `/${id}`,
-				method: 'PUT',
-				body: data,
-			}),
-		}),
-		createMeal: builder.mutation<number, IMealCreateArg>({
+		createOrder: builder.mutation<void, IOrderCreateArg>({
 			query: data => ({
-				url: '',
+				url: '/order',
 				method: 'POST',
 				body: data,
+			}),
+		}),
+		getOrderById: builder.query<IGetOrderById, number>({
+			query: (id: number) => `/orders/${id}`,
+		}),
+		getAllOrders: builder.query<IGetAllOrders, void>({
+			query: () => `/orders`,
+		}),
+		GetReport: builder.query<void, ICreateReportArg>({
+			query: (data: ICreateReportArg) => ({
+				url: `/report?days=${data.days}`,
+				method: 'GET',
+				responseHandler: response => response.blob(),
 			}),
 		}),
 	}),
 });
 
 export const {
-	useGetAllMealsQuery,
-	useGetMealByIdQuery,
-	useDeleteMealMutation,
-	useUpdateMealMutation,
-	useCreateMealMutation,
+	useCreateOrderMutation,
+	useGetOrderByIdQuery,
+	useGetReportQuery,
 } = ordersApi;

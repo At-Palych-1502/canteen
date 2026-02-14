@@ -98,5 +98,3 @@ def meal_detail(id):
             db.session.rollback()
             return jsonify({"error": "Failed to delete meal"}), 500
     return None
-
-

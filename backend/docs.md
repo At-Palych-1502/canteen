@@ -9,7 +9,7 @@ _register [POST]_
         "password": String,
         "email": String,
     }
-    форма ответа: 
+    форма ответа:
     [200] {"message": "User added"}
     [400] email or username already exists
 
@@ -48,7 +48,7 @@ _user [GET]_
     [422] любые иные ошибки
 
 _user/<int:user_id> [GET]_
-(получение информации о пользователе админом или поваром)    
+(получение информации о пользователе админом или поваром)
 
     формат запроса: headers: {
         "Authorization": "Bearer " + jwt_token}
@@ -74,10 +74,10 @@ _users [GET]_
         "username": username}]}
 
 /change_role/<int:uesr_id> [PUT]
-    
+
     требумые роли: admin
     формат запроса: {"role": choice_of(admin, student, cook'}
-    
+
 
 **dish**:
 
@@ -98,12 +98,12 @@ _/dish/<int:id>  [GET]_
         "ingredients": [
             {
                 "id":1,
-                "name":"свёкла",                
+                "name":"свёкла",
             }]}
 
 
 _/dish/<int:id>  [DELETE]_
-    
+
     Формат запроса: headers: {
         "Authorization": "Bearer " + jwt_token
     }
@@ -148,7 +148,7 @@ _/dish [POST]_
         "ingredients": [
             {
                 "id":1,
-                "name":"свёкла",                
+                "name":"свёкла",
             }]}
 
 
@@ -158,7 +158,7 @@ _/dish [POST]_
     Headers:{
         "Authorization": "Bearer " + jwt_token
     }
-    Формат ответа: 
+    Формат ответа:
     [201] {"message":"Ingredient added to dish"}
     [208] {"error":"Ingredient-dish relation already exists"}
 
@@ -181,7 +181,7 @@ _crud логика (/ingredients)_: аналогично для dish, парам
     Headers: {
         "Authorization": "Bearer " + jwt_token
     }
-    Формат ответа: 
+    Формат ответа:
     [200] {'message': 'successfully added allergy'}
     [208] {'error': 'Ingredient-allergy relationship already exists'}
 
@@ -195,7 +195,7 @@ _crud логика (/ingredients)_: аналогично для dish, парам
     Тело запроса: {"name": String, "price": Integer,
     "date": "y-m-d", "dishes": [dish_id1, dish_id2, ..0]
     Пример формата даты: "2026-02-08"
-    
+
 
 
 **reviews**
@@ -290,7 +290,7 @@ _crud логика (/ingredients)_: аналогично для dish, парам
 
 **business**
 /users/filter ['GET']
-    
+
     Требуемая роль: 'admin'
     Headers: {
         "Authorization": "Bearer " + jwt_token
@@ -351,7 +351,7 @@ _crud логика (/ingredients)_: аналогично для dish, парам
         "Authorization": "Bearer " + jwt_token
     }
     Формат запроса: {
-        "date": "YYYY-MM-DD",          
+        "date": "YYYY-MM-DD",
         "meals": [...]
     }
     Формат ответа:
@@ -359,10 +359,10 @@ _crud логика (/ingredients)_: аналогично для dish, парам
         "id": 456,
         "user_id": 123,
         "date": "2026-02-10",
-        "meals": [ ... ]  
+        "meals": [ ... ]
     }}
     [400] {"error": "You don't have enough money"}
-    [404] {"error": "Not found"}  
+    [404] {"error": "Not found"}
 
 /orders ['GET']
 
