@@ -10,89 +10,31 @@ import { IAddReview, IGetReview } from '../tools/types/reviews';
 import { IFeedback } from '../tools/types/mock';
 import { useAddReviewMutation, useGetReviewsByUserQuery } from '../tools/redux/api/reviews';
 import { Notification } from '../components/Notification/Notification';
+import { FeadBackForm } from './FeadBackForm';
 
 export default function FeedbackPage() {
-	const [selectedDish, setSelectedDish] = useState<string>('');
-	const [rating, setRating] = useState<number>(0);
-	const [comment, setComment] = useState<string>('');
 	const [submitted, setSubmitted] = useState(false);
 	const [notification, setNotification] = useState({ isOpen: false, ok: false, text: "" });
-
-	const showNotification = (ok: boolean, text: string) => setNotification({ isOpen: true, ok, text });
+	const userFeedbacks = useGetReviewsByUserQuery();	
 
 	const router = useRouter();
 	const User = useSelector(selectUser);
-	const userFeedbacks = useGetReviewsByUserQuery();	
-
-	const [addReview] = useAddReviewMutation();
-	const {
-		data: dishes,
-		isLoading: dishesLoading,
-		refetch: refetchDishes,
-	} = useGetAllDishesQuery();
 
 	useEffect(() => {
 		if (!User || User.role !== 'student') router.push('/');
 	}, [User, router]);
 
-	const handleRatingClick = (value: number) => {
-		setRating(value);
-	};
+	const showNotification = (ok: boolean, text: string) => setNotification({ isOpen: true, ok, text });
 
-
-	const handleSubmit = async(e: React.FormEvent) => {
-		e.preventDefault();
-
-		if (!selectedDish || rating === 0) {
-			showNotification(false, 'Пожалуйста, выберите блюдо и поставьте оценку');
-			return;
-		}
-
-		const dish = dishes?.data?.find(d => d.id === Number(selectedDish));
-		if (!dish) return;
-
-		const newFeedback: IAddReview = {
-			dishId: dish.id,
-			score: rating,
-			comment: comment
-		};
-
-		const response = await addReview(newFeedback);
-		if (response.error) {
-			showNotification(false, "Неизвестная ошибка");
-			return;
-		}
-
+	const onSubmit = () => {
 		setSubmitted(true);
 		userFeedbacks.refetch();
-
-		// Сброс формы
-		setSelectedDish('');
-		setRating(0);
-		setComment('');
-	};
+	}
 
 	const handleBackToForm = () => {
 		setSubmitted(false);
 	};
-
-	const renderStars = (value: number, interactive = false) => {
-		return (
-			<div className={Styles['rating-group']}>
-				{[1, 2, 3, 4, 5].map(star => (
-					<span
-						key={star}
-						className={`${Styles['rating-star']} ${
-							star <= value ? Styles.active : ''
-						} ${interactive ? '' : Styles.star}`}
-						onClick={interactive ? () => handleRatingClick(star) : undefined}
-					>
-						★
-					</span>
-				))}
-			</div>
-		);
-	};
+	
 
 	if (submitted) {
 		return (
@@ -118,44 +60,7 @@ export default function FeedbackPage() {
 				<div className={Styles['form-header']}>
 					<h2>Оставить отзыв</h2>
 				</div>
-				<form onSubmit={handleSubmit}>
-					<div className={Styles['form-group']}>
-						<label htmlFor='dish'>Выберите блюдо</label>
-						<select
-							id='dish'
-							value={selectedDish}
-							onChange={e => setSelectedDish(e.target.value)}
-							required
-						>
-							<option value=''>Выберите блюдо...</option>
-							{dishes?.data
-								.map(dish => (
-									<option key={dish.id} value={dish.id}>
-										{dish.name}
-									</option>
-								))}	
-						</select>
-					</div>
-
-					<div className={Styles['form-group']}>
-						<label>Оценка</label>
-						{renderStars(rating, true)}
-					</div>
-
-					<div className={Styles['form-group']}>
-						<label htmlFor='comment'>Комментарий</label>
-						<textarea
-							id='comment'
-							value={comment}
-							onChange={e => setComment(e.target.value)}
-							placeholder='Напишите ваш отзыв...'
-						/>
-					</div>
-
-					<button type='submit' className={Styles['submit-button']}>
-						Отправить отзыв
-					</button>
-				</form>
+				<FeadBackForm onSubmit={onSubmit} showNotification={showNotification} />
 			</div>
 
 			<div className={Styles['feedbacks-list']}>
