@@ -6,8 +6,9 @@ export interface IReview {
 }
 
 export interface IAddReview {
-	id: number;
-	data: IReview;
+	dishId: number,
+	score: number,
+	comment: string
 }
 
 export interface IUpdateReviewReq {

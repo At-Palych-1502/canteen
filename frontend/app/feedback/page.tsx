@@ -3,11 +3,14 @@
 import React, { useEffect, useState } from 'react';
 import Styles from './page.module.css';
 import { mockDishes, mockFeedbacks } from '@/app/tools/mockData';
-import { IFeedback } from '@/app/tools/types/mock';
 import { useRouter } from 'next/navigation';
 import { useSelector } from 'react-redux';
 import { selectUser } from '../tools/redux/user';
 import { useGetAllDishesQuery } from '../tools/redux/api/dishes';
+import { IAddReview } from '../tools/types/reviews';
+import { IFeedback } from '../tools/types/mock';
+import { useAddReviewMutation } from '../tools/redux/api/reviews';
+import { Notification } from '../components/Notification/Notification';
 
 // ID текущего пользователя (в реальном приложении берется из Redux)
 const CURRENT_USER_ID = 'user1';
@@ -18,10 +21,14 @@ export default function FeedbackPage() {
 	const [comment, setComment] = useState<string>('');
 	const [feedbacks, setFeedbacks] = useState<IFeedback[]>(mockFeedbacks);
 	const [submitted, setSubmitted] = useState(false);
+	const [notification, setNotification] = useState({ isOpen: false, ok: false, text: "" });
+
+	const showNotification = (ok: boolean, text: string) => setNotification({ isOpen: true, ok, text });
 
 	const router = useRouter();
 	const User = useSelector(selectUser);
 
+	const [addReview] = useAddReviewMutation();
 	const {
 		data: dishes,
 		isLoading: dishesLoading,
@@ -39,28 +46,30 @@ export default function FeedbackPage() {
 		setRating(value);
 	};
 
-	const handleSubmit = (e: React.FormEvent) => {
+
+	const handleSubmit = async(e: React.FormEvent) => {
 		e.preventDefault();
 
 		if (!selectedDish || rating === 0) {
-			alert('Пожалуйста, выберите блюдо и поставьте оценку');
+			showNotification(false, 'Пожалуйста, выберите блюдо и поставьте оценку');
 			return;
 		}
 
-		const dish = mockDishes.find(d => d.id === Number(selectedDish));
+		const dish = dishes?.data?.find(d => d.id === Number(selectedDish));
 		if (!dish) return;
 
-		const newFeedback: IFeedback = {
-			id: feedbacks.length + 1,
+		const newFeedback: IAddReview = {
 			dishId: dish.id,
-			dishName: dish.name,
-			rating,
-			comment,
-			date: new Date().toISOString().split('T')[0],
-			userId: CURRENT_USER_ID,
+			score: rating,
+			comment: comment
 		};
 
-		setFeedbacks([newFeedback, ...feedbacks]);
+		const response = await addReview(newFeedback);
+		if (response.error) {
+			showNotification(false, "Неизвестная ошибка");
+			return;
+		}
+
 		setSubmitted(true);
 
 		// Сброс формы
@@ -104,6 +113,7 @@ export default function FeedbackPage() {
 	}
 
 	return (
+		<>
 		<div className={Styles['feedback-container']}>
 			<div className={Styles['page-header']}>
 				<h1>Отзывы о блюдах</h1>
@@ -125,7 +135,6 @@ export default function FeedbackPage() {
 						>
 							<option value=''>Выберите блюдо...</option>
 							{dishes?.data
-								.sort((a, b) => a.name.localeCompare(b.name, 'ru'))
 								.map(dish => (
 									<option key={dish.id} value={dish.id}>
 										{dish.name}
@@ -190,5 +199,15 @@ export default function FeedbackPage() {
 				)}
 			</div>
 		</div>
+		
+		{notification.isOpen && (
+			<Notification
+				ok={notification.ok}
+				text={notification.text}
+				close={() => setNotification({ isOpen: false, ok: false, text: "" })}
+			/>
+		)}
+
+		</>
 	);
 }

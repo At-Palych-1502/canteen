@@ -23,9 +23,10 @@ export const reviewsApi = createApi({
 	}),
 	endpoints: builder => ({
 		addReview: builder.mutation<IReview, IAddReview>({
-			query: ({ id, data }: IAddReview) => ({
-				url: `/reviews/${id}`,
-				body: data,
+			query: ({ dishId, comment, score }: IAddReview) => ({
+				url: `/reviews/${dishId}`,
+				body: { comment, score },
+				method: "POST"
 			}),
 		}),
 		getReviewById: builder.query<IReview, number>({
