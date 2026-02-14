@@ -14,6 +14,13 @@ def review(dish_id):
         return jsonify({"reviews": [review.to_dict() for review in reviews]}), 200
 
 
+@bp.route('/reviews_by_user', methods=['GET'])
+@jwt_required()
+def reviews_by_user():
+    reviews = Review.query.filter_by(user_id=get_jwt_identity()).all()
+    return {"reviews": [review.to_dict() for review in reviews]}
+
+
 @bp.route('/review/<int:review_id>', methods=['GET', 'PUT', 'DELETE'])
 @jwt_required()
 def review_by_id(review_id):

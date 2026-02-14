@@ -107,7 +107,6 @@ def add_dish():
 
 @bp.route('/dishes', methods=['GET'])
 @jwt_required()
-@role_required(["admin", "cook"])
 def dishes():
     dishes = Dish.query.all()
     sl = []
