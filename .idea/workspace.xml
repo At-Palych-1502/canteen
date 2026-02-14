@@ -6,15 +6,8 @@
   <component name="ChangeListManager">
     <list default="true" id="281c2898-3d13-4459-a8ec-e45788dc05bd" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/app/api/business.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/api/business.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/app/api/orders.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/api/orders.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/app/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/db/canteen.db" beforeDir="false" afterPath="$PROJECT_DIR$/backend/db/canteen.db" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/migrations/README" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/migrations/alembic.ini" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/migrations/env.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/migrations/script.py.mako" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/migrations/versions/74453482bc30_.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/api/dish.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/api/dish.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/api/reviews.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/api/reviews.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -75,7 +68,6 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <module name="" />
-      <option name="RUN_TOOL" value="" />
       <option name="SCRIPT_NAME" value="" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
@@ -98,7 +90,6 @@
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="RUN_TOOL" value="" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/backend/test.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
@@ -117,7 +108,6 @@
       <option name="IS_MODULE_SDK" value="false" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="RUN_TOOL" value="" />
       <method v="2" />
     </configuration>
     <configuration default="true" type="docs" factoryName="Docutils task">
@@ -130,7 +120,6 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <module name="" />
-      <option name="RUN_TOOL" value="" />
       <option name="docutils_input_file" value="" />
       <option name="docutils_output_file" value="" />
       <option name="docutils_params" value="" />
@@ -148,7 +137,6 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <module name="" />
-      <option name="RUN_TOOL" value="" />
       <option name="docutils_input_file" value="" />
       <option name="docutils_output_file" value="" />
       <option name="docutils_params" value="" />
@@ -166,7 +154,6 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <module name="" />
-      <option name="RUN_TOOL" value="" />
       <option name="SCRIPT_NAME" value="" />
       <option name="CLASS_NAME" value="" />
       <option name="METHOD_NAME" value="" />
