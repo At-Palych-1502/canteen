@@ -6,7 +6,7 @@ interface IIngredientRequest {
     quantity: number
 }
 
-export const putIngridientsRequest = async(data: IIngredientRequest) => {
+export const putIngridientsRequest = async(data: IIngredientRequest, callback: () => void) => {
     try {
         const jwt = getAccessToken();
         const response = await fetch(endpoints.ingredients.putIngridientsRequest, {
@@ -19,6 +19,7 @@ export const putIngridientsRequest = async(data: IIngredientRequest) => {
         });
 
         if (response.ok) {
+            callback();
             return { ok: true, text: "Запрос успешно добавлен" };
         } else {
             return { ok: false, text: response.statusText }

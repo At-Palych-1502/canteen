@@ -20,6 +20,7 @@ import { Notification } from '../components/Notification/Notification';
 import { IIngredient } from '../tools/types/ingredients';
 import { isNumberObject } from 'util/types';
 import { putIngridientsRequest } from '../tools/utils/ingriduents';
+import { refresh } from 'next/cache';
 
 const BuyRequestsPageCook: React.FC = () => {
 	const currentUser = useSelector(selectUser);
@@ -92,7 +93,7 @@ const BuyRequestsPageCook: React.FC = () => {
 		if (curQuality) {
 			const data = { ingredient_id: curIngridient ?? 1, quantity: curQuality };
 			
-			const response = await putIngridientsRequest(data);
+			const response = await putIngridientsRequest(data, () => { refetch() });
 			setNotification({ isOpen: true, ...response });
 
 			setIsOpenAuthForm(false);
