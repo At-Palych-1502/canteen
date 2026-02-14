@@ -30,9 +30,10 @@ def test_create_meal_success(client, app):
             'name': 'Test Meal',
             'price': 100.0,
             'type': 'lunch',
-            'dishes': [dish_id]
+            'dishes': [dish_id],
+            'day_of_week':'Monday'
         }, headers={'Authorization': f'Bearer {admin_token}'})
-        
+
         assert meal_response.status_code == 201
         assert 'meal' in meal_response.json
         assert meal_response.json['meal']['name'] == 'Test Meal'
