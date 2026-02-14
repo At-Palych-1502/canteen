@@ -16,7 +16,7 @@ export default function AllergiesPage() {
 	const User = useSelector(selectUser);
 
 	useEffect(() => {
-		if (User && User.role !== 'student') router.push('/');
+		if (!User || User.role !== 'student') router.push('/');
 	}, [User, router]);
 
 	const toggleAllergy = (id: number) => {
