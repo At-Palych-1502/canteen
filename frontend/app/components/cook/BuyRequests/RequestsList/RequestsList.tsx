@@ -1,35 +1,17 @@
 import React from 'react';
-import { IBuyRequest } from '@/app/tools/types/mock';
-import RequestCard from '../RequestCard/RequestCard';
 import Styles from './RequestsList.module.css';
+import RequestCard from '../RequestCard/RequestCard';
+import { IBuyRequest } from '@/app/tools/types/buyRequests';
 
 interface RequestsListProps {
 	requests: IBuyRequest[];
-	onApprove: (requestId: number) => void;
-	onReject: (requestId: number) => void;
-	onQuantityChange: (requestId: number, newQuantity: number) => void;
 }
 
 const RequestsList: React.FC<RequestsListProps> = ({
-	requests,
-	onApprove,
-	onReject,
-	onQuantityChange,
+	requests
 }) => {
-	const pendingRequests = requests.filter(r => r.status === 'pending');
-	const processedRequests = requests.filter(r => r.status !== 'pending');
-
-	const handleApprove = (requestId: number) => {
-		onApprove(requestId);
-	};
-
-	const handleReject = (requestId: number) => {
-		onReject(requestId);
-	};
-
-	const handleQuantityChange = (requestId: number, newQuantity: number) => {
-		onQuantityChange(requestId, newQuantity);
-	};
+	const pendingRequests = requests.filter(r => r.is_accepted === null);
+	const processedRequests = requests.filter(r => r.is_accepted !== null);
 
 	return (
 		<div className={Styles.container}>
@@ -43,9 +25,6 @@ const RequestsList: React.FC<RequestsListProps> = ({
 							<RequestCard
 								key={request.id}
 								request={request}
-								onApprove={handleApprove}
-								onReject={handleReject}
-								onQuantityChange={handleQuantityChange}
 							/>
 						))}
 					</div>
@@ -62,9 +41,6 @@ const RequestsList: React.FC<RequestsListProps> = ({
 							<RequestCard
 								key={request.id}
 								request={request}
-								onApprove={handleApprove}
-								onReject={handleReject}
-								onQuantityChange={handleQuantityChange}
 							/>
 						))}
 					</div>

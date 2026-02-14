@@ -9,7 +9,7 @@ import { selectUser, setUser } from './tools/redux/user';
 import { IUser } from './tools/types/user';
 import CurrentOrders from './components/student/CurrentOrder/CurrentOrders';
 import UsersTable from './components/admin/UsersTable/UsersTable/UsersTable';
-import { OrdersForCook } from './components/student/CurrentOrder/OrdersForCook';
+import { OrdersForCook } from './components/cook/OrdersForCook/OrdersForCook';
 
 export default function Home() {
 	const { data, isLoading } = useGetUserQuery();

@@ -12,23 +12,41 @@ import {
 } from '../tools/mockData';
 import RequestsList from '../components/cook/BuyRequests/RequestsList/RequestsList';
 import Styles from './page.module.css';
+
 import { Popup } from '../components/Popup/Popup';
 import { useGetAllIngredientsQuery } from '../tools/redux/api/ingredients';
+import { useCreateBuyRequestMutation, useGetAllBuyRequestsQuery } from '../tools/redux/api/buyRequests';
+import { Notification } from '../components/Notification/Notification';
+import { IIngredient } from '../tools/types/ingredients';
+import { isNumberObject } from 'util/types';
+import { refresh } from 'next/cache';
 
 const BuyRequestsPageCook: React.FC = () => {
 	const currentUser = useSelector(selectUser);
 	const [requests, setRequests] = useState<IBuyRequest[]>([]);
 	const [isOpenAddForm, setIsOpenAuthForm] = useState(false);
+	const [curIngridient, setCurIngridient] = useState<number>();
+	const [curQuality, setCurQuality] = useState<number>();
+	const [notification, setNotification] = useState({ isOpen: false, ok: false, text: "" });
 
 	const {
 		data: ingredients,
 		isLoading: ingredientsLoading,
 		refetch: refetchIngredients,
 	} = useGetAllIngredientsQuery();
+	const [createBuyRequest] = useCreateBuyRequestMutation();
+	const { data, refetch } = useGetAllBuyRequestsQuery();
 
 	useEffect(() => {
 		loadRequests();
+		console.log(data);
 	}, []);
+
+	useEffect(() => {
+		if (isOpenAddForm) {
+			setCurIngridient(ingredients?.data[0]?.id ?? 0);
+		}
+	}, [isOpenAddForm]);
 
 	const loadRequests = () => {
 		const loadedRequests = getBuyRequests();
@@ -56,6 +74,40 @@ const BuyRequestsPageCook: React.FC = () => {
 		}
 	};
 
+	const selectHandler = (e: React.ChangeEvent<HTMLSelectElement>) => {
+		setCurIngridient(Number(e.currentTarget.value));
+	}
+
+	const qualityChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+		if (Number(e.target.value)) {
+			setCurQuality(Number(e.target.value));
+		} else {
+			setNotification({ isOpen: true, ok: false, text: "Некоректный ввод количества товара" });
+		}
+	}
+
+	const handleSubmit = async(e: React.FormEvent<HTMLFormElement>) => {
+		e.preventDefault();
+
+		if (curQuality) {
+			const data = { ingredient_id: curIngridient ?? 1, quantity: curQuality };
+			
+			const response = await createBuyRequest(data);
+
+			if (response.error) {
+				setNotification({ isOpen: true, ok: false, text: "Неизвестная ошибка" });
+			} else {
+				setNotification({ isOpen: true, ok: true, text: "Запрос успешно добавлен" });
+			}
+
+			refetch();
+
+			setIsOpenAuthForm(false);
+		} else {
+			setNotification({ isOpen: true, ok: false, text: "Введите количество товара!" });
+		}
+	}
+
 	return (
 		<>
 		<div className={Styles.container}>
@@ -63,32 +115,42 @@ const BuyRequestsPageCook: React.FC = () => {
 				<h1 className={Styles.title}>Заявки на покупки</h1>
 				<button onClick={() => {setIsOpenAuthForm(true)}} className={Styles["button"]}>Добавить</button>
 			</div>
-			<RequestsList
-				requests={requests}
-				onApprove={handleApprove}
-				onReject={handleReject}
-				onQuantityChange={handleQuantityChange}
-			/>
+			{data && (
+				<RequestsList
+					requests={data.purchase_requests}
+				/>
+			)}
 		</div>
 
 		{isOpenAddForm && !ingredientsLoading && (
 			<Popup closePopup={() => {setIsOpenAuthForm(false)}}>
-				<form>
+				<form onSubmit={handleSubmit}>
 					<h1>Создание заявки на покупку</h1>
 					<div className={Styles["ingr_div"]}>
-						<h3>Ингредиент: </h3>
-						<select id="city" name="city">
+						<h2>Ингредиент: </h2>
+						<select onChange={selectHandler} className={Styles["select"]} id="ingredient" name="ingredient">
 							{ingredients && ingredients.data?.map((ingredient, index) => {
 								return <option key={index} value={ingredient.id}>{ingredient.name}</option>
 							})}
 						</select>
 					</div>
 					<div className={Styles["ingr_div"]}>
-						<h3>Количество: </h3>
-						<input type='text'></input>
+						<h2>Количество: </h2>
+						<input onChange={qualityChangeHandler} className={Styles['input']} type='number' id='quality' />
+					</div>
+					<div className={Styles.button_div}>
+						<button className="button" type="submit">Отправить</button>
 					</div>
 				</form>
 			</Popup>
+		)}
+
+		{notification.isOpen && (
+			<Notification 
+				close={() => { setNotification({ ...notification, isOpen: false}) }}
+				ok={notification.ok}
+				text={notification.text}
+			/>
 		)}
 		</>
 	);
