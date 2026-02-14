@@ -2,8 +2,9 @@ import React from 'react';
 import { mockFeedbacks } from '../../../../tools/mockData';
 import Styles from './FeedbackSection.module.css';
 
-const FeedbackSection: React.FC = () => {
-	// Сортируем отзывы по дате (сначала новые)
+const FeedbackSection = () => {
+	// const {data: feedbacks, isLoading} = useGetR
+
 	const sortedFeedbacks = [...mockFeedbacks].sort(
 		(a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
 	);

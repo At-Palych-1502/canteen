@@ -11,7 +11,7 @@ import {
 export const mealsApi = createApi({
 	reducerPath: 'mealsApi',
 	baseQuery: fetchBaseQuery({
-		baseUrl: endpoints.meals.base,
+		baseUrl: endpoints.base,
 		prepareHeaders: headers => {
 			const token = getAccessToken();
 
@@ -22,31 +22,40 @@ export const mealsApi = createApi({
 	}),
 	endpoints: builder => ({
 		getAllMeals: builder.query<IMealsGet, void>({
-			query: () => '',
+			query: () => '/meals',
 		}),
 		getMealById: builder.query<IMeal, number>({
-			query: (id: number) => `/${id}`,
+			query: (id: number) => `/meals/${id}`,
 		}),
 		deleteMeal: builder.mutation<void, number>({
 			query: (id: number) => ({
-				url: `/${id}`,
+				url: `/meals/${id}`,
 				method: 'DELETE',
 			}),
 		}),
 		updateMeal: builder.mutation<IMeal, IMealUpdateReq>({
 			query: ({ id, data }) => ({
-				url: `/${id}`,
+				url: `/meals/${id}`,
 				method: 'PUT',
 				body: data,
 			}),
 		}),
 		createMeal: builder.mutation<number, IMealCreateArg>({
 			query: data => ({
-				url: '',
+				url: '/meals',
 				method: 'POST',
 				body: data,
 			}),
 		}),
+		setMealsCount: builder.mutation<number, { id: number; quantity: number }[]>(
+			{
+				query: data => ({
+					url: '/set_meals_count',
+					method: 'PUT',
+					body: data,
+				}),
+			},
+		),
 	}),
 });
 

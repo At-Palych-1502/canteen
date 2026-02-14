@@ -12,6 +12,12 @@ export const endpoints = {
 		register: '/auth/register',
 		user: '/user',
 	},
+	users: {
+		getAll: '/users',
+		getUser: '/user',
+		changeRole: '/change_role',
+		delete: '/user',
+	},
 	dishes: {
 		base: `${BASE_URL}/dishes`,
 		addIngredient: '/add-ingredient',
@@ -26,5 +32,8 @@ export const endpoints = {
 		base: `${BASE_URL}/purchase_requests`,
 		getMealsDayOfWeek: `${BASE_URL}/meals_by_day`,
 		setMealsCount: `${BASE_URL}/set_meals_count`,
+	},
+	reviews: {
+		base: '/reviews',
 	},
 };
