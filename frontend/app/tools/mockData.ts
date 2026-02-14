@@ -481,127 +481,14 @@ export const getCurrentOrders = (): IOrder[] => [
 ];
 
 // Моковые данные пользователей
-const mockUsers: IUser[] = [
+const mockUsers: any[] = [
 	{
 		id: 1,
 		username: 'admin',
 		role: 'admin',
 		email: 'admin@school.ru',
 	},
-	{
-		id: 2,
-		username: 'ivanov',
-		role: 'student',
-		email: 'ivanov@school.ru',
-	},
-	{
-		id: 3,
-		username: 'petrov',
-		role: 'student',
-		email: 'petrov@school.ru',
-	},
-	{
-		id: 4,
-		username: 'sidorov',
-		role: 'cook',
-		email: 'sidorov@school.ru',
-	},
-	{
-		id: 5,
-		username: 'kozlova',
-		role: 'student',
-		email: 'kozlova@school.ru',
-	},
-	{
-		id: 6,
-		username: 'morozov',
-		role: 'student',
-		email: 'morozov@school.ru',
-	},
-	{
-		id: 7,
-		username: 'volkov',
-		role: 'student',
-		email: 'volkov@school.ru',
-	},
-	{
-		id: 8,
-		username: 'novikov',
-		role: 'student',
-		email: 'novikov@school.ru',
-	},
-	{
-		id: 9,
-		username: 'lebedev',
-		role: 'cook',
-		email: 'lebedev@school.ru',
-	},
-	{
-		id: 10,
-		username: 'kozlov',
-		role: 'student',
-		email: 'kozlov@school.ru',
-	},
-	{
-		id: 11,
-		username: 'ivanova',
-		role: 'student',
-		email: 'ivanova@school.ru',
-	},
-	{
-		id: 12,
-		username: 'petrova',
-		role: 'student',
-		email: 'petrova@school.ru',
-	},
-	{
-		id: 13,
-		username: 'smirnov',
-		role: 'student',
-		email: 'smirnov@school.ru',
-	},
-	{
-		id: 14,
-		username: 'popov',
-		role: 'student',
-		email: 'popov@school.ru',
-	},
-	{
-		id: 15,
-		username: 'vasilev',
-		role: 'student',
-		email: 'vasilev@school.ru',
-	},
-	{
-		id: 16,
-		username: 'mikhailov',
-		role: 'student',
-		email: 'mikhailov@school.ru',
-	},
-	{
-		id: 17,
-		username: 'fedorov',
-		role: 'student',
-		email: 'fedorov@school.ru',
-	},
-	{
-		id: 18,
-		username: 'alexeev',
-		role: 'student',
-		email: 'alexeev@school.ru',
-	},
-	{
-		id: 19,
-		username: 'andreev',
-		role: 'student',
-		email: 'andreev@school.ru',
-	},
-	{
-		id: 20,
-		username: 'sergeev',
-		role: 'student',
-		email: 'sergeev@school.ru',
-	},
+	
 ];
 
 export const getUsers = (): IUser[] => {
