@@ -22,7 +22,7 @@ const RequestCard: React.FC<RequestCardProps> = ({
 		});
 	};
 
-	const isPending = request.is_accepted === 'pending';
+	const isPending = typeof(request.is_accepted) !== 'boolean';
 
 	return (
 		<div className={`${Styles.card} ${!isPending ? Styles.disabled : ''}`}>
@@ -31,7 +31,7 @@ const RequestCard: React.FC<RequestCardProps> = ({
 					<div className={Styles.username}>{`Имя: ${request?.user?.name ?? "Аноним"}`}</div>
 					<div className={Styles.fullName}>{`Имя пользователя: ${request?.user?.username ?? "Аноним"}`}</div>
 				</div>
-				<StatusBadge status={request.is_accepted ?? false} />
+				<StatusBadge status={isPending ? 'pending' : request.is_accepted ?? false} />
 			</div>
 
 			<div className={Styles.body}>
