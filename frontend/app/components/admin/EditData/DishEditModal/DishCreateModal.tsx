@@ -90,9 +90,10 @@ const DishCreateModal: React.FC<DishEditModalProps> = ({
 
 			if (ingredientExists || !existingIngredients) return prev;
 
-			const newIngredient = {
+			const newIngredient: IIngredient = {
 				id: ingredient.id,
 				name: ingredient.name,
+				quantity: ingredient.quantity,
 			};
 
 			return {

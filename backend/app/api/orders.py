@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
-from ..models import User, Order, Meal, Subscription, Transaction, OrderMeal
+from ..models import User, Order, Meal, Subscription, Transaction
 import datetime
 
 from .. import db
@@ -25,52 +25,49 @@ def add_transaction(user_id, amount, description):
 @jwt_required()
 def order():
     data = request.get_json()
-    date = datetime.datetime.strptime(data['date'], '%Y-%m-%d')
-    meal_ids = data['meals']
-    meals = [Meal.query.get_or_404(id) for id in meal_ids]
-    total_price = sum(meal.price for meal in meals)
+    date = datetime.date.strptime(data['date'], '%Y-%m-%d')
+    meal_id = data['meal_id']
+    meal = Meal.query.get_or_404(meal_id)
     user_id = get_jwt_identity()
     user = User.query.get_or_404(user_id)
 
+    if datetime.datetime.strftime(date, "%A").lower() != meal.day_of_week:
+        return jsonify({"error": "This meal can't be ordered on this date", "meal": meal.to_dict()}), 400
+
+    if meal.day_of_week != datetime.datetime.strftime(date, '%A').lower():
+        return jsonify({"error": "This meal can't be ordered on this date"}), 400
     payment_type = data['payment_type'].lower()
     if payment_type not in ['subscription', 'balance']:
         return jsonify({"error": "Invalid payment type"}), 400
 
     if payment_type == 'subscription':
-        subsc = Subscription.query.filter_by(user_id=user.id).first()
-        if not (subsc and subsc.active):
+        subsc = Subscription.query.filter_by(user_id=user.id, type=meal.type).first()
+        if not subsc:
+            return jsonify({"error": "Subscription not found"}), 400
+        if not subsc.is_active():
             return jsonify({"error": "Subscription not active"}), 400
 
-        # Создаём заказ
-        order = Order(user_id=user_id, date=date)
-        db.session.add(order)
-        db.session.flush()  # ← получаем order.id
-
-        # Связываем блюда
-        for meal in meals:
-            ord_meal = OrderMeal(order_id=order.id, meal_id=meal.id)
-            db.session.add(ord_meal)
-
-        subsc.duration -= 1
-        add_transaction(user_id, total_price,
-                        description=f"Произведен заказ питания на дату {data['date']}, общая цена: {total_price}, оплата абонементом")
-        db.session.commit()
-        return jsonify({"message": "success"}), 200  # ← добавлен return!
-
-    else:  # balance
-        if user.balance < total_price:
-            return jsonify({"error": "You don't have enough money"}), 400
-
-        order = Order(user_id=user_id, date=date)
+        order = Order(user_id=user_id, date=date, meal_id=meal.id, payment_type=payment_type)
         db.session.add(order)
         db.session.flush()
 
-        for meal in meals:
-            ord_meal = OrderMeal(order_id=order.id, meal_id=meal.id)
-            db.session.add(ord_meal)
+        subsc.duration -= 1
+        add_transaction(user_id, meal.price,
+                            description=f"Произведен заказ питания на дату {data['date']}, общая цена: {meal.price}, оплата абонементом")
+        db.session.commit()
+        return jsonify({"message": "success"}), 200
 
-        add_transaction(user_id, total_price,
-                        description=f"Произведен заказ питания на дату {data['date']}, общая цена: {total_price}")
+    else:
+        if meal.price > user.balance:
+            return jsonify({"error": "You don't have enough money"}), 400
+
+        order = Order(user_id=user_id, date=date, meal_id=meal.id, payment_type=payment_type, price=meal.price)
+        db.session.add(order)
+        db.session.flush()
+        user.balance -= meal.price
+
+        add_transaction(user_id, meal.price,
+                            description=f"Произведен заказ питания на дату {data['date']}, общая цена: {meal.price}, оплата балансом")
         db.session.commit()
         return jsonify({"message": "success"}), 200
 
@@ -81,9 +78,18 @@ def orders():
     orders = Order.query.all()
     return jsonify({"data": [order.to_dict() for order in orders]}), 200
 
-@bp.route('/orders/<int:id>', methods=['GET'])
+@bp.route('/orders/<int:id>', methods=['GET', 'DELETE'])
 @jwt_required()
 def order_by_id(id):
     if request.method == 'GET':
         order = Order.query.get_or_404(id)
         return jsonify({"order": order.to_dict()})
+    if request.method == 'DELETE':
+        order = Order.query.get_or_404(id)
+        if order.date <= datetime.datetime.today().date():
+            return jsonify({"error": "Order on today or days before can't be deleted"}), 400
+        user = User.query.get_or_404(get_jwt_identity())
+        user.balance += order.price
+        db.session.delete(order)
+        db.session.commit()
+        return jsonify({"message": "success"}), 200

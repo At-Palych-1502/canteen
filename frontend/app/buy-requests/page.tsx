@@ -10,12 +10,10 @@ import {
 } from '../tools/redux/api/buyRequests';
 
 const BuyRequestsPage = () => {
-	const { data, isLoading, refetch } = useGetAllBuyRequestsQuery();
+	const { data, refetch } = useGetAllBuyRequestsQuery();
 	const [acceptBuyRequest] = useAcceptBuyRequestMutation();
 	const [rejectBuyRequest] = useRejectBuyRequestMutation();
 	const [updateBuyRequest] = useUpdateBuyRequestMutation();
-
-	console.log(data, isLoading);
 
 	const handleApprove = (requestId: number) => {
 		acceptBuyRequest(requestId);
@@ -29,7 +27,7 @@ const BuyRequestsPage = () => {
 
 	const handleQuantityChange = (requestId: number, newQuantity: number) => {
 		updateBuyRequest({ id: requestId, data: { quantity: newQuantity } });
-		refetch();
+		setTimeout(() => refetch(), 100);
 	};
 
 	return (
