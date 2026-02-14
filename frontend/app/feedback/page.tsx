@@ -5,12 +5,10 @@ import Styles from './page.module.css';
 import { useRouter } from 'next/navigation';
 import { useSelector } from 'react-redux';
 import { selectUser } from '../tools/redux/user';
-import { useGetAllDishesQuery } from '../tools/redux/api/dishes';
-import { IAddReview, IGetReview } from '../tools/types/reviews';
-import { IFeedback } from '../tools/types/mock';
-import { useAddReviewMutation, useGetReviewsByUserQuery } from '../tools/redux/api/reviews';
+import { useGetReviewsByUserQuery } from '../tools/redux/api/reviews';
 import { Notification } from '../components/Notification/Notification';
 import { FeadBackForm } from './FeadBackForm';
+import { FeadBackList } from './FeadBackList';
 
 export default function FeedbackPage() {
 	const [submitted, setSubmitted] = useState(false);
@@ -63,39 +61,7 @@ export default function FeedbackPage() {
 				<FeadBackForm onSubmit={onSubmit} showNotification={showNotification} />
 			</div>
 
-			<div className={Styles['feedbacks-list']}>
-				<div className={Styles['feedbacks-header']}>
-					<h2>Мои отзывы</h2>
-				</div>
-				{!userFeedbacks?.isLoading ? (
-					userFeedbacks?.data?.reviews?.map((feedback: IGetReview) => (
-						<div key={feedback.id} className={Styles['feedback-card']}>
-							<div className={Styles['feedback-header']}>
-								<span className={Styles['feedback-dish-name']}>
-									{feedback?.dish?.name}
-								</span>
-							</div>
-							<div className={Styles['feedback-rating']}>
-								{[1, 2, 3, 4, 5].map(star => (
-									<span
-										key={star}
-										className={`${Styles.star} ${
-											star <= feedback.score ? '' : Styles.inactive
-										}`}
-									>
-										★
-									</span>
-								))}
-							</div>
-							{feedback.comment && (
-								<p className={Styles['feedback-comment']}>{feedback.comment}</p>
-							)}
-						</div>
-					))
-				) : (
-					<div className={Styles['empty-state']}>У вас пока нет отзывов</div>
-				)}
-			</div>
+			<FeadBackList userFeedbacks={userFeedbacks} />
 		</div>
 		
 		{notification.isOpen && (
