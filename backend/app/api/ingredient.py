@@ -56,7 +56,7 @@ def ingredients():
     return jsonify({"data": sl})
 
 
-@bp.route('add_allergic_ingredient', methods=['POST', 'DELETE'])
+@bp.route('add_allergic_ingredient/<int:id>', methods=['POST', 'DELETE'])
 @jwt_required()
 def add_allergic_ingredient():
     ingredients_ids = request.get_json()['ingredients_ids']
