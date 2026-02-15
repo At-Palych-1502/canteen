@@ -1,15 +1,30 @@
+import { MouseEvent } from "react";
 import { IGetReview } from "../tools/types/reviews";
 import Styles from "./page.module.css";
+import { useDeleteReviewMutation, useUpdateReviewMutation } from "../tools/redux/api/reviews";
 
 interface Props {
     userFeedbacks: any,
-    changeFeedback: (id: number) => void
 }
 
 export const FeadBackList = ({
     userFeedbacks,
-    changeFeedback
 }: Props) => {
+
+    const [changeFeedBack] = useUpdateReviewMutation();
+    const [deleteFeedback] = useDeleteReviewMutation();
+
+    const changeFeedbackHandler = (id: number) => {
+        
+    };
+
+    const deleteFeedbackHandler = async(id: number) => {
+        await deleteFeedback(id);
+
+        userFeedbacks.refetch();
+    };
+
+
     return (
         <div className={Styles['feedbacks-list']}>
             <div className={Styles['feedbacks-header']}>
@@ -41,8 +56,8 @@ export const FeadBackList = ({
                             )}
                         </div>
                         <div>
-                            <button className={Styles["change-button"]}>Изменить</button>
-                            <button className={Styles["delete-button"]}>Удалить</button>
+                            <button onClick={() => { changeFeedbackHandler(feedback.id) }} className={Styles["change-button"]}>Изменить</button>
+                            <button onClick={() => { deleteFeedbackHandler(feedback.id) }} className={Styles["delete-button"]}>Удалить</button>
                         </div>
                     </div>
                 ))
