@@ -119,15 +119,50 @@ def subscriptions():
     return jsonify({"subscription": subsc.to_dict()}), 200
 
 
-@bp.route('/report/orders', methods=['GET'])
+from datetime import datetime, timedelta
+from io import BytesIO
+from fpdf import FPDF
+from pathlib import Path
+
+@bp.route('/report/orders/<int:days>', methods=['GET'])
 @jwt_required()
 @role_required(['admin'])
-def generate_orders_report():
+def generate_orders_report(days):
+
+    end_date = datetime.utcnow().date()
+    start_date = end_date - timedelta(days=days)
+
+    orders = Order.query.filter(Order.date >= start_date, Order.date <= end_date).all()
+
+    total_price = sum(order.price or 0 for order in orders)
+    given_count = sum(1 for order in orders if order.is_given)
+    not_given_count = len(orders) - given_count
+    subscription_count = sum(1 for order in orders if order.payment_type == 'subscription')
+    balance_count = sum(1 for order in orders if order.payment_type == 'balance')
+
     pdf = FPDF()
     pdf.add_page()
+    current_dir = Path(__file__).parent
+    font_path = current_dir / "fonts" / "DejaVuSansCondensed.ttf"
+    pdf.add_font("DejaVu", "", str(font_path), uni=True)
+
+    pdf.set_font("DejaVu", size=14)
+
+    pdf.cell(0, 10, txt="Отчёт по заказам", ln=True, align='C')
+    pdf.ln(10)
+
+    pdf.set_font("DejaVu", size=12)
+    pdf.cell(0, 8, txt=f"Период: с {start_date.strftime('%d.%m.%Y')} по {end_date.strftime('%d.%m.%Y')}", ln=True)
+    pdf.ln(5)
+    pdf.cell(0, 8, txt=f"Суммарная цена заказов: {total_price} руб.", ln=True)
+    pdf.cell(0, 8, txt=f"Выдано: {given_count}", ln=True)
+    pdf.cell(0, 8, txt=f"Не выдано: {not_given_count}", ln=True)
+    pdf.cell(0, 8, txt=f"Оплата абонементом: {subscription_count}", ln=True)
+    pdf.cell(0, 8, txt=f"Оплата с баланса: {balance_count}", ln=True)
+
     return send_file(
         BytesIO(pdf.output()),
         mimetype='application/pdf',
         as_attachment=False,
-        download_name='empty.pdf'
+        download_name=f'orders_report_{days}d.pdf'
     )

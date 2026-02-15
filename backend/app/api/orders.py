@@ -4,7 +4,7 @@ from ..models import User, Order, Meal, Subscription, Transaction
 import datetime
 
 from .. import db
-from ..utils import role_required
+from ..utils import role_required, create_notification
 
 bp = Blueprint('orders', __name__)
 
@@ -99,13 +99,15 @@ def order_by_id(id):
         return jsonify({"message": "success"}), 200
 
 
-@bp.route("/orders/<int:id>/set_given")
+@bp.route("/orders/<int:id>/set_given", methods=['PUT'])
 @jwt_required()
 @role_required(['admin', 'cook'])
 def set_given(id):
     order = Order.query.get_or_404(id)
-    if order.is_given is False:
+    user = User.query.get(get_jwt_identity())
+    if order.is_given is False or order.is_given is None:
         order.is_given = True
+        create_notification(order.user_id, "Вам было выдано питание", f"Уважаемый {user.name} {user.surname}! Вам было выдано питание: {order.meal.name} на дату {order.date}.")
     else:
         return jsonify({"error": "this order was already given"}), 400
     db.session.commit()

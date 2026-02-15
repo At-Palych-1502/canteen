@@ -5,9 +5,20 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="281c2898-3d13-4459-a8ec-e45788dc05bd" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+<<<<<<< HEAD
+      <change beforePath="$PROJECT_DIR$/backend/app/api/business.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/api/business.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/app/api/orders.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/api/orders.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/app/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/templates/reports/orders_report.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/utils.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/db/canteen.db" beforeDir="false" afterPath="$PROJECT_DIR$/backend/db/canteen.db" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/test.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/test.py" afterDir="false" />
+=======
+      <change beforePath="$PROJECT_DIR$/backend/app/api/orders.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/api/orders.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/models.py" afterDir="false" />
+>>>>>>> main
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -54,6 +65,11 @@
     &quot;last_opened_file_path&quot;: &quot;C:/Users/Honor/PycharmProjects/canteen-git/canteen&quot;
   }
 }</component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\rte30\PycharmProjects\canteen_git\canteen\backend\app\api" />
+    </key>
+  </component>
   <component name="RunManager">
     <configuration default="true" type="PythonConfigurationType" factoryName="Python">
       <option name="ENV_FILES" value="" />

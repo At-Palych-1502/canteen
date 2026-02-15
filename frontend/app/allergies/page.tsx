@@ -3,39 +3,60 @@
 import React, { useEffect, useState } from 'react';
 import Styles from './page.module.css';
 import { mockAllergies } from '@/app/tools/mockData';
-import { IAllergy } from '@/app/tools/types/mock';
 import { useRouter } from 'next/navigation';
 import { useSelector } from 'react-redux';
 import { selectUser } from '../tools/redux/user';
+import { useAddAllergyMutation, useDeleteAllergyMutation, useGetAllergiesQuery } from '../tools/redux/api/allergies';
 
 export default function AllergiesPage() {
-	const [allergies, setAllergies] = useState<IAllergy[]>(mockAllergies);
+	const [checkedAllergies, setCheckAllergies] = useState<number[]>([]); //Массив id отмеченных аллергий
 	const [saved, setSaved] = useState(false);
+
+	const ingredients = useGetAllergiesQuery();
+	const [addAllergy] = useAddAllergyMutation();
+	const [deleteAllergy] = useDeleteAllergyMutation();
 
 	const router = useRouter();
 	const User = useSelector(selectUser);
 
 	useEffect(() => {
-		if (User && User.role !== 'student') router.push('/');
+		setCheckAllergies(ingredients.data?.allergies.map(i => i.id) ?? []);
+	}, [ingredients.isLoading])
+
+	useEffect(() => {
+		if (!User || User.role !== 'student') router.push('/');
 	}, [User, router]);
 
 	const toggleAllergy = (id: number) => {
-		setAllergies(
-			allergies.map(allergy =>
-				allergy.id === id ? { ...allergy, checked: !allergy.checked } : allergy,
-			),
-		);
+		if (checkedAllergies.find(i => i === id)) {
+			setCheckAllergies(checkedAllergies.filter(i => i !== id));
+		} else {
+			setCheckAllergies([...checkedAllergies, id]);
+		}
 	};
 
 	const handleSave = () => {
-		// Здесь будет логика отправки данных на сервер
-		const selectedAllergies = allergies.filter(a => a.checked);
-		console.log('Saved allergies:', selectedAllergies);
+		const allIngridients = ingredients.data?.ingredients;
+		const allergies = ingredients.data?.allergies;
+		if (!allIngridients || !allergies) return;
+
+		allIngridients.forEach(item => {
+			const isInAllergies = allergies.find(i => i.id === item.id);
+			const isInCheckedAllergies = checkedAllergies.find(i => i === item.id);
+
+			if (isInAllergies && !isInCheckedAllergies) {
+				deleteAllergy(item.id);
+			} else if (!isInAllergies && isInCheckedAllergies) {
+				addAllergy(item.id);
+			}
+		})
+
 		setSaved(true);
+		ingredients.refetch();
 	};
 
 	const handleReset = () => {
-		setAllergies(mockAllergies.map(a => ({ ...a, checked: false })));
+		setCheckAllergies(ingredients.data?.allergies.map(i => i.id) ?? []);
 	};
 
 	const handleBack = () => {
@@ -57,7 +78,7 @@ export default function AllergiesPage() {
 		);
 	}
 
-	const selectedCount = allergies.filter(a => a.checked).length;
+	const selectedCount = checkedAllergies.length;
 
 	return (
 		<div className={Styles['allergies-container']}>
@@ -67,20 +88,22 @@ export default function AllergiesPage() {
 			</div>
 
 			<div className={Styles['allergies-grid']}>
-				{allergies.map(allergy => (
-					<div
-						key={allergy.id}
-						className={`${Styles['allergy-card']} ${
-							allergy.checked ? Styles.checked : ''
-						}`}
-						onClick={() => toggleAllergy(allergy.id)}
-					>
+				{!ingredients.isLoading && ingredients.data?.ingredients.map(ingridient => {
+					const isChecked = checkedAllergies.find(i => i === ingridient.id);
+					return (
 						<div
-							className={`${Styles['checkbox']} ${allergy.checked ? Styles.checked : ''}`}
-						/>
-						<span className={Styles['allergy-name']}>{allergy.name}</span>
-					</div>
-				))}
+							key={ingridient.id}
+							className={`${Styles['allergy-card']} ${
+								isChecked ? Styles.checked : ''
+							}`}
+							onClick={() => toggleAllergy(ingridient.id)}
+						>
+							<div
+								className={`${Styles['checkbox']} ${isChecked ? Styles.checked : ''}`}
+							/>
+							<span className={Styles['allergy-name']}>{ingridient.name}</span>
+						</div>
+				)})}
 			</div>
 
 			<div className={Styles['actions-section']}>
