@@ -37,4 +37,8 @@ export const endpoints = {
 	reviews: {
 		base: '/reviews',
 	},
+	allergies: {
+		base: '', //У бэка ужастная логика их названия, там нет общего эндпоинта
+		addAllergy: '/add_allergic_ingredient'
+	}
 };
