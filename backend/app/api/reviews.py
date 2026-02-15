@@ -30,7 +30,7 @@ def review_by_id(review_id):
     if request.method == 'GET':
         return jsonify({"review": review.to_dict()}), 200
     elif request.method == 'PUT':
-        if review.user_id != get_jwt_identity():
+        if int(review.user_id) != int(get_jwt_identity()):
             return jsonify({"error": "You are not allowed to edit this review"}), 403
         allowed_keys = ['score', 'comment']
         if not all(key in allowed_keys for key in data.keys()):
@@ -40,7 +40,7 @@ def review_by_id(review_id):
         db.session.commit()
         return jsonify({"review": review.to_dict()}), 200
     elif request.method == 'DELETE':
-        if review.user_id != get_jwt_identity():
+        if int(review.user_id) != int(get_jwt_identity()):
             return jsonify({"error": "You are not allowed to delete this review"}), 403
         db.session.delete(review)
         db.session.commit()
