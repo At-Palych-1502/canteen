@@ -21,7 +21,7 @@ def reviews_by_user():
     return {"reviews": [review.to_dict() for review in reviews]}
 
 
-@bp.route('/review/<int:review_id>', methods=['GET', 'PUT', 'DELETE'])
+@bp.route('/review/<int:review_id>', methods=['GET', 'PUT'])
 @jwt_required()
 def review_by_id(review_id):
     review = Review.query.get_or_404(review_id)
@@ -45,6 +45,18 @@ def review_by_id(review_id):
         db.session.delete(review)
         db.session.commit()
         return jsonify({"message": "Review deleted"}), 200
+    
+@bp.route('/review/<int:review_id>', methods=['DELETE'])
+@jwt_required()
+def delete_review_by_id(review_id):
+    review = Review.query.get_or_404(review_id)
+
+    if int(review.user_id) != int(get_jwt_identity()):
+        return jsonify({"error": "You are not allowed to delete this review"}), 403
+    
+    db.session.delete(review)
+    db.session.commit()
+    return jsonify({"message": "Review deleted"}), 200
 
 
 @bp.route('/reviews/<int:dish_id>', methods=['POST'])
