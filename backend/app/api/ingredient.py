@@ -56,31 +56,33 @@ def ingredients():
     return jsonify({"data": sl})
 
 
-@bp.route('add_allergic_ingredient/<int:id>', methods=['POST', 'DELETE'])
+@bp.route('add_allergic_ingredient', methods=['POST', 'DELETE'])
 @jwt_required()
-def add_allergic_ingredient(id):
-    ingredient = Ingredient.query.get_or_404(id)
+def add_allergic_ingredient():
+    ingredients_ids = request.get_json()['ingredients_ids']
+    ingredients = [Ingredient.query.get_or_404(id) for id in ingredients_ids]
     user = User.query.get_or_404(get_jwt_identity())
     if request.method == 'POST':
-
-        existing = UserAllergies.query.filter_by(user_id=user.id, ingredient_id=ingredient.id).first()
-        if existing:
-            return jsonify({'error': 'Ingredient-allergy relationship already exists'}), 208
-        allergy = UserAllergies(
-            user_id=user.id,
-            ingredient_id=ingredient.id,
-        )
-        db.session.add(allergy)
+        for ingredient in ingredients:
+            existing = UserAllergies.query.filter_by(user_id=user.id, ingredient_id=ingredient.id).first()
+            if existing:
+                return jsonify({'error': 'Ingredient-allergy relationship already exists'}), 208
+            allergy = UserAllergies(
+                user_id=user.id,
+                ingredient_id=ingredient.id,
+            )
+            db.session.add(allergy)
         db.session.commit()
-        return jsonify({'message': 'successfully added allergy'}), 200
+        return jsonify({'message': 'successfully added allergies'}), 200
     elif request.method == 'DELETE':
-        existing = UserAllergies.query.filter_by(user_id=user.id, ingredient_id=ingredient.id).first()
-        if existing:
-            db.session.delete(existing)
-            db.session.commit()
-            return jsonify({"message": "allergy deleted"}), 200
-        else:
-            return jsonify({"error": "there's no this allergy"})
+        for ingredient in ingredients:
+            existing = UserAllergies.query.filter_by(user_id=user.id, ingredient_id=ingredient.id).first()
+            if existing:
+                db.session.delete(existing)
+            else:
+                return jsonify({"error": "there's no this allergy"})
+        db.session.commit()
+        return jsonify({"message": "allergy deleted"}), 200
 
 
 @bp.route('/allergies')
