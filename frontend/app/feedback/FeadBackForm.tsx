@@ -74,7 +74,6 @@ export const FeedBackForm = ({
             onChangeSubmit({ id: ingridientId, score: rating, comment: comment });
         }
 
-
 		// Сброс формы
 		setSelectedDish('');
 		setRating(0);
