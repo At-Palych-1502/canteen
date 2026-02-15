@@ -6,15 +6,22 @@ import { mockAllergies } from '@/app/tools/mockData';
 import { useRouter } from 'next/navigation';
 import { useSelector } from 'react-redux';
 import { selectUser } from '../tools/redux/user';
-import { useGetAllIngredientsQuery } from '../tools/redux/api/ingredients';
+import { useAddAllergyMutation, useDeleteAllergyMutation, useGetAllergiesQuery } from '../tools/redux/api/allergies';
 
 export default function AllergiesPage() {
-	const ingredients = useGetAllIngredientsQuery();
 	const [checkedAllergies, setCheckAllergies] = useState<number[]>([]); //Массив id отмеченных аллергий
 	const [saved, setSaved] = useState(false);
 
+	const ingredients = useGetAllergiesQuery();
+	const [addAllergy] = useAddAllergyMutation();
+	const [deleteAllergy] = useDeleteAllergyMutation();
+
 	const router = useRouter();
 	const User = useSelector(selectUser);
+
+	useEffect(() => {
+		setCheckAllergies(ingredients.data?.allergies.map(i => i.id) ?? []);
+	}, [ingredients.isLoading])
 
 	useEffect(() => {
 		if (!User || User.role !== 'student') router.push('/');
@@ -29,14 +36,27 @@ export default function AllergiesPage() {
 	};
 
 	const handleSave = () => {
-		// Здесь будет логика отправки данных на сервер
-		const selectedAllergies = checkedAllergies;
-		console.log('Saved allergies:', selectedAllergies);
+		const allIngridients = ingredients.data?.ingredients;
+		const allergies = ingredients.data?.allergies;
+		if (!allIngridients || !allergies) return;
+
+		allIngridients.forEach(item => {
+			const isInAllergies = allergies.find(i => i.id === item.id);
+			const isInCheckedAllergies = checkedAllergies.find(i => i === item.id);
+
+			if (isInAllergies && !isInCheckedAllergies) {
+				deleteAllergy(item.id);
+			} else if (!isInAllergies && isInCheckedAllergies) {
+				addAllergy(item.id);
+			}
+		})
+
 		setSaved(true);
+		ingredients.refetch();
 	};
 
 	const handleReset = () => {
-		setCheckAllergies([]);
+		setCheckAllergies(ingredients.data?.allergies.map(i => i.id) ?? []);
 	};
 
 	const handleBack = () => {
@@ -68,7 +88,7 @@ export default function AllergiesPage() {
 			</div>
 
 			<div className={Styles['allergies-grid']}>
-				{!ingredients.isLoading && ingredients.data?.data.map(ingridient => {
+				{!ingredients.isLoading && ingredients.data?.ingredients.map(ingridient => {
 					const isChecked = checkedAllergies.find(i => i === ingridient.id);
 					return (
 						<div

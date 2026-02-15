@@ -5,7 +5,7 @@ import { getAccessToken } from '../../utils/auth';
 export const allergiesApi = createApi({
 	reducerPath: 'allergiesApi',
 	baseQuery: fetchBaseQuery({
-		baseUrl: endpoints.allergies.addAllergy,
+		baseUrl: endpoints.base,
 		prepareHeaders: headers => {
 			const token = getAccessToken();
 
@@ -15,12 +15,26 @@ export const allergiesApi = createApi({
 		},
 	}),
 	endpoints: builder => ({
-        addAllergy: builder.query<void, number>({
-            query: (id: number) => `/${id}`,
+        getAllergies: builder.query<IGetAllergyRes, void>({
+            query: () => '/allergies'
+        }),
+        addAllergy: builder.mutation<void, number>({
+            query: (id: number) => ({
+                url: `/add_allergic_ingredient/${id}`,
+                method: "POST"
+            })
+        }),
+        deleteAllergy: builder.mutation<void, number>({
+            query: (id: number) => ({
+                url: `/add_allergic_ingredient/${id}`,
+                method: "DELETE"
+            })
         })
 	}),
 });
 
 export const {
-    useAddAllergyQuery
+    useGetAllergiesQuery,
+    useAddAllergyMutation,
+    useDeleteAllergyMutation
 } = allergiesApi;
