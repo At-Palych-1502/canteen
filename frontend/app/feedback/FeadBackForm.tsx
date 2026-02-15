@@ -7,20 +7,26 @@ import { useSelector } from "react-redux";
 import { useAddReviewMutation, useGetReviewsByUserQuery } from "../tools/redux/api/reviews";
 import { useGetAllDishesQuery } from "../tools/redux/api/dishes";
 import { selectUser } from "../tools/redux/user";
-import { IAddReview } from "../tools/types/reviews";
+import { IAddReview, IReview, IUpdateReviewReq } from "../tools/types/reviews";
 
 interface Props {
     showNotification: (ok: boolean, text: string) => void,
-    onSubmit: () => void
+    onSubmit?: () => void,
+    onChangeSubmit?: (data: IUpdateReviewReq) => void
+    ingridientId?: number,
+    feedbackTemp?: IReview
 }
 
-export const FeadBackForm = ({
+export const FeedBackForm = ({
     showNotification,
-    onSubmit
+    onSubmit,
+    onChangeSubmit,
+    ingridientId,
+    feedbackTemp
 }: Props) => {
     const [selectedDish, setSelectedDish] = useState<string>('');
-	const [rating, setRating] = useState<number>(0);
-	const [comment, setComment] = useState<string>('');
+	const [rating, setRating] = useState<number>(feedbackTemp?.score ?? 0);
+	const [comment, setComment] = useState<string>(feedbackTemp?.comment ?? '');
 
 	const [addReview] = useAddReviewMutation();
 	const {
@@ -37,27 +43,36 @@ export const FeadBackForm = ({
 	const handleSubmit = async(e: React.FormEvent) => {
 		e.preventDefault();
 
-		if (!selectedDish || rating === 0) {
-			showNotification(false, 'Пожалуйста, выберите блюдо и поставьте оценку');
-			return;
-		}
+        if (onSubmit) {
+            if (!selectedDish || rating === 0) {
+                showNotification(false, 'Пожалуйста, выберите блюдо и поставьте оценку');
+                return;
+            }
 
-		const dish = dishes?.data?.find(d => d.id === Number(selectedDish));
-		if (!dish) return;
+            const dish = dishes?.data?.find(d => d.id === Number(selectedDish));
+            if (!dish) return;
 
-		const newFeedback: IAddReview = {
-			dishId: dish.id,
-			score: rating,
-			comment: comment
-		};
+            const newFeedback: IAddReview = {
+                dishId: dish.id,
+                score: rating,
+                comment: comment
+            };
 
-		const response = await addReview(newFeedback);
-		if (response.error) {
-			showNotification(false, "Неизвестная ошибка");
-			return;
-		}
+            const response = await addReview(newFeedback);
+            if (response.error) {
+                showNotification(false, "Неизвестная ошибка");
+                return;
+            }
+		    onSubmit();
+        }
+        else if (onChangeSubmit && ingridientId) {
+            if (rating === 0) {
+                showNotification(false, "Поставьте оценку!");
+                return;
+            }
 
-		onSubmit();
+            onChangeSubmit({ id: ingridientId, score: rating, comment: comment });
+        }
 
 		// Сброс формы
 		setSelectedDish('');
@@ -95,8 +110,13 @@ export const FeadBackForm = ({
                     onChange={e => setSelectedDish(e.target.value)}
                     required
                 >
-                    <option value=''>Выберите блюдо...</option>
-                    {dishes?.data
+                    {ingridientId ? (
+                        <option value={`${ingridientId}`}>{dishes?.data.find(i => i.id === ingridientId)?.name}</option>
+                    ) : (
+                        <option value=''>Выберите блюдо...</option>
+                    )}
+
+                    {!ingridientId && dishes?.data
                         .map(dish => (
                             <option key={dish.id} value={dish.id}>
                                 {dish.name}
@@ -121,7 +141,7 @@ export const FeadBackForm = ({
             </div>
 
             <button type='submit' className={Styles['submit-button']}>
-                Отправить отзыв
+                {ingridientId ? "Сохранить" : "Отправить отзыв"}
             </button>
         </form>
     )

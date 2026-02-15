@@ -1,7 +1,6 @@
 def test_balance_topup_success(client, app):
-    """Тест успешного пополнения баланса"""
     with app.app_context():
-        # Создаем пользователя для авторизации
+        
         user_response = client.post('/api/auth/register', json={
             'username': 'testuser_balance',
             'email': 'testbalance@example.com',

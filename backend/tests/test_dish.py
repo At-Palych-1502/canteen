@@ -1,11 +1,10 @@
 from app.models import Dish, Ingredient, User
 
 def test_user_becomes_admin_and_adds_dish(client, app):
-    """Тест: администратор добавляет блюдо"""
     with app.app_context():
 
 
-        # Логинимся как администратор с предопределенными учетными данными
+        
         admin_login = client.post('/api/auth/login', json={
             'username': 'admin',
             'password': 'password',

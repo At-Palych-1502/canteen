@@ -35,21 +35,27 @@ export default function AllergiesPage() {
 		}
 	};
 
-	const handleSave = () => {
+	const handleSave = async() => {
 		const allIngridients = ingredients.data?.ingredients;
 		const allergies = ingredients.data?.allergies;
 		if (!allIngridients || !allergies) return;
+
+		const ingridientsToDelete = new Array<number>();
+		const ingridientsToAdd = new Array<number>();
 
 		allIngridients.forEach(item => {
 			const isInAllergies = allergies.find(i => i.id === item.id);
 			const isInCheckedAllergies = checkedAllergies.find(i => i === item.id);
 
 			if (isInAllergies && !isInCheckedAllergies) {
-				deleteAllergy(item.id);
+				ingridientsToDelete.push(item.id);
 			} else if (!isInAllergies && isInCheckedAllergies) {
-				addAllergy(item.id);
+				ingridientsToAdd.push(item.id);
 			}
-		})
+		});
+
+		await addAllergy(ingridientsToAdd);
+		await deleteAllergy(ingridientsToDelete);
 
 		setSaved(true);
 		ingredients.refetch();

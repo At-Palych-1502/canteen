@@ -38,15 +38,15 @@ export const reviewsApi = createApi({
 		}),
 		deleteReview: builder.mutation<void, number>({
 			query: (id: number) => ({
-				url: `/review/${id}`,
+				url: `/review/${id}`,		
 				method: 'DELETE',
 			}),
 		}),
 		updateReview: builder.mutation<IUpdateReviewRes, IUpdateReviewReq>({
-			query: ({ id, data }) => ({
-				url: `/review${id}`,
+			query: ({ id, comment, score }) => ({
+				url: `/review/${id}`,
 				method: 'PUT',
-				body: data,
+				body: { comment, score },
 			}),
 		}),
 		getReviewsByUser: builder.query<IGetReviewRes, void>({
@@ -62,5 +62,6 @@ export const {
 	useDeleteReviewMutation,
 	useGetReviewByIdQuery,
 	useGetReviewsByMealIdQuery,
-	useGetReviewsByUserQuery
+	useGetReviewsByUserQuery,
+	useUpdateReviewMutation
 } = reviewsApi;
