@@ -19,7 +19,7 @@ def role_required(allowed_roles):
 def create_notification(user_id, title, message, app=None):
     if app:
         with app.context():
-            from models import db, Notification
+            from .models import Notification, db
 
             notif = Notification(
                 user_id=user_id,
@@ -34,7 +34,7 @@ def create_notification(user_id, title, message, app=None):
                 "notification_id": notif.id,
             }), 200
     else:
-        from models import Notification, db
+        from .models import Notification, db
 
         notif = Notification(
             user_id=user_id,
@@ -53,7 +53,7 @@ def create_notification(user_id, title, message, app=None):
 def mark_notification_as_read(notification_id, app=None):
     if app:
         with app.context():
-            from models import Notification, db
+            from .models import Notification, db
 
             notification = Notification.query.get(notification_id)
             if not notification:
@@ -75,8 +75,8 @@ def mark_notification_as_read(notification_id, app=None):
                 'message': 'Notification marked as read'
             }
     else:
-        from models import Notification, db
-        
+        from .models import Notification, db
+
         notification = Notification.query.get(notification_id)
         if not notification:
             return {

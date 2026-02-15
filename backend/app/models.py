@@ -191,7 +191,7 @@ class Order(Base):
         return {
             "id": self.id,
             "user_id": self.user_id,
-            "date": self.date,
+            "date": self.date.isoformat(),
             "meal": self.meal.to_dict(),
             "price": self.price,
             "is_given": self.is_given
