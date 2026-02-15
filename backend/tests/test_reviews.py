@@ -1,9 +1,8 @@
 from app.models import Review, Dish, User
 
 def test_add_review_success(client, app):
-    """Тест успешного добавления отзыва"""
     with app.app_context():
-        # Логинимся как администратор
+
         admin_login = client.post('/api/auth/login', json={
             'username': 'admin',
             'password': 'password',
@@ -48,6 +47,7 @@ def test_add_review_success(client, app):
         # Добавляем отзыв
         review_response = client.post('/api/reviews', json={
             'dish_id': dish_id,
+
             'score': 5,
             'comment': 'Отличное блюдо!'
         }, headers={'Authorization': f'Bearer {user_token}'})
@@ -115,16 +115,15 @@ def test_add_review_with_invalid_score(client, app):
             'dish_id': dish_id,
             'score': 0,
             'comment': 'Плохая оценка'
-        }, headers={'Authorization': f'Bearer {user_token}'})
+        }, headers={'Authorization': f'Bearer {user_token}', 'Content-Type': 'application/json'})
 
         assert review_response.status_code == 405
-
 
         # Пытаемся добавить отзыв с некорректной оценкой (более 5)
         review_response = client.post('/api/reviews', json={
             'dish_id': dish_id,
             'score': 6,
             'comment': 'Слишком высокая оценка'
-        }, headers={'Authorization': f'Bearer {user_token}'})
+        }, headers={'Authorization': f'Bearer {user_token}', 'Content-Type': 'application/json'})
 
         assert review_response.status_code == 405

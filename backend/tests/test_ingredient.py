@@ -1,11 +1,10 @@
 from app.models import Ingredient
 
 def test_add_ingredient_success(client, app):
-    """Тест успешного добавления нового ингредиента"""
     with app.app_context():
 
 
-        # Получаем токен
+
         login_response = client.post('/api/auth/login', json={
             'username': 'cook',
             'password': 'password',
@@ -94,7 +93,8 @@ def test_add_allergic_ingredient_success(client, app):
 
         # Добавляем как аллергенный
         response = client.post(f'/api/add_allergic_ingredient/{ingredient_id}',
-                             headers={'Authorization': f'Bearer {student_token}'})
+                             json={},
+                             headers={'Authorization': f'Bearer {student_token}', 'Content-Type': 'application/json'})
 
         assert response.status_code == 200
         assert 'message' in response.json

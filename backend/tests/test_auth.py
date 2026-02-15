@@ -1,7 +1,6 @@
 from app.models import User
 
 def test_register_success(client, app):
-    """Тест успешной регистрации нового пользователя"""
     with app.app_context():
         response = client.post('/api/auth/register', json={
             'username': 'testuser',
@@ -23,7 +22,7 @@ def test_register_success(client, app):
 def test_register_duplicate_username(client, app):
     """Тест регистрации с дублирующим username"""
     with app.app_context():
-        # Первый пользователь
+        
         client.post('/api/auth/register', json={
             'username': 'testuser',
             'email': 'test@example.com',
