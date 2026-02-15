@@ -26,6 +26,7 @@ class User(Base):
     reviews = relationship("Review", back_populates="user")
     purchase_requests = relationship("PurchaseRequest", back_populates="user")
     subscriptions = relationship("Subscription", back_populates="user")
+    notifications = relationship("Notification", back_populates="user")
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
@@ -179,9 +180,9 @@ class Order(Base):
     user_id = Column(Integer, ForeignKey("users.id"), nullable=True)
     meal_id = Column(Integer, ForeignKey("meals.id"), nullable=True)
     date = Column(Date, nullable=False)
-    price = Column(Integer, nullable=False)
+    price = Column(Integer)
     is_given = Column(Boolean, default=False, nullable=True)
-    payment_type = Column(String(20), nullable=False)
+    payment_type = Column(String(20))
 
     user = relationship("User", back_populates="orders")
     meal = relationship("Meal", back_populates="orders")
@@ -190,7 +191,7 @@ class Order(Base):
         return {
             "id": self.id,
             "user_id": self.user_id,
-            "date": self.date,
+            "date": self.date.isoformat(),
             "meal": self.meal.to_dict(),
             "price": self.price,
             "is_given": self.is_given
@@ -214,6 +215,7 @@ class Review(Base):
             "username": self.user.username,
             "score": self.score,
             "comment": self.comment,
+            "dish": self.dish.to_dict() if self.dish else None
         }
 
 
@@ -262,3 +264,16 @@ class Subscription(Base):
             "type": self.type,
             "duration": self.duration
         }
+
+
+class Notification(db.Model):
+    __tablename__ = 'notifications'
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    title = Column(String(255), nullable=False)
+    message = Column(String, nullable=False)
+    is_read = Column(Boolean, default=False)
+    created_at = Column(DateTime(timezone=True), default=datetime.datetime.today)
+    user_id = Column(Integer, ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
+
+    user = db.relationship('User', back_populates='notifications')

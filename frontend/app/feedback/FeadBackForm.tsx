@@ -43,7 +43,6 @@ export const FeedBackForm = ({
 	const handleSubmit = async(e: React.FormEvent) => {
 		e.preventDefault();
 
-
         if (onSubmit) {
             if (!selectedDish || rating === 0) {
                 showNotification(false, 'Пожалуйста, выберите блюдо и поставьте оценку');
@@ -74,6 +73,7 @@ export const FeedBackForm = ({
 
             onChangeSubmit({ id: ingridientId, score: rating, comment: comment });
         }
+
 
 		// Сброс формы
 		setSelectedDish('');
@@ -123,7 +123,6 @@ export const FeedBackForm = ({
                                 {dish.name}
                             </option>
                         ))}	
-                    
                 </select>
             </div>
 
