@@ -6,11 +6,10 @@ import Styles from './Popup.module.css';
 interface Props {
 	closePopup: VoidFunction;
 	children: React.ReactNode;
-	isOpen: boolean
 }
 
 export function Popup(props: Props) {
-	
+
 	useEffect(() => {
 		document.body.style.overflow = 'hidden';
 		
