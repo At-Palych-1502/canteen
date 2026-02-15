@@ -22,7 +22,7 @@ def test_register_success(client, app):
 def test_register_duplicate_username(client, app):
     """Тест регистрации с дублирующим username"""
     with app.app_context():
-        
+
         client.post('/api/auth/register', json={
             'username': 'testuser',
             'email': 'test@example.com',
@@ -32,7 +32,6 @@ def test_register_duplicate_username(client, app):
             'patronymic': 'Testovich'
         })
 
-        # Попытка создать с тем же именем
         response = client.post('/api/auth/register', json={
             'username': 'testuser',
             'email': 'another@example.com',
@@ -61,21 +60,7 @@ def test_register_duplicate_email(client, app):
             'patronymic': 'Testovich'
         })
 
-        # Попытка создать с тем же email
-#         response = client.post('/api/auth/register', json={
-#             'username': 'testuser2',
-#             'email': 'test@example.com',
-#             'password': 'testpassword',
-#             'name': 'Test',
-#             'surname': 'User',
-#             'patronymic': 'Testovich'
-#         })
 
-#         assert response.status_code == 400
-#         assert 'email' in response.json['error'].lower()
-
-#         users = User.query.filter_by(email='test@example.com').all()
-#         assert len(users) == 1
 
 def test_register_missing_fields(client, app):
     """Тест регистрации с отсутствующими обязательными полями"""
@@ -85,37 +70,7 @@ def test_register_missing_fields(client, app):
 
 
 
-        # # Без username
-        # response = client.post('/api/auth/register', json={
-        #     'email': 'test@example.com',
-        #     'password': 'testpassword',
-        #     'name': 'Test',
-        #     'surname': 'User',
-        #     'patronymic': 'Testovich'
-        # })
-        # assert response.status_code == 400
 
-        # # Без email
-        # response = client.post('/api/auth/register', json={
-        #     'username': 'testuser2',
-        #     'password': 'testpassword',
-        #     'name': 'Test',
-        #     'surname': 'User',
-        #     'patronymic': 'Testovich'
-        # })
-        # assert response.status_code == 400
-
-        # # Без password
-        # response = client.post('/api/auth/register', json={
-        #     'username': 'testuser3',
-        #     'email': 'test3@example.com',
-        #     'name': 'Test',
-        #     'surname': 'User',
-        #     'patronymic': 'Testovich'
-        # })
-        # assert response.status_code == 400
-
-        # Без patronymic
         response = client.post('/api/auth/register', json={
             'username': 'testuser4',
             'email': 'test4@example.com',
@@ -123,4 +78,4 @@ def test_register_missing_fields(client, app):
             'name': 'Test',
             'surname': 'User'
         })
-        assert response.status_code == 200  # Должен быть 200, так как patronymic теперь необязательный
+        assert response.status_code == 200

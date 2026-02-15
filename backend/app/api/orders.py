@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from ..models import User, Order, Meal, Subscription, Transaction
-import datetime
+from datetime import datetime, date
 
 from .. import db
 from ..utils import role_required, create_notification
@@ -27,16 +27,15 @@ def add_transaction(user_id, amount, description):
 @jwt_required()
 def order():
     data = request.get_json()
-    date = datetime.date.strptime(data['date'], '%Y-%m-%d')
+    date_str = data['date'].split('T')[0] if 'T' in data['date'] else data['date']
+    date = datetime.strptime(date_str, '%Y-%m-%d').date()
     meal_id = data['meal_id']
     meal = Meal.query.get_or_404(meal_id)
     user_id = get_jwt_identity()
     user = User.query.get_or_404(user_id)
 
-    if datetime.datetime.strftime(date, "%A").lower() != meal.day_of_week:
-        return jsonify({"error": "This meal can't be ordered on this date", "meal": meal.to_dict()}), 400
-
-    if meal.day_of_week != datetime.datetime.strftime(date, '%A').lower():
+    day_of_week = date.strftime('%A').lower()
+    if day_of_week != meal.day_of_week:
         return jsonify({"error": "This meal can't be ordered on this date"}), 400
     payment_type = data['payment_type'].lower()
     if payment_type not in ['subscription', 'balance']:
@@ -90,7 +89,7 @@ def order_by_id(id):
         return jsonify({"order": order.to_dict()})
     if request.method == 'DELETE':
         order = Order.query.get_or_404(id)
-        if order.date <= datetime.datetime.today().date():
+        if order.date <= datetime.today().date():
             return jsonify({"error": "Order on today or days before can't be deleted"}), 400
         user = User.query.get_or_404(get_jwt_identity())
         user.balance += order.price
