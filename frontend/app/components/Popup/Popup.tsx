@@ -1,18 +1,25 @@
+"use client"
+
 import { useEffect } from 'react';
 import Styles from './Popup.module.css';
 
 interface Props {
 	closePopup: VoidFunction;
 	children: React.ReactNode;
+	isOpen: boolean
 }
 
 export function Popup(props: Props) {
+	
 	useEffect(() => {
 		document.body.style.overflow = 'hidden';
+		
+		return () => {
+			document.body.style.overflow = '';
+		}
 	}, []);
 
 	const close = () => {
-		document.body.style.overflow = '';
 		props.closePopup();
 	}
 
