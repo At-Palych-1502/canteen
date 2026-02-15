@@ -43,10 +43,10 @@ export const reviewsApi = createApi({
 			}),
 		}),
 		updateReview: builder.mutation<IUpdateReviewRes, IUpdateReviewReq>({
-			query: ({ id, data }) => ({
-				url: `/review${id}`,
+			query: ({ id, comment, score }) => ({
+				url: `/review/${id}`,
 				method: 'PUT',
-				body: data,
+				body: { comment, score },
 			}),
 		}),
 		getReviewsByUser: builder.query<IGetReviewRes, void>({

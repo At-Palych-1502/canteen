@@ -7,7 +7,7 @@ import { useSelector } from 'react-redux';
 import { selectUser } from '../tools/redux/user';
 import { useGetReviewsByUserQuery } from '../tools/redux/api/reviews';
 import { Notification } from '../components/Notification/Notification';
-import { FeadBackForm } from './FeadBackForm';
+import { FeedBackForm } from './FeadBackForm';
 import { FeadBackList } from './FeadBackList';
 
 export default function FeedbackPage() {
@@ -58,7 +58,7 @@ export default function FeedbackPage() {
 				<div className={Styles['form-header']}>
 					<h2>Оставить отзыв</h2>
 				</div>
-				<FeadBackForm onSubmit={onSubmit} showNotification={showNotification} />
+				<FeedBackForm onSubmit={onSubmit} showNotification={showNotification} />
 			</div>
 
 			<FeadBackList userFeedbacks={userFeedbacks}/>

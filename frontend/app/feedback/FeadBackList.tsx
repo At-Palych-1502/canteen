@@ -1,7 +1,9 @@
-import { MouseEvent } from "react";
-import { IGetReview } from "../tools/types/reviews";
+import { MouseEvent, useState } from "react";
+import { IGetReview, IReview, IUpdateReviewReq } from "../tools/types/reviews";
 import Styles from "./page.module.css";
 import { useDeleteReviewMutation, useUpdateReviewMutation } from "../tools/redux/api/reviews";
+import { Popup } from "../components/Popup/Popup";
+import { FeedBackForm } from "./FeadBackForm";
 
 interface Props {
     userFeedbacks: any,
@@ -10,22 +12,34 @@ interface Props {
 export const FeadBackList = ({
     userFeedbacks,
 }: Props) => {
+    const [isChangePopup, setIsChangePopup] = useState(false);
+    const [changingIngridientId, setChangingIngridientId] = useState<number>();
+    const [feedbackTemp, setFeedbackTemp] = useState<IReview>();
 
-    const [changeFeedBack] = useUpdateReviewMutation();
-    const [deleteFeedback] = useDeleteReviewMutation();
+    const [changeFeedBackMutation] = useUpdateReviewMutation();
+    const [deleteFeedbackMutation] = useDeleteReviewMutation();
 
     const changeFeedbackHandler = (id: number) => {
-        
+        setChangingIngridientId(id);
+        setFeedbackTemp(userFeedbacks?.data?.reviews?.find((i: IReview) => i.id === id));
+        setIsChangePopup(true);
     };
 
+    const changeFeedback = async(data: IUpdateReviewReq) => {
+        await changeFeedBackMutation(data);
+        setIsChangePopup(false);
+        userFeedbacks.refetch();
+    }
+
     const deleteFeedbackHandler = async(id: number) => {
-        await deleteFeedback(id);
+        await deleteFeedbackMutation(id);
 
         userFeedbacks.refetch();
     };
 
 
     return (
+        <>
         <div className={Styles['feedbacks-list']}>
             <div className={Styles['feedbacks-header']}>
                 <h2>Мои отзывы</h2>
@@ -65,5 +79,18 @@ export const FeadBackList = ({
                 <div className={Styles['empty-state']}>У вас пока нет отзывов</div>
             )}
         </div>
+
+        {isChangePopup && (
+            <Popup closePopup={() => { setIsChangePopup(false) }}>
+                <FeedBackForm
+                    onChangeSubmit={changeFeedback}
+                    showNotification={() => {}}
+                    ingridientId={changingIngridientId}
+                    feedbackTemp={feedbackTemp}
+                    />
+            </Popup>
+        )}
+
+        </>
     )
 }
