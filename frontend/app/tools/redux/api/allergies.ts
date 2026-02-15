@@ -18,16 +18,18 @@ export const allergiesApi = createApi({
         getAllergies: builder.query<IGetAllergyRes, void>({
             query: () => '/allergies'
         }),
-        addAllergy: builder.mutation<void, number>({
-            query: (id: number) => ({
-                url: `/add_allergic_ingredient/${id}`,
-                method: "POST"
+        addAllergy: builder.mutation<void, number[]>({
+            query: (id_s) => ({
+                url: `/add_allergic_ingredient`,
+                method: "POST",
+                body: { ingredients_ids: id_s}
             })
         }),
-        deleteAllergy: builder.mutation<void, number>({
-            query: (id: number) => ({
-                url: `/add_allergic_ingredient/${id}`,
-                method: "DELETE"
+        deleteAllergy: builder.mutation<void, number[]>({
+            query: (id_s) => ({
+                url: `/add_allergic_ingredient`,
+                method: "DELETE",
+                body: { ingredients_ids: id_s}
             })
         })
 	}),
