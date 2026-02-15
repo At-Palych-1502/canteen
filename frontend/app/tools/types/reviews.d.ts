@@ -15,7 +15,8 @@ export interface IAddReview {
 
 export interface IUpdateReviewReq {
 	id: number;
-	data: Partial<IReview>;
+	score: number,
+	comment: string
 }
 
 export interface IUpdateReviewRes {

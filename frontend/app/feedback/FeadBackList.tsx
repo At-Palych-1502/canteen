@@ -1,16 +1,45 @@
-import { IGetReview } from "../tools/types/reviews";
+import { MouseEvent, useState } from "react";
+import { IGetReview, IReview, IUpdateReviewReq } from "../tools/types/reviews";
 import Styles from "./page.module.css";
+import { useDeleteReviewMutation, useUpdateReviewMutation } from "../tools/redux/api/reviews";
+import { Popup } from "../components/Popup/Popup";
+import { FeedBackForm } from "./FeadBackForm";
 
 interface Props {
     userFeedbacks: any,
-    changeFeedback: (id: number) => void
 }
 
 export const FeadBackList = ({
     userFeedbacks,
-    changeFeedback
 }: Props) => {
+    const [isChangePopup, setIsChangePopup] = useState(false);
+    const [changingIngridientId, setChangingIngridientId] = useState<number>();
+    const [feedbackTemp, setFeedbackTemp] = useState<IReview>();
+
+    const [changeFeedBackMutation] = useUpdateReviewMutation();
+    const [deleteFeedbackMutation] = useDeleteReviewMutation();
+
+    const changeFeedbackHandler = (id: number) => {
+        setChangingIngridientId(id);
+        setFeedbackTemp(userFeedbacks?.data?.reviews?.find((i: IReview) => i.id === id));
+        setIsChangePopup(true);
+    };
+
+    const changeFeedback = async(data: IUpdateReviewReq) => {
+        await changeFeedBackMutation(data);
+        setIsChangePopup(false);
+        userFeedbacks.refetch();
+    }
+
+    const deleteFeedbackHandler = async(id: number) => {
+        await deleteFeedbackMutation(id);
+
+        userFeedbacks.refetch();
+    };
+
+
     return (
+        <>
         <div className={Styles['feedbacks-list']}>
             <div className={Styles['feedbacks-header']}>
                 <h2>Мои отзывы</h2>
@@ -41,8 +70,8 @@ export const FeadBackList = ({
                             )}
                         </div>
                         <div>
-                            <button className={Styles["change-button"]}>Изменить</button>
-                            <button className={Styles["delete-button"]}>Удалить</button>
+                            <button onClick={() => { changeFeedbackHandler(feedback.id) }} className={Styles["change-button"]}>Изменить</button>
+                            <button onClick={() => { deleteFeedbackHandler(feedback.id) }} className={Styles["delete-button"]}>Удалить</button>
                         </div>
                     </div>
                 ))
@@ -50,5 +79,18 @@ export const FeadBackList = ({
                 <div className={Styles['empty-state']}>У вас пока нет отзывов</div>
             )}
         </div>
+
+        {isChangePopup && (
+            <Popup closePopup={() => { setIsChangePopup(false) }}>
+                <FeedBackForm
+                    onChangeSubmit={changeFeedback}
+                    showNotification={() => {}}
+                    ingridientId={changingIngridientId}
+                    feedbackTemp={feedbackTemp}
+                    />
+            </Popup>
+        )}
+
+        </>
     )
 }
