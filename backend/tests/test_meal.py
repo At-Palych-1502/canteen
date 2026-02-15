@@ -2,7 +2,7 @@ from app.models import Meal, Dish, User
 
 def test_create_meal_success(client, app):
     with app.app_context():
-        
+
         admin_login = client.post('/api/auth/login', json={
             'username': 'admin',
             'password': 'password',
@@ -14,7 +14,6 @@ def test_create_meal_success(client, app):
         assert 'user' in admin_login.json
         assert admin_login.json['user']['role'] == 'admin'
 
-        # Создаем тестовое блюдо
         dish_response = client.post('/api/dishes', json={
             'name': 'Test Dish for Meal',
             'weight': 200,
@@ -24,7 +23,6 @@ def test_create_meal_success(client, app):
         assert 'dish' in dish_response.json
         dish_id = dish_response.json['dish']['id']
 
-        # Создаем обед
         meal_response = client.post('/api/meals', json={
             'name': 'Test Meal',
             'price': 100.0,
@@ -35,6 +33,5 @@ def test_create_meal_success(client, app):
 
         assert meal_response.status_code == 200
 
-        # Проверяем, что обед действительно добавился
         meals_response = client.get('/api/meals', headers={'Authorization': f'Bearer {admin_token}'})
         assert meals_response.status_code == 200
