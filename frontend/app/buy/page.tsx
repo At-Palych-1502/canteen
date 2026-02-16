@@ -16,7 +16,7 @@ import { IMeal } from '../tools/types/meals';
 import { useCreateOrderMutation } from '../tools/redux/api/orders';
 import { useSelector } from 'react-redux';
 import { selectUser } from '../tools/redux/user';
-import { useGetBalanceQuery } from '../tools/redux/api/business';
+import { useAddSubscriptionMutation, useGetBalanceQuery, useGetSubscriptionsQuery } from '../tools/redux/api/business';
 import { Notification } from '../components/Notification/Notification';
 
 type SubscriptionType = 'breakfast' | 'lunch' | 'breakfast-lunch';
@@ -46,7 +46,36 @@ export default function BuyPage() {
 		isLoading: isMealsLoading,
 		refetch: refetchMeals
 	} = useGetAllMealsQuery();
+	const {
+		data: subs,
+		isLoading: isSubsLoading,
+		refetch: refetchSubs
+	} = useGetSubscriptionsQuery();
 	const [createOrder] = useCreateOrderMutation();
+	const [addSub] = useAddSubscriptionMutation();
+
+	const onSubscription = async() => {
+		setIsButtonOrderDisabled(true);
+		if (selectedMeals.length !== 1)
+			return; 
+
+		const res = await createOrder({ 
+			meal_id: selectedMeals[0],
+			date: getNextDayOfWeek(selectedDay === 6 ? 0 : selectedDay + 1).toJSON(),
+			payment_type: "subscription"
+		});
+		if (res.error) {
+			showNotification(false, "Неизвестная ошибка");
+		} else {
+			showNotification(true, "Успешно");
+		}
+
+		refetchSubs();
+		refetchBalance();
+		refetchMeals();
+		setSelectedMeals([]);
+		setIsButtonOrderDisabled(false);
+	}
 
 
 	// Автоматически выбираем сегодняшний день при загрузке страницы
@@ -69,6 +98,18 @@ export default function BuyPage() {
 	useEffect(() => {
 		setSelectedMeals([]);
 	}, [selectedDay])
+
+	useEffect(() => {
+		if (selectedOption === 1) {
+			setOrderPrice(0);
+		}
+		else if (selectedOption === 2) {
+			setOrderPrice(2500);
+		}
+		else {
+			setOrderPrice(4500);
+		}
+	}, [selectedOption]);
 
 	const handleBackToMenu = () => {
 		setOrderPlaced(false);
@@ -106,26 +147,53 @@ export default function BuyPage() {
 		return nextDate;
 	}
 
+	const isPosibleSub = () => {
+		console.log(subs);
+		if (selectedMeals.length === 1) {
+			const type = meals?.meals?.find(m => m.id === selectedMeals[0])?.type;
+			if (subs?.subscriptions?.find(s => s.type === type)) {
+				return true
+			}
+		}
+
+		return false;
+	}
+
 	const handleOrder = async() => {
 		setIsButtonOrderDisabled(true);
 		let isSucces = true;
-		for (let i = 0; i < selectedMeals.length; i++) {
-			const id = selectedMeals[i];
-			const res = await createOrder({ 
-				meal_id: id,
-				date: getNextDayOfWeek(selectedDay === 6 ? 0 : selectedDay + 1).toJSON(),
-				payment_type: "balance"
-			});
-			if (res.error) {
-				isSucces = false;
-				showNotification(false, "Неизвестная ошибка");
-				break;
+
+		if (selectedOption === 1) {
+			for (let i = 0; i < selectedMeals.length; i++) {
+				const id = selectedMeals[i];
+				const res = await createOrder({ 
+					meal_id: id,
+					date: getNextDayOfWeek(selectedDay === 6 ? 0 : selectedDay + 1).toJSON(),
+					payment_type: "balance"
+				});
+				if (res.error) {
+					isSucces = false;
+					showNotification(false, "Неизвестная ошибка");
+					break;
+				}
 			}
+		} else {
+			const data = selectedOption === 2 ? ({
+				type: 'breakfast',
+				price: 2500
+			}) : ({
+				type: 'lunch',
+				price: 4500
+			});
+			const res = await addSub(data);
+			isSucces = res.error !== null;
 		}
+		
 		
 		if (isSucces)
 			showNotification(true, "Успешно!");
 
+		refetchSubs();
 		refetchBalance();
 		refetchMeals();
 		setSelectedMeals([]);
@@ -184,7 +252,7 @@ export default function BuyPage() {
 			</div>
 
 			<div className={Styles['options-grid']}>
-				{[ { id: 1, name: "Разовый приём пищи", description: "Оплата одного приема пищи"}].map(option => (
+				{[ { id: 1, name: "Разовый приём пищи", description: "Оплата одного приема пищи" }, { id: 2, name: "Абонемент 20 дней ЗАВТРАКИ", description: "В течение 20 дней можно оплачивать по 1 приёму пищи" }, { id: 3, name: "Абонемент 20 дней ОБЕДЫ", description: "В течение 20 дней можно оплачивать по 1 приёму пищи" }].map(option => (
 					<OptionCard
 						key={option.id}
 						id={option.id}
@@ -235,9 +303,11 @@ export default function BuyPage() {
 					summaryText={`Выбрано: ${selectedMeals.length}`}
 					onOrder={handleOrder}
 					disabled={
-						selectedMeals.length === 0 || !balance?.balance || orderPrice > balance?.balance || isButtonOrderDisabled
+						(selectedMeals.length === 0 && selectedOption === 1) || !balance?.balance || orderPrice > balance?.balance || isButtonOrderDisabled
 					}
 					balance={balance?.balance ?? 0}
+					isSub={isPosibleSub() && !isButtonOrderDisabled}
+					onSubscription={onSubscription}
 				/>
 			)}
 

@@ -6,7 +6,9 @@ interface Props {
 	summaryText: string;
 	onOrder: () => void;
 	disabled?: boolean;
-	balance: number
+	balance: number,
+	onSubscription: () => void,
+	isSub: boolean
 }
 
 export const OrderSection: React.FC<Props> = ({
@@ -14,7 +16,9 @@ export const OrderSection: React.FC<Props> = ({
 	summaryText,
 	onOrder,
 	disabled,
-	balance
+	balance,
+	onSubscription,
+	isSub
 }) => {
 	return (
 		<div className={Styles['order-section']}>
@@ -29,10 +33,22 @@ export const OrderSection: React.FC<Props> = ({
 			<button
 				className={Styles['order-button']}
 				onClick={onOrder}
-				disabled={disabled}
+				disabled={disabled || isSub}
 			>
 				Оформить заказ
 			</button>
+			{isSub && (
+				<>
+				<br/>
+				<br/>
+				<button
+				className={Styles['order-button']}
+				onClick={onSubscription}
+			>
+				Оформить за подписку
+			</button>
+			</>
+			)}
 		</div>
 	);
 };

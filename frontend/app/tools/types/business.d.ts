@@ -25,3 +25,10 @@ export interface IGetOrderById {
 export interface ICreateReportArg {
 	days: 1 | 3 | 7;
 }
+
+interface ISubscription {
+	id: number,
+	user_id: number,
+	type: string,
+	duration: number
+}

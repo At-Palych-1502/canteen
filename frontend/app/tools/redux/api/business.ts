@@ -2,6 +2,8 @@ import { endpoints } from '@/app/config/endpoints';
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { getAccessToken } from '../../utils/auth';
 import { IMeal } from '../../types/meals';
+import { url } from 'inspector';
+import { ISubscription } from '../../types/business';
 
 export const businessApi = createApi({
 	reducerPath: 'businessApi',
@@ -28,6 +30,16 @@ export const businessApi = createApi({
 				method: "PUT",
 				body: { amount: sum }
 			})
+		}),
+		addSubscription: builder.mutation<void, any>({
+			query: (data) => ({
+				url: '/subscriptions',
+				method: 'POST',
+				body: data
+			})
+		}),
+		getSubscriptions: builder.query<{ subscriptions: ISubscription[]}, void>({
+			query: () => '/subscription'
 		})
 	}),
 });
@@ -35,5 +47,7 @@ export const businessApi = createApi({
 export const { 
 	useGetMenuQuery,
 	useGetBalanceQuery,
-	useAddManyMutation
+	useAddManyMutation,
+	useAddSubscriptionMutation,
+	useGetSubscriptionsQuery
 } = businessApi;
