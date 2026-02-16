@@ -61,9 +61,9 @@ class Dish(Base):
     __tablename__ = 'dishes'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    name = Column(String(80), nullable=False)
-    weight = Column(Integer, nullable=False)
-    created_at = Column(DateTime, nullable=False, default=datetime.datetime.now)
+    name = Column(String(80))
+    weight = Column(Integer)
+    created_at = Column(DateTime, default=datetime.datetime.now)
     quantity = Column(Integer)
 
     dish_ingredients = relationship("DishIngredient", back_populates="dish")
