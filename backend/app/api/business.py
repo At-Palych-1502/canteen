@@ -122,7 +122,7 @@ def subscriptions():
 @jwt_required()
 def get_subsc():
     subsc = Subscription.query.filter_by(user_id=get_jwt_identity()).all()
-    subsc = [subs for subs in subsc if subsc.active is True]
+    subsc = [subs for subs in subsc if subs.active is True]
     if subsc:
         return jsonify({"subscriptions": [subs.to_dict() for subs in subsc]}), 200
     return [], 200
