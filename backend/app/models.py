@@ -277,3 +277,12 @@ class Notification(db.Model):
     user_id = Column(Integer, ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
 
     user = db.relationship('User', back_populates='notifications')
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "title": self.title,
+            "message": self.message,
+            "is_read": self.is_read,
+            "created_at": self.created_at.isoformat()
+        }

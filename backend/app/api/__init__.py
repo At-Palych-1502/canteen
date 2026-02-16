@@ -8,6 +8,7 @@ from .business import bp as business_bp
 from .reviews import bp as review_bp
 from .purchase_requests import bp as purchase_bp
 from .orders import bp as orders_bp
+from .notifications import bp as notifications_bp
 
 api = Blueprint('api', __name__, url_prefix='/api')
 api.register_blueprint(auth_bp)
@@ -19,3 +20,4 @@ api.register_blueprint(business_bp)
 api.register_blueprint(review_bp)
 api.register_blueprint(purchase_bp)
 api.register_blueprint(orders_bp)
+api.register_blueprint(notifications_bp)
