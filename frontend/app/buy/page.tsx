@@ -30,7 +30,6 @@ export default function BuyPage() {
 	const [orderPlaced, setOrderPlaced] = useState(false);
 	const [orderPrice, setOrderPrice] = useState(0);
 	const [isButtonOrderDisabled, setIsButtonOrderDisabled] = useState(false);
-	const [subscriptionType, setSubscriptionType] = useState<SubscriptionType>('breakfast');
 
 	const [notification, setNotification] = useState({ isOpen: false, ok: false, text: "" });
 	const showNotification = (ok: boolean, text: string) => setNotification({ isOpen: true, ok, text });
@@ -125,6 +124,9 @@ export default function BuyPage() {
 			const temp = selectedMeals.map(v => v);
 			temp.push(id);
 			setSelectedMeals(temp);
+			if (meals?.meals.find(m => m.id === id)?.allergies?.length) {
+				showNotification(false, "У вас на выбранный приём пищи аллергия!!!");
+			}
 		}
 	}
 

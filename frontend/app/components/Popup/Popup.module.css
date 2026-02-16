@@ -7,6 +7,7 @@
     left: 0;
 
     background-color: rgba(0, 0, 0, 0.5);
+    z-index: 2;
 }
 
 .main {
@@ -29,4 +30,5 @@
     -moz-transform: translateX(-50%) translateY(-50%);
     -ms-transform: translateX(-50%) translateY(-50%);
     -o-transform: translateX(-50%) translateY(-50%);
+    z-index: 3;
 }
