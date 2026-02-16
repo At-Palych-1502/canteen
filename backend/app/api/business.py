@@ -121,9 +121,6 @@ def subscriptions():
 @bp.route('/subscription', methods=['GET'])
 @jwt_required()
 def get_subsc():
-    args = request.args
-    if type not in ['lunch', 'breakfast']:
-        return jsonify({"error": "invalid type: lunch or breakfast"}), 400
     subsc = Subscription.query.filter_by(user_id=get_jwt_identity()).all()
     subsc = [subs for subs in subsc if subsc.active is True]
     if subsc:
