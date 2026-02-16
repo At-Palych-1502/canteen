@@ -1,6 +1,5 @@
 def test_balance_topup_success(client, app):
     with app.app_context():
-
         user_response = client.post('/api/auth/register', json={
             'username': 'testuser_balance',
             'email': 'testbalance@example.com',
