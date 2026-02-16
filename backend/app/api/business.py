@@ -102,6 +102,8 @@ def subscriptions():
     if user.balance < data['price']:
         return jsonify({"error": "not enough balance"}), 400
     exsist = Subscription.query.filter_by(user_id=user.id).first()
+    if data['type'] not in ['lunch', 'breakfast']:
+        return jsonify({"error": "invalid type: lunch or breakfast"}), 400
     if exsist and exsist.active is True:
         return jsonify({"error": "already subscribed"}), 400
     subsc = Subscription(
@@ -114,6 +116,16 @@ def subscriptions():
     create_notification(user.id, "Новый абонемент", f"Вам поступил абонемент на {subsc.duration} {'обедов' if subsc.type == 'lunch' else 'завтраков'}")
     db.session.commit()
     return jsonify({"subscription": subsc.to_dict()}), 200
+
+
+@bp.route('/subscription', methods=['GET'])
+@jwt_required()
+def get_subsc():
+    subsc = Subscription.query.filter_by(user_id=get_jwt_identity()).all()
+    subsc = [subs for subs in subsc if subsc.active is True]
+    if subsc:
+        return jsonify({"subscriptions": [subs.to_dict() for subs in subsc]}), 200
+    return [], 200
 
 
 from datetime import datetime, timedelta
