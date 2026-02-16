@@ -66,6 +66,10 @@ export default function BuyPage() {
 		}
 	}, [selectedMeals]);
 
+	useEffect(() => {
+		setSelectedMeals([]);
+	}, [selectedDay])
+
 	const handleBackToMenu = () => {
 		setOrderPlaced(false);
 		setSelectedOption(1);

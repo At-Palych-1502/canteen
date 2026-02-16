@@ -75,7 +75,6 @@ def order():
 
 @bp.route('/orders', methods=['GET'])
 @jwt_required()
-@role_required(['admin', 'cook'])
 def orders():
     orders = Order.query.all()
     return jsonify({"data": [order.to_dict() for order in orders]}), 200

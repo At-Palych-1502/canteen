@@ -1,5 +1,4 @@
 import { IMeal } from './meals';
-import { IOrder } from '@/app/tools/types/mock';
 
 export interface IOrderCreateArg {
 	meal_id: number;
@@ -11,7 +10,7 @@ export interface IOrder {
 	id: number;
 	user_id: number;
 	date: string;
-	meals: IMeal[];
+	meal: IMeal;
 }
 
 export interface IGetAllOrders {
