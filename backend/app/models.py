@@ -41,7 +41,6 @@ class User(Base):
             "name": self.name,
             "surname": self.surname,
             "patronymic": self.patronymic,
-            "email": self.email,
             "role": self.role
         }
 
@@ -274,7 +273,7 @@ class Notification(db.Model):
     message = Column(String, nullable=False)
     is_read = Column(Boolean, default=False)
     created_at = Column(DateTime(timezone=True), default=datetime.datetime.today)
-    user_id = Column(Integer, ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
+    user_id = Column(Integer, ForeignKey('users.id', ondelete='CASCADE'))
 
     user = db.relationship('User', back_populates='notifications')
 
