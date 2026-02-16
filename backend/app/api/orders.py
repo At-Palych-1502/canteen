@@ -110,7 +110,7 @@ def set_given(id):
     if order.is_given is False or order.is_given is None:
         order.is_given = True
         meal = order.meal
-        meal.quantity -= 1
+        meal.quantity = meal.quantity - 1 if meal.quantity > 0 else 0
     else:
         return jsonify({"error": "this order was already given"}), 400
     create_notification(order.user_id, "Вам было выдано питание",
