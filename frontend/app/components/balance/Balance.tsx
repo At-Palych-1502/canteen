@@ -22,7 +22,6 @@ export const Balance = () => {
     const handleAdd = async() => {
         setIsDisabled(true);
         await addMany(value ?? 0);
-        setValue(0);
         refetchBalance();
         setIsDisabled(false);
     }
