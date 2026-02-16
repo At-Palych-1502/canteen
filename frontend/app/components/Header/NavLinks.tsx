@@ -18,6 +18,11 @@ const NavLinks = ({ role, orderCount = 0 }: IProps) => {
 		return (
 			<>
 				<li>
+					<Link href={'/notice'} className={Styles['button']}>
+						Уведомления
+					</Link>
+				</li>
+				<li>
 					<Link href={'/edit-data'} className={Styles['button']}>
 						Изменение данных
 					</Link>
@@ -38,6 +43,11 @@ const NavLinks = ({ role, orderCount = 0 }: IProps) => {
 		return (
 			<>
 				<li>
+					<Link href={'/notice'} className={Styles['button']}>
+						Уведомления
+					</Link>
+				</li>
+				<li>
 					<Link href={'/buy-requests-cook'} className={Styles['button']}>
 						Заявка на покупку
 					</Link>
@@ -52,6 +62,11 @@ const NavLinks = ({ role, orderCount = 0 }: IProps) => {
 	} else {
 		return (
 			<>
+				<li>
+					<Link href={'/notice'} className={Styles['button']}>
+						Уведомления
+					</Link>
+				</li>
 				<li>
 					<Link href={'/buy'} className={Styles['button']}>
 						Покупка питания

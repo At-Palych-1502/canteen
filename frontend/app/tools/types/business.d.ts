@@ -26,9 +26,16 @@ export interface ICreateReportArg {
 	days: 1 | 3 | 7;
 }
 
-interface ISubscription {
+export interface ISubscription {
 	id: number,
 	user_id: number,
 	type: string,
 	duration: number
+}
+
+export interface INotice {
+	created_at: string,
+	title: string,
+	message: string,
+	id: number
 }
