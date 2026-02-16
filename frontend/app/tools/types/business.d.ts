@@ -2,7 +2,8 @@ import { IMeal } from './meals';
 import { IOrder } from '@/app/tools/types/mock';
 
 export interface IOrderCreateArg {
-	meals: number[];
+	meal_id: number;
+	date: string
 	payment_type: 'subscription' | 'balance';
 }
 

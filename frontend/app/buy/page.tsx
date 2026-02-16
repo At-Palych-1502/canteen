@@ -2,8 +2,6 @@
 
 import React, { useState, useEffect } from 'react';
 import Styles from './page.module.css';
-import { mockBuyOptions, getDailyMeals } from '@/app/tools/mockData';
-import { IBuyOption, IComplexMeal } from '@/app/tools/types/mock';
 import { OptionCard } from './components/OptionCard';
 import { SubscriptionTypeSelector } from './components/SubscriptionTypeSelector';
 import { OrderSection } from './components/OrderSection';
@@ -13,18 +11,43 @@ import {
 } from '@/app/tools/utils/order';
 import ComplexMeals from '../components/student/Menu/ComplexMeals/ComplexMeals';
 import DaySelector from '../components/student/Menu/DaySelector/DaySelector';
+import { useGetAllMealsQuery } from '../tools/redux/api/meals';
+import { IMeal } from '../tools/types/meals';
+import { useCreateOrderMutation } from '../tools/redux/api/orders';
+import { useSelector } from 'react-redux';
+import { selectUser } from '../tools/redux/user';
+import { useGetBalanceQuery } from '../tools/redux/api/business';
+import { Notification } from '../components/Notification/Notification';
 
 type SubscriptionType = 'breakfast' | 'lunch' | 'breakfast-lunch';
 
 export default function BuyPage() {
 	// const status useProtectedPage('student');
 
-	const [selectedOption, setSelectedOption] = useState<IBuyOption | null>(null);
-	const [selectedMeals, setSelectedMeals] = useState<IComplexMeal[]>([]);
+	const [selectedOption, setSelectedOption] = useState<number>(1);
+	const [selectedMeals, setSelectedMeals] = useState<number[]>([]);
 	const [selectedDay, setSelectedDay] = useState<number>(0);
 	const [orderPlaced, setOrderPlaced] = useState(false);
-	const [subscriptionType, setSubscriptionType] =
-		useState<SubscriptionType>('breakfast');
+	const [orderPrice, setOrderPrice] = useState(0);
+	const [isButtonOrderDisabled, setIsButtonOrderDisabled] = useState(false);
+	const [subscriptionType, setSubscriptionType] = useState<SubscriptionType>('breakfast');
+
+	const [notification, setNotification] = useState({ isOpen: false, ok: false, text: "" });
+	const showNotification = (ok: boolean, text: string) => setNotification({ isOpen: true, ok, text });
+
+	const User = useSelector(selectUser);
+	const {
+		data: balance,
+		isLoading: isBalanceLoading,
+		refetch: refetchBalance
+	} = useGetBalanceQuery();
+	const {
+		data: meals,
+		isLoading: isMealsLoading,
+		refetch: refetchMeals
+	} = useGetAllMealsQuery();
+	const [createOrder] = useCreateOrderMutation();
+
 
 	// Автоматически выбираем сегодняшний день при загрузке страницы
 	useEffect(() => {
@@ -35,85 +58,75 @@ export default function BuyPage() {
 		}
 	}, []);
 
-	// Проверяем наличие текущего заказа в localStorage при загрузке
 	useEffect(() => {
-		const complexOrder = getCurrentComplexOrder();
-		if (complexOrder?.items && complexOrder.items.length > 0) {
-			// Загружаем обеды из текущего заказа
-			const dailyMeals = getDailyMeals(complexOrder.items[0].day);
-			const meals = [dailyMeals.breakfast, dailyMeals.lunch];
-			const selectedMealsFromOrder = complexOrder.items
-				.map(item => meals.find(m => m.id === item.mealId))
-				.filter((m): m is IComplexMeal => m !== undefined);
-			setSelectedMeals(selectedMealsFromOrder);
-			setSelectedDay(complexOrder.items[0].day);
+		setOrderPrice(countPrice());
+
+		if (balance?.balance && countPrice() > balance.balance) {
+			showNotification(false, "Недостаточно средств!");
 		}
-	}, []);
-
-	// При выборе разового питания загружаем обеды из localStorage
-	useEffect(() => {
-		if (selectedOption?.type === 'single') {
-			const complexOrder = getCurrentComplexOrder();
-			if (complexOrder?.items && complexOrder.items.length > 0) {
-				// Загружаем обеды из текущего заказа
-				const dailyMeals = getDailyMeals(complexOrder.items[0].day);
-				const meals = [dailyMeals.breakfast, dailyMeals.lunch];
-				const selectedMealsFromOrder = complexOrder.items
-					.map(item => meals.find(m => m.id === item.mealId))
-					.filter((m): m is IComplexMeal => m !== undefined);
-				setSelectedMeals(selectedMealsFromOrder);
-				setSelectedDay(complexOrder.items[0].day);
-			}
-		}
-	}, [selectedOption?.type]);
-
-	const handleOptionClick = (option: IBuyOption) => {
-		setSelectedOption(option);
-		// Если выбран разовый обед и в localStorage есть выбранные обеды, не сбрасываем их
-		if (option.type !== 'single') {
-			setSelectedMeals([]);
-		}
-	};
-
-	const handleMealSelect = (mealId: string) => {
-		const dailyMeals = getDailyMeals(selectedDay);
-		const meals = [dailyMeals.breakfast, dailyMeals.lunch];
-		const meal = meals.find(m => m.id === mealId);
-
-		if (meal) {
-			setSelectedMeals(prev => {
-				const isSelected = prev.some(m => m.id === mealId);
-				if (isSelected) {
-					return prev.filter(m => m.id !== mealId);
-				} else {
-					return [...prev, meal];
-				}
-			});
-		}
-	};
-
-	const handleOrder = () => {
-		if (selectedOption?.type === 'single' && selectedMeals.length === 0) {
-			alert('Пожалуйста, выберите хотя бы один комплексный обед');
-			return;
-		}
-
-		// Здесь будет логика отправки заказа на сервер
-		console.log('Order placed:', {
-			selectedOption,
-			selectedMeals,
-			selectedDay,
-			subscriptionType,
-		});
-		setOrderPlaced(true);
-	};
+	}, [selectedMeals]);
 
 	const handleBackToMenu = () => {
 		setOrderPlaced(false);
-		setSelectedOption(null);
+		setSelectedOption(1);
 		setSelectedMeals([]);
 		clearComplexOrder();
 	};
+
+	const handleMealSelect = (id: number) => {
+		if (selectedMeals.find(v => v === id)) {
+			setSelectedMeals(selectedMeals.filter(v => v !== id));
+		} else {
+			const temp = selectedMeals.map(v => v);
+			temp.push(id);
+			setSelectedMeals(temp);
+		}
+	}
+
+	const countPrice = () => {
+		let sum = 0;
+		selectedMeals.forEach(id => {
+			const meal = meals?.meals.find(m => m.id === id);
+			sum += meal?.price ?? 0;
+		});
+		return sum;
+	}
+
+	function getNextDayOfWeek(targetDay: number): Date {
+		const now = new Date();
+		const currentDay = now.getDay(); // 0 (вс) ... 6 (сб)
+		const daysAhead = (targetDay - currentDay + 7) % 7;
+
+		const nextDate = new Date(now);
+		nextDate.setDate(now.getDate() + daysAhead);
+		return nextDate;
+	}
+
+	const handleOrder = async() => {
+		setIsButtonOrderDisabled(true);
+		let isSucces = true;
+		for (let i = 0; i < selectedMeals.length; i++) {
+			const id = selectedMeals[i];
+			const res = await createOrder({ 
+				meal_id: id,
+				date: getNextDayOfWeek(selectedDay === 6 ? 0 : selectedDay + 1).toJSON(),
+				payment_type: "balance"
+			});
+			if (res.error) {
+				isSucces = false;
+				showNotification(false, "Неизвестная ошибка");
+				break;
+			}
+		}
+		
+		if (isSucces)
+			showNotification(true, "Успешно!");
+
+		refetchBalance();
+		refetchMeals();
+		setSelectedMeals([]);
+		setIsButtonOrderDisabled(false);
+	}
 
 	const getDayName = (day: number): string => {
 		const days = [
@@ -128,19 +141,12 @@ export default function BuyPage() {
 		return days[day];
 	};
 
-	const getTotalPrice = (): number => {
-		if (selectedOption?.type !== 'single') {
-			return selectedOption?.price || 0;
-		}
-		return selectedMeals.reduce((sum, meal) => sum + meal.price, 0);
-	};
-
 	if (orderPlaced) {
 		return (
 			<div className={Styles['buy-container']}>
 				<div className={Styles['success-message']}>
 					<h2>Заказ успешно оформлен!</h2>
-					{selectedOption?.type === 'single' ? (
+					{/* {selectedOption?.type === 'single' ? (
 						<p>
 							Вы заказали {selectedMeals.length} комплексных обедов на{' '}
 							{getDayName(selectedDay)} сумму {getTotalPrice()} ₽
@@ -149,16 +155,15 @@ export default function BuyPage() {
 						<p>
 							Вы приобрели: {selectedOption?.name} {selectedOption?.period}
 						</p>
-					)}
+					)} */}
 					<button onClick={handleBackToMenu}>Вернуться к выбору</button>
 				</div>
 			</div>
 		);
 	}
 
-	const totalPrice = getTotalPrice();
-	const dailyMeals = getDailyMeals(selectedDay);
-	const meals = [dailyMeals.breakfast, dailyMeals.lunch];
+	// const dailyMeals = getDailyMeals(selectedDay);
+	// const meals = [dailyMeals.breakfast, dailyMeals.lunch];
 
 	return (
 		<div className={Styles['buy-container']}>
@@ -168,33 +173,34 @@ export default function BuyPage() {
 						<h1>Покупка питания</h1>
 						<p>Выберите удобный вариант оплаты питания</p>
 					</div>
-					{selectedOption?.type === 'single' && selectedMeals.length > 0 && (
+					{/* {selectedOption?.type === 'single' && selectedMeals.length > 0 && (
 						<div className={Styles['badge']}>{selectedMeals.length}</div>
-					)}
+					)} */}
 				</div>
 			</div>
 
 			<div className={Styles['options-grid']}>
-				{mockBuyOptions.map(option => (
+				{[ { id: 1, name: "Разовый приём пищи", description: "Оплата одного приема пищи"}].map(option => (
 					<OptionCard
 						key={option.id}
-						option={option}
-						isSelected={selectedOption?.id === option.id}
-						onClick={() => handleOptionClick(option)}
+						id={option.id}
+						name={option.name}
+						description={option.description}
+						isSelected={selectedOption === option.id}
+						onClick={() => setSelectedOption(option.id)}
 					/>
 				))}
 			</div>
 
-			{/* Выбор типа абонемента */}
+			{/* Выбор типа абонемента
 			{selectedOption?.type !== 'single' && (
 				<SubscriptionTypeSelector
 					subscriptionType={subscriptionType}
 					onSubscriptionTypeChange={setSubscriptionType}
 				/>
-			)}
+			)} */}
 
-			{/* Если выбран разовый обед, показываем выбор обедов */}
-			{selectedOption?.type === 'single' && (
+			{selectedOption === 1 && !isMealsLoading && meals && (
 				<div className={Styles['dishes-section']}>
 					<div className={Styles['dishes-header']}>
 						<h2>Выберите день недели</h2>
@@ -205,36 +211,38 @@ export default function BuyPage() {
 					<DaySelector selectedDay={selectedDay} onDayChange={setSelectedDay} />
 
 					<div className={Styles['dishes-header']}>
-						<h2>Комплексные обеды на {getDayName(selectedDay)}</h2>
+						<h2>Комплексные завтраки/обеды на {getDayName(selectedDay)}</h2>
 						<p className={Styles['hint']}>
-							Выберите комплексные обеды (можно несколько)
+							Выберите комплексные завтраки/обеды (можно несколько)
 						</p>
 					</div>
 					<ComplexMeals
 						meals={meals}
-						selectedMealIds={selectedMeals.map(m => m.id)}
+						selectedMealIds={selectedMeals}
 						onSelectMeal={handleMealSelect}
+						selectedDay={selectedDay}
 					/>
 				</div>
 			)}
 
 			{selectedOption && (
 				<OrderSection
-					totalPrice={totalPrice}
-					summaryText={
-						selectedOption.type === 'single'
-							? selectedMeals.length > 0
-								? `${selectedMeals.length} комплексных обедов на ${getDayName(
-										selectedDay,
-									)}`
-								: 'Не выбрано'
-							: selectedOption.name
-					}
+					totalPrice={orderPrice}
+					summaryText={`Выбрано: ${selectedMeals.length}`}
 					onOrder={handleOrder}
 					disabled={
-						selectedOption.type === 'single' && selectedMeals.length === 0
+						selectedMeals.length === 0 || !balance?.balance || orderPrice > balance?.balance || isButtonOrderDisabled
 					}
+					balance={balance?.balance ?? 0}
 				/>
+			)}
+
+			{notification.isOpen && (
+				<Notification
+					close={() => setNotification({ isOpen: false, ok: false, text: "" })}
+					ok={notification.ok}
+					text={notification.text}
+					/>
 			)}
 		</div>
 	);

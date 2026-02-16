@@ -6,6 +6,7 @@ export interface IUser {
 	id: number;
 	role: UserRole;
 	name: string
+	balance: number
 }
 
 export interface ILoginArgs {

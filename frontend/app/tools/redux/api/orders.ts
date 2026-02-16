@@ -49,4 +49,5 @@ export const {
 	useCreateOrderMutation,
 	useGetOrderByIdQuery,
 	useGetReportQuery,
+	useGetAllOrdersQuery
 } = ordersApi;
