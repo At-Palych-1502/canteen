@@ -8,39 +8,42 @@ from ..utils import role_required
 bp = Blueprint('logic', __name__)
 
 
-@bp.route('/meals', methods=['POST', 'GET'])
+@bp.route('/meals', methods=['GET'])
+@jwt_required()
+def get_meals():
+    meals = Meal.query.all()
+    return jsonify({"meals": [meal.to_dict() for meal in meals]})
+
+@bp.route('/meals', methods=['POST'])
 @jwt_required()
 @role_required(['admin'])
 def add_meal():
-    if request.method == 'POST':
-        data = request.get_json()
-        if Meal.query.filter_by(day_of_week=data["day_of_week"], type=data["type"]).first():
-            return jsonify({"error": "Meal already exists"}), 400
-        dish_ids = data['dishes']
-        dishes = Dish.query.filter(Dish.id.in_(dish_ids)).all()
-        if len(dishes) != len(dish_ids):
-            found_ids = {d.id for d in dishes}
-            missing = [did for did in dish_ids if did not in found_ids]
-            return jsonify({"error": f"Dish IDs not found: {missing}"}), 404
-        if not data['day_of_week'].lower() in ['monday', 'tuesday', 'wednesday', 'thursday', 'friday']:
-            return jsonify({"error": "Invalid day of week"}), 400
-        if not data['type'].lower() in ['breakfast', 'lunch']:
-            return jsonify({"error": "Invalid type"}), 400
-        meal = Meal(
-            name=data['name'],
-            price=int(data['price']),
-            day_of_week=data['day_of_week'].lower(),
-            type=data['type']
-        )
-        meal.dishes = dishes
+    data = request.get_json()
+    if Meal.query.filter_by(day_of_week=data["day_of_week"], type=data["type"]).first():
+        return jsonify({"error": "Meal already exists"}), 400
+    dish_ids = data['dishes']
+    dishes = Dish.query.filter(Dish.id.in_(dish_ids)).all()
+    if len(dishes) != len(dish_ids):
+        found_ids = {d.id for d in dishes}
+        missing = [did for did in dish_ids if did not in found_ids]
+        return jsonify({"error": f"Dish IDs not found: {missing}"}), 404
+    if not data['day_of_week'].lower() in ['monday', 'tuesday', 'wednesday', 'thursday', 'friday']:
+        return jsonify({"error": "Invalid day of week"}), 400
+    if not data['type'].lower() in ['breakfast', 'lunch']:
+        return jsonify({"error": "Invalid type"}), 400
+    meal = Meal(
+        name=data['name'],
+        price=int(data['price']),
+        day_of_week=data['day_of_week'].lower(),
+        type=data['type']
+    )
+    meal.dishes = dishes
 
-        db.session.add(meal)
-        db.session.commit()
+    db.session.add(meal)
+    db.session.commit()
 
-        return jsonify(meal.to_dict()), 200
-    if request.method == 'GET':
-        meals = Meal.query.all()
-        return jsonify({"meals": [meal.to_dict() for meal in meals]})
+    return jsonify(meal.to_dict()), 200
+        
 
 @bp.route('/meals_by_day', methods=['GET'])
 @jwt_required()

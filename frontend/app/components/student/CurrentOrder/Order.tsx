@@ -1,31 +1,31 @@
-import { IOrder } from '@/app/tools/types/mock';
 import { IDish } from '@/app/tools/types/dishes';
 import React, { useEffect, useState } from 'react';
 import Styles from './CurrentOrder.module.css';
+import { useGetAllOrdersQuery } from '@/app/tools/redux/api/orders';
+import { IOrder } from '@/app/tools/types/business';
 
 interface Props {
-	order: IOrder
+	order: IOrder,
+	setGivenHandler: (id: number) => Promise<void>
 }
 
-const Order = ({ order }: Props) => {
-	const [isReceived, setIsReceived] = useState(false);
+const Order = ({ order, setGivenHandler }: Props) => {
+	const [isReceived, setIsReceived] = useState(order.is_given);
 
-	useEffect(() => {
-		// Получение
-	}, [])
+
 
 	// Проверяем, является ли дата сегодняшней
 	const isToday = () => {
 		const today = new Date();
 		today.setHours(0, 0, 0, 0);
-		const orderDate = new Date(parseInt(order.date));
+		const orderDate = new Date(order.date);
 		orderDate.setHours(0, 0, 0, 0);
 		return today.getTime() === orderDate.getTime();
 	};
 
 	// Форматируем дату для отображения
-	const formatDate = (dateString: string) => {
-		const date = new Date(parseInt(dateString));
+	const formatDate = (temp: string) => {
+		const date = new Date(temp);
 		const options: Intl.DateTimeFormatOptions = {
 			day: 'numeric',
 			month: 'long',
@@ -34,9 +34,9 @@ const Order = ({ order }: Props) => {
 		return date.toLocaleDateString('ru-RU', options);
 	};
 
-	const handleReceiveOrder = () => {
+	const handleReceiveOrder = async() => {
+		await setGivenHandler(order.id);
 		setIsReceived(true);
-		// Здесь можно добавить логику отправки на сервер
 	};
 
 	const today = isToday();
@@ -48,15 +48,11 @@ const Order = ({ order }: Props) => {
 				{today && <span className={Styles['order-today-badge']}>Сегодня</span>}
 			</div>
 			<div className={Styles['order-meals']}>
-				{order.meals.map((meal: IDish, index: number) => (
-					<div
-						key={`${order.id}-${meal.id}-${index}`}
-						className={Styles['meal-item']}
-					>
-						<span className={Styles['meal-name']}>{meal.name}</span>
-						<span className={Styles['meal-info']}>{meal.weight}г</span>
-					</div>
-				))}
+				<div
+					className={Styles['meal-item']}
+				>
+					<span className={Styles['meal-name']}>{order.meal.name}</span>
+				</div>
 			</div>
 
 			{/* Кнопки для студента */}

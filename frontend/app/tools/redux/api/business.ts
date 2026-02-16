@@ -19,7 +19,13 @@ export const businessApi = createApi({
 		getMenu: builder.query<IMeal[], number>({
 			query: (dayOfWeek: number) => `/menu?${dayOfWeek}`,
 		}),
+		getBalance: builder.query<{ balance: number }, void>({
+			query: () => `/balance`
+		})
 	}),
 });
 
-export const { useGetMenuQuery } = businessApi;
+export const { 
+	useGetMenuQuery,
+	useGetBalanceQuery
+} = businessApi;
