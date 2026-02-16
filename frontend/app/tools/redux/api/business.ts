@@ -3,7 +3,8 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { getAccessToken } from '../../utils/auth';
 import { IMeal } from '../../types/meals';
 import { url } from 'inspector';
-import { ISubscription } from '../../types/business';
+import { INotice, ISubscription } from '../../types/business';
+
 
 export const businessApi = createApi({
 	reducerPath: 'businessApi',
@@ -40,6 +41,9 @@ export const businessApi = createApi({
 		}),
 		getSubscriptions: builder.query<{ subscriptions: ISubscription[]}, void>({
 			query: () => '/subscription'
+		}),
+		getNotices: builder.query<{ notifications: INotice[] }, void>({
+			query: () => '/notifications'
 		})
 	}),
 });
@@ -49,5 +53,6 @@ export const {
 	useGetBalanceQuery,
 	useAddManyMutation,
 	useAddSubscriptionMutation,
-	useGetSubscriptionsQuery
+	useGetSubscriptionsQuery,
+	useGetNoticesQuery
 } = businessApi;

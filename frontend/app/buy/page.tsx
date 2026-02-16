@@ -90,7 +90,7 @@ export default function BuyPage() {
 	useEffect(() => {
 		setOrderPrice(countPrice());
 
-		if (balance?.balance && countPrice() > balance.balance) {
+		if ((balance?.balance || balance?.balance === 0) && countPrice() > balance.balance) {
 			showNotification(false, "Недостаточно средств!");
 		}
 	}, [selectedMeals]);
