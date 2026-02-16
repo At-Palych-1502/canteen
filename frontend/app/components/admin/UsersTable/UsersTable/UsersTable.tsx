@@ -12,6 +12,8 @@ import {
 	useDeleteUserMutation,
 	useGetAllUsersQuery,
 } from '@/app/tools/redux/api/auth';
+import { FeadBackList } from '@/app/feedback/FeadBackList';
+import { useGetAllReviewsQuery, useGetReviewsByUserQuery } from '@/app/tools/redux/api/reviews';
 
 interface PopupState {
 	type: 'role' | 'delete' | null;
@@ -36,6 +38,8 @@ const UsersTable = () => {
 		username: '',
 		currentRole: 'student',
 	});
+
+	const userFeedbacks = useGetAllReviewsQuery();	
 
 	useEffect(() => {
 		setCurrentPage(1);
@@ -213,7 +217,7 @@ const UsersTable = () => {
 				</div>
 
 				<div className={Styles.feedbackSection}>
-					<FeedbackSection />
+					<FeadBackList userFeedbacks={userFeedbacks} isCloseButtons={true} />
 				</div>
 			</div>
 

@@ -1,7 +1,6 @@
 from flask import Blueprint, request, jsonify
-from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
+from flask_jwt_extended import jwt_required, get_jwt_identity
 from ..models import User, Transaction
-from datetime import timedelta
 from .. import db
 from ..utils import role_required
 
@@ -21,6 +20,17 @@ def add_transaction(user_id, amount, description):
     db.session.add(transaction)
     db.session.commit()
     return True
+
+@bp.route('/balance', methods=['GET'])
+@jwt_required()
+@role_required(['student'])
+def get_balance():
+    user_id = get_jwt_identity()
+    user = User.query.get_or_404(user_id)
+    return jsonify({
+        'balance': user.balance
+    })
+
 
 
 @bp.route('/balance/topup', methods=['PUT'])

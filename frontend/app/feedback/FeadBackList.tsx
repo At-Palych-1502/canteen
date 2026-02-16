@@ -7,10 +7,12 @@ import { FeedBackForm } from "./FeadBackForm";
 
 interface Props {
     userFeedbacks: any,
+    isCloseButtons?: boolean
 }
 
 export const FeadBackList = ({
     userFeedbacks,
+    isCloseButtons
 }: Props) => {
     const [isChangePopup, setIsChangePopup] = useState(false);
     const [changingIngridientId, setChangingIngridientId] = useState<number>();
@@ -42,7 +44,7 @@ export const FeadBackList = ({
         <>
         <div className={Styles['feedbacks-list']}>
             <div className={Styles['feedbacks-header']}>
-                <h2>Мои отзывы</h2>
+                <h2>{isCloseButtons ? "Отзывы" : "Мои отзывы"}</h2>
             </div>
             {!userFeedbacks?.isLoading ? (
                 userFeedbacks?.data?.reviews?.map((feedback: IGetReview) => (
@@ -69,10 +71,12 @@ export const FeadBackList = ({
                                 <p className={Styles['feedback-comment']}>{feedback.comment}</p>
                             )}
                         </div>
-                        <div>
-                            <button onClick={() => { changeFeedbackHandler(feedback.id) }} className={Styles["change-button"]}>Изменить</button>
-                            <button onClick={() => { deleteFeedbackHandler(feedback.id) }} className={Styles["delete-button"]}>Удалить</button>
-                        </div>
+                        {!isCloseButtons && (
+                            <div>
+                                <button onClick={() => { changeFeedbackHandler(feedback.id) }} className={Styles["change-button"]}>Изменить</button>
+                                <button onClick={() => { deleteFeedbackHandler(feedback.id) }} className={Styles["delete-button"]}>Удалить</button>
+                            </div>
+                        )}
                     </div>
                 ))
             ) : (

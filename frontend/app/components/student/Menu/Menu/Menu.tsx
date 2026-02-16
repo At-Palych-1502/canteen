@@ -90,11 +90,11 @@ const Menu = () => {
 					<h3 className={Styles['day-title']}>
 						Комплексные обеды на {dailyMeals.date}
 					</h3>
-					<ComplexMeals
+					{/* <ComplexMeals
 						meals={meals}
 						selectedMealIds={selectedMeals}
 						onSelectMeal={handleMealSelect}
-					/>
+					/> */}
 				</div>
 			</div>
 		</div>

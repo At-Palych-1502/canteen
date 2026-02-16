@@ -15,7 +15,6 @@ def test_filter_users(client, app):
         assert admin_login.status_code == 200
         admin_token = admin_login.json['access_token']
 
-
         user_response = client.post('/api/auth/register', json={
             'username': 'findme',
             'email': 'findme@example.com',
@@ -25,6 +24,7 @@ def test_filter_users(client, app):
             'patronymic': 'Testovich'
         })
         assert user_response.status_code == 200
+
 
         response = client.get('/api/users/filter?username=findme&per_page=10&page=1', headers={'Authorization': f'Bearer {admin_token}'})
 

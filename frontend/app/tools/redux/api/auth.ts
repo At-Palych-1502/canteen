@@ -24,11 +24,11 @@ export const authApi = createApi({
 		},
 	}),
 	endpoints: build => ({
-		login: build.mutation<ILoginRes, ILoginArgs>({
-			query: (data: ILoginArgs) => ({
+		login: build.mutation<ILoginRes, any>({
+			query: (data: any) => ({
 				url: endpoints.auth.login,
 				method: 'POST',
-				body: data,
+				body: { ...data, remember_me: true},
 			}),
 			onQueryStarted: async (_, { queryFulfilled }) => {
 				try {

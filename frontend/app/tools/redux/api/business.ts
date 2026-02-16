@@ -19,7 +19,21 @@ export const businessApi = createApi({
 		getMenu: builder.query<IMeal[], number>({
 			query: (dayOfWeek: number) => `/menu?${dayOfWeek}`,
 		}),
+		getBalance: builder.query<{ balance: number }, void>({
+			query: () => `/balance`
+		}),
+		addMany: builder.mutation<void, number>({
+			query: (sum: number) => ({
+				url: '/balance/topup',
+				method: "PUT",
+				body: { amount: sum }
+			})
+		})
 	}),
 });
 
-export const { useGetMenuQuery } = businessApi;
+export const { 
+	useGetMenuQuery,
+	useGetBalanceQuery,
+	useAddManyMutation
+} = businessApi;

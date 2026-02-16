@@ -1,23 +1,41 @@
-import React from 'react';
+"use client"
+
+import React, { useEffect } from 'react';
 import Styles from './CurrentOrder.module.css';
-import { getCurrentOrders } from '@/app/tools/mockData';
 import Link from 'next/link';
 import Order from './Order';
+import { useGetAllOrdersQuery, useSetOrderGivenMutation } from '@/app/tools/redux/api/orders';
 
 interface Props {
 	role: "cook" | "student"
 }
 
 const CurrentOrders = (props: any) => {
-	const orders = getCurrentOrders();
+
+	const {
+		data: orders,
+		isLoading: isOrdersLoading,
+		refetch: refetchOrders
+	} = useGetAllOrdersQuery();
+	const [setGivenMutation] = useSetOrderGivenMutation();
+
+	const setGivenHandler = async(id: number) => {
+		await setGivenMutation(id);
+		//Можно добавить обработчик ошибок
+	}
+
+	useEffect(() => {
+		refetchOrders();
+	}, [])
+
 
 	return (
 		<div className={Styles['current-orders-wrapper']}>
 			<h2>{props.role == "cook" ? "Учёт выданных заказов" : "Текущие заказы"}</h2>
-			{orders.length > 0 ? (
+			{orders?.data && orders?.data.length > 0 ? (
 				<div className={Styles['orders']}>
-					{orders.map(order => (
-						<Order key={order.id} order={order} />
+					{orders.data.map(order => (
+						<Order setGivenHandler={setGivenHandler} key={order.id} order={order} />
 					))}
 				</div>
 			) : (

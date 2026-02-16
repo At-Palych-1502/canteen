@@ -157,6 +157,7 @@
 }
 .cook_panel_digit{
 	font-size: 25px;
+	margin-left: 5px;
 }
 .receive-button-cook:disabled{
 	background-color: #c5e2ff;

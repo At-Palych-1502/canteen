@@ -4,7 +4,6 @@ def test_user_becomes_admin_and_adds_dish(client, app):
     with app.app_context():
 
 
-
         admin_login = client.post('/api/auth/login', json={
             'username': 'admin',
             'password': 'password',
