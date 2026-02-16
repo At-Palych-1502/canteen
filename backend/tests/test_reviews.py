@@ -42,9 +42,7 @@ def test_add_review_success(client, app):
         assert 'access_token' in user_login.json
         user_token = user_login.json['access_token']
 
-        review_response = client.post('/api/reviews', json={
-            'dish_id': dish_id,
-
+        review_response = client.post(f'/api/reviews/{dish_id}', json={
             'score': 5,
             'comment': 'Отличное блюдо!'
         }, headers={'Authorization': f'Bearer {user_token}'})
@@ -55,12 +53,12 @@ def test_add_review_success(client, app):
         assert review_response.json['review']['comment'] == 'Отличное блюдо!'
         assert review_response.json['review']['username'] == 'review_user'
 
-        reviews_response = client.get(f'/api/dishes/{dish_id}', headers={'Authorization': f'Bearer {admin_token}'})
+        # ИСПРАВЛЕНИЕ: Используем правильный endpoint для получения отзывов
+        reviews_response = client.get(f'/api/reviews/{dish_id}', headers={'Authorization': f'Bearer {user_token}'})
         assert reviews_response.status_code == 200
-        assert 'data' in reviews_response.json
-        assert 'reviews' in reviews_response.json['data']
-        assert len(reviews_response.json['data']['reviews']) == 1
-        assert reviews_response.json['data']['reviews'][0]['comment'] == 'Отличное блюдо!'
+        assert 'reviews' in reviews_response.json
+        assert len(reviews_response.json['reviews']) == 1
+        assert reviews_response.json['reviews'][0]['comment'] == 'Отличное блюдо!'
 
 
 def test_add_review_with_invalid_score(client, app):
@@ -102,18 +100,16 @@ def test_add_review_with_invalid_score(client, app):
         assert 'access_token' in user_login.json
         user_token = user_login.json['access_token']
 
-        review_response = client.post('/api/reviews', json={
-            'dish_id': dish_id,
+        review_response = client.post(f'/api/reviews/{dish_id}', json={
             'score': 0,
             'comment': 'Плохая оценка'
         }, headers={'Authorization': f'Bearer {user_token}', 'Content-Type': 'application/json'})
 
-        assert review_response.status_code == 405
+        assert review_response.status_code == 400
 
-        review_response = client.post('/api/reviews', json={
-            'dish_id': dish_id,
+        review_response = client.post(f'/api/reviews/{dish_id}', json={
             'score': 6,
             'comment': 'Слишком высокая оценка'
         }, headers={'Authorization': f'Bearer {user_token}', 'Content-Type': 'application/json'})
 
-        assert review_response.status_code == 405
+        assert review_response.status_code == 400
