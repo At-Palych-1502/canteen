@@ -12,6 +12,8 @@ export interface IMeal extends IMealCreateArg {
 	id: number;
 
 	dishes: IDish[];
+
+	quantity?: number
 }
 
 export type IMealUpdateReq = {
