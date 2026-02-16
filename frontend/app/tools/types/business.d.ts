@@ -11,6 +11,7 @@ export interface IOrder {
 	user_id: number;
 	date: string;
 	meal: IMeal;
+	is_given: boolean
 }
 
 export interface IGetAllOrders {

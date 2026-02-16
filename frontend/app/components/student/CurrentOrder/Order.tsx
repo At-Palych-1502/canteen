@@ -10,7 +10,7 @@ interface Props {
 }
 
 const Order = ({ order, setGivenHandler }: Props) => {
-	const [isReceived, setIsReceived] = useState(false);
+	const [isReceived, setIsReceived] = useState(order.is_given);
 
 
 
