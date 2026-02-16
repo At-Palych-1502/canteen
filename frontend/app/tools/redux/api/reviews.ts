@@ -53,6 +53,9 @@ export const reviewsApi = createApi({
 			query: () => ({
 				url: '/reviews_by_user'
 			})
+		}),
+		getAllReviews: builder.query<IGetReviewsByMealIdRes, void>({
+			query: () => '/reviews'
 		})
 	}),
 });
@@ -63,5 +66,6 @@ export const {
 	useGetReviewByIdQuery,
 	useGetReviewsByMealIdQuery,
 	useGetReviewsByUserQuery,
-	useUpdateReviewMutation
+	useUpdateReviewMutation,
+	useGetAllReviewsQuery
 } = reviewsApi;
