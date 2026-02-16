@@ -114,7 +114,6 @@ export const OrdersForCook = () => {
                     <h2>Комплексов пока нет</h2>
                 )}
                 </div>
-                <button onClick={handleButton} disabled={!hasChanged} className={`${Styles["receive-button"]} ${Styles["receive-button-cook"]}`}>{hasChanged ? "Сохранить" : "Сохранено"}</button>
                 </>
             ) : (
                 <h3>Загрузка...</h3>
