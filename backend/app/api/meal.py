@@ -12,17 +12,28 @@ bp = Blueprint('logic', __name__)
 @jwt_required()
 def get_meals():
     meals = Meal.query.all()
+    user_id = get_jwt_identity()
+    user = User.query.get(user_id)
+
+    if not user:
+        return jsonify({"error": "User not found"}), 404
+    user_allergy_ids = {ingr.id for ingr in user.allergies}
+
     sl = []
-    user = User.query.get(get_jwt_identity())
-    for i in range(len(meals)):
-        meal = meals[i]
-        sl.append(meal.to_dict())
-        allergies = []
+    for meal in meals:
+        meal_data = meal.to_dict()
+        allergies_found = []
+
         for dish in meal.dishes:
-            for ingr in dish.dish_ingredients:
-                if ingr in user.allergies:
-                    allergies.append(ingr.to_dict())
-        sl[i]['allergies'] = allergies
+            for dish_ingr_rel in dish.dish_ingredients:
+                ingredient_id = dish_ingr_rel.ingredient_id
+                if ingredient_id in user_allergy_ids:
+                    ingredient_obj = dish_ingr_rel.ingredient
+                    allergies_found.append(ingredient_obj.to_dict())
+
+        meal_data['allergies'] = allergies_found
+        sl.append(meal_data)
+
     return jsonify({"meals": sl})
 
 @bp.route('/meals', methods=['POST'])
