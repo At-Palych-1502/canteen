@@ -1,4 +1,6 @@
-import React from 'react';
+"use client"
+
+import React, { useEffect } from 'react';
 import Styles from './CurrentOrder.module.css';
 import Link from 'next/link';
 import Order from './Order';
@@ -21,6 +23,10 @@ const CurrentOrders = (props: any) => {
 		await setGivenMutation(id);
 		//Можно добавить обработчик ошибок
 	}
+
+	useEffect(() => {
+		refetchOrders();
+	}, [])
 
 
 	return (
