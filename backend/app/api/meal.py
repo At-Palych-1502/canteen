@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from flask_jwt_extended import jwt_required
+from flask_jwt_extended import jwt_required, get_jwt_identity
 from ..models import User, Transaction, Meal, Dish, Order
 import datetime
 from .. import db
@@ -12,7 +12,18 @@ bp = Blueprint('logic', __name__)
 @jwt_required()
 def get_meals():
     meals = Meal.query.all()
-    return jsonify({"meals": [meal.to_dict() for meal in meals]})
+    sl = []
+    user = User.query.get(get_jwt_identity())
+    for i in range(len(meals)):
+        meal = meals[i]
+        sl.append(meal.to_dict())
+        allergies = []
+        for dish in meal.dishes:
+            for ingr in dish.dish_ingredients:
+                if ingr in user.allergies:
+                    allergies.append(ingr.to_dict())
+        sl[i]['allergies'] = allergies
+    return jsonify({"meals": sl})
 
 @bp.route('/meals', methods=['POST'])
 @jwt_required()
