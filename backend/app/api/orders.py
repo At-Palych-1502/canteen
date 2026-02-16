@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from ..models import User, Order, Meal, Subscription, Transaction
-from datetime import datetime, date
+from datetime import datetime
 
 from .. import db
 from ..utils import role_required, create_notification
@@ -76,7 +76,11 @@ def order():
 @bp.route('/orders', methods=['GET'])
 @jwt_required()
 def orders():
-    orders = Order.query.all()
+    user = User.query.get_or_404(get_jwt_identity())
+    if user.role == 'student':
+        orders = Order.query.filter_by(user_id=get_jwt_identity()).all()
+    else:
+        orders = Order.query.all()
     return jsonify({"data": [order.to_dict() for order in orders]}), 200
 
 

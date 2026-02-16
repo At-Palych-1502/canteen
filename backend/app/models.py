@@ -61,9 +61,9 @@ class Dish(Base):
     __tablename__ = 'dishes'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    name = Column(String(80), nullable=False)
-    weight = Column(Integer, nullable=False)
-    created_at = Column(DateTime, nullable=False, default=datetime.datetime.now)
+    name = Column(String(80))
+    weight = Column(Integer)
+    created_at = Column(DateTime, default=datetime.datetime.now)
     quantity = Column(Integer)
 
     dish_ingredients = relationship("DishIngredient", back_populates="dish")
@@ -277,3 +277,12 @@ class Notification(db.Model):
     user_id = Column(Integer, ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
 
     user = db.relationship('User', back_populates='notifications')
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "title": self.title,
+            "message": self.message,
+            "is_read": self.is_read,
+            "created_at": self.created_at.isoformat()
+        }
