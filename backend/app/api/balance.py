@@ -22,6 +22,17 @@ def add_transaction(user_id, amount, description):
     db.session.commit()
     return True
 
+@bp.route('/balance', methods=['GET'])
+@jwt_required()
+@role_required(['student'])
+def get_balance():
+    user_id = get_jwt_identity()
+    user = User.query.get_or_404(user_id)
+    return jsonify({
+        'balance': user.balance
+    })
+
+
 
 @bp.route('/balance/topup', methods=['PUT'])
 @jwt_required()
