@@ -7,6 +7,8 @@ import ReportTypeSelector from '@/app/components/admin/CreateReport/ReportTypeSe
 import CreateReportButton from '@/app/components/admin/CreateReport/CreateReportButton/CreateReportButton';
 import ReportViewer from '@/app/components/admin/CreateReport/ReportViewer/ReportViewer';
 import { GetReport } from '@/app/tools/mockData';
+import { endpoints } from '../config/endpoints';
+import { getAccessToken } from '../tools/utils/auth';
 
 type DateOption = '1d' | '3d' | '7d';
 type ReportType = 'food' | 'finance' | 'food+finance';
@@ -19,24 +21,53 @@ const CreateReportPage = () => {
 	);
 	const [loading, setLoading] = useState(false);
 
-	const handleCreateReport = () => {
+	const handleCreateReport = async() => {
 		setLoading(true);
 		setReportData(null);
 
-		// Симуляция задержки запроса
-		setTimeout(() => {
-			const result = GetReport({
-				date: dateOption,
-				type:
-					reportType === 'food+finance'
-						? ['food', 'finance']
-						: reportType === 'food'
-							? ['food']
-							: ['food', 'finance'],
+		try {
+			const response = await fetch(`${endpoints.base}/report/orders/${Number(dateOption.slice(0, 1))}`, {
+			method: "GET",
+			headers: {
+				"authorization": `Bearer ${getAccessToken()}`
+			}
 			});
-			setReportData(result.data);
-			setLoading(false);
-		}, 500);
+
+			if (!response.ok) {
+			throw new Error(`Ошибка сети: ${response.status}`);
+			}
+
+			const blob = await response.blob();
+
+			const url = window.URL.createObjectURL(blob);
+
+			const a = document.createElement('a');
+			a.href = url;
+			
+			const disposition = response.headers.get('Content-Disposition');
+			let filename = 'report.pdf';
+			
+			if (disposition && disposition.indexOf('attachment') !== -1) {
+			const filenameRegex = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/;
+			const matches = filenameRegex.exec(disposition);
+			if (matches != null && matches[1]) { 
+				filename = matches[1].replace(/['"]/g, '');
+			}
+			}
+			
+			a.download = filename;
+
+			document.body.appendChild(a);
+			a.click();
+			
+			window.URL.revokeObjectURL(url);
+			document.body.removeChild(a);
+
+		} catch (error) {
+			console.error(error);
+		}
+
+		setLoading(false);
 	};
 
 	return (
@@ -54,18 +85,11 @@ const CreateReportPage = () => {
 						<DateSelector value={dateOption} onChange={setDateOption} />
 					</div>
 					<div className={Styles.controlGroup}>
-						<ReportTypeSelector value={reportType} onChange={setReportType} />
-					</div>
-					<div className={Styles.controlGroup}>
 						<CreateReportButton
 							onClick={handleCreateReport}
 							disabled={loading}
 						/>
 					</div>
-				</div>
-
-				<div className={Styles.reportContainer}>
-					<ReportViewer data={reportData} loading={loading} />
 				</div>
 			</div>
 		</div>
