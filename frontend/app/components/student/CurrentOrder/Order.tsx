@@ -5,10 +5,11 @@ import { useGetAllOrdersQuery } from '@/app/tools/redux/api/orders';
 import { IOrder } from '@/app/tools/types/business';
 
 interface Props {
-	order: IOrder
+	order: IOrder,
+	setGivenHandler: (id: number) => Promise<void>
 }
 
-const Order = ({ order }: Props) => {
+const Order = ({ order, setGivenHandler }: Props) => {
 	const [isReceived, setIsReceived] = useState(false);
 
 
@@ -33,9 +34,9 @@ const Order = ({ order }: Props) => {
 		return date.toLocaleDateString('ru-RU', options);
 	};
 
-	const handleReceiveOrder = () => {
+	const handleReceiveOrder = async() => {
+		await setGivenHandler(order.id);
 		setIsReceived(true);
-		// Здесь можно добавить логику отправки на сервер
 	};
 
 	const today = isToday();

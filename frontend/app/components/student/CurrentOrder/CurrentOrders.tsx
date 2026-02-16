@@ -2,7 +2,7 @@ import React from 'react';
 import Styles from './CurrentOrder.module.css';
 import Link from 'next/link';
 import Order from './Order';
-import { useGetAllOrdersQuery } from '@/app/tools/redux/api/orders';
+import { useGetAllOrdersQuery, useSetOrderGivenMutation } from '@/app/tools/redux/api/orders';
 
 interface Props {
 	role: "cook" | "student"
@@ -15,6 +15,12 @@ const CurrentOrders = (props: any) => {
 		isLoading: isOrdersLoading,
 		refetch: refetchOrders
 	} = useGetAllOrdersQuery();
+	const [setGivenMutation] = useSetOrderGivenMutation();
+
+	const setGivenHandler = async(id: number) => {
+		await setGivenMutation(id);
+		//Можно добавить обработчик ошибок
+	}
 
 
 	return (
@@ -23,7 +29,7 @@ const CurrentOrders = (props: any) => {
 			{orders?.data && orders?.data.length > 0 ? (
 				<div className={Styles['orders']}>
 					{orders.data.map(order => (
-						<Order key={order.id} order={order} />
+						<Order setGivenHandler={setGivenHandler} key={order.id} order={order} />
 					))}
 				</div>
 			) : (

@@ -42,6 +42,12 @@ export const ordersApi = createApi({
 				responseHandler: response => response.blob(),
 			}),
 		}),
+		setOrderGiven: builder.mutation<void, number>({
+			query: (id: number) => ({
+				url: `/orders/${id}/set_given`,
+				method: "PUT"
+			})
+		})
 	}),
 });
 
@@ -49,5 +55,6 @@ export const {
 	useCreateOrderMutation,
 	useGetOrderByIdQuery,
 	useGetReportQuery,
-	useGetAllOrdersQuery
+	useGetAllOrdersQuery,
+	useSetOrderGivenMutation
 } = ordersApi;
