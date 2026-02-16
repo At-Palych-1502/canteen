@@ -99,7 +99,7 @@ def order_by_id(id):
 
 @bp.route("/orders/<int:id>/set_given", methods=['PUT'])
 @jwt_required()
-@role_required(['admin', 'cook'])
+@role_required(['admin', 'cook', "student"])
 def set_given(id):
     order = Order.query.get_or_404(id)
     user = User.query.get(get_jwt_identity())
