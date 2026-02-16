@@ -109,8 +109,11 @@ def set_given(id):
     user = User.query.get(get_jwt_identity())
     if order.is_given is False or order.is_given is None:
         order.is_given = True
-        create_notification(order.user_id, "Вам было выдано питание", f"Уважаемый {user.name} {user.surname}! Вам было выдано питание: {order.meal.name} на дату {order.date}.")
+        meal = order.meal
+        meal.quantity = meal.quantity - 1 if meal.quantity > 0 else 0
     else:
         return jsonify({"error": "this order was already given"}), 400
+    create_notification(order.user_id, "Вам было выдано питание",
+                        f"Уважаемый {user.name} {user.surname}! Вам было выдано питание: {order.meal.name} на дату {order.date}.")
     db.session.commit()
     return jsonify({"message": "Order given", "order": order.to_dict()})

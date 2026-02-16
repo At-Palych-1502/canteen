@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required
-from ..models import User, Transaction, Meal, Dish
+from ..models import User, Transaction, Meal, Dish, Order
 import datetime
 from .. import db
 from ..utils import role_required
@@ -52,7 +52,16 @@ def meals_by_day():
     day = request.args.get('day_of_week').lower()
 
     meals = Meal.query.filter(Meal.day_of_week == day).all()
-    return jsonify({"meals": [meal.to_dict() for meal in meals]}), 200
+    sl = []
+    for i in range(len(meals)):
+        meal = meals[i]
+        sl.append(meal.to_dict())
+
+        orders = Order.query.filter_by(meal_id=meal.id, date=str(datetime.datetime.today().date()), is_given=True).all()
+        given = len(orders)
+
+        sl[i]["given"] = given
+    return jsonify({"meals": sl}), 200
 
 
 @bp.route('/meals/<int:id>', methods=['GET', 'PUT', 'DELETE'])

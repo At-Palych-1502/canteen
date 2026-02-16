@@ -17,6 +17,7 @@ export interface IMeal {
 	price: number;
 	day_of_week: string;
 	quantity: number;
+    given?: number
 
 	dishes: IDish[];
 }
@@ -89,7 +90,7 @@ export const OrdersForCook = () => {
                 {meals?.length > 0 ? meals?.map((meal: IMeal, index) => {
                     return (
                         <div key={index} className={Styles['order-card']}>
-                            <div className={Styles['order-header']}>{meal.name} <span>({meal.quantity})</span></div>
+                            <div className={Styles['order-header']}>{meal.name}</div>
                             <div className={Styles['order-meals']}>
                                 {meal.dishes?.map((meal: IDish, index: number) => (
                                     <div
@@ -97,22 +98,22 @@ export const OrdersForCook = () => {
                                         className={Styles['meal-item']}
                                     >
                                         <span className={Styles['meal-name']}>{meal.name}</span>
-                                        <span className={Styles['meal-info']}>{meal.weight}г</span>
                                     </div>
                                 ))}
                             </div>
                             <div className={Styles["cook_panel"]}>
+                                <h4 className={Styles["cook_panel_title"]}>В наличие:</h4>
+                                <span className={Styles["cook_panel_digit"]}>{meal.quantity ?? 0}</span>
+                            </div>
+                            <div className={Styles["cook_panel"]}>
                                 <h4 className={Styles["cook_panel_title"]}>Выдано:</h4>
-                                <span onClick={() => handleOrderCountMines(index)} className={Styles["add_button"]}>–</span>
-                                <span className={Styles["cook_panel_digit"]}>{orderCount[index]}</span>
-                                <span onClick={() => handleOrderCountPlus(index)} className={Styles["add_button"]}>+</span>
+                                <span className={Styles["cook_panel_digit"]}>{meal.given}</span>
                             </div>
                         </div>
                 )}) : (
                     <h2>Комплексов пока нет</h2>
                 )}
                 </div>
-                <button onClick={handleButton} disabled={!hasChanged} className={`${Styles["receive-button"]} ${Styles["receive-button-cook"]}`}>{hasChanged ? "Сохранить" : "Сохранено"}</button>
                 </>
             ) : (
                 <h3>Загрузка...</h3>

@@ -1,15 +1,11 @@
-from flask import send_file, render_template, Blueprint, request, jsonify
+from flask import send_file, Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
-from fpdf import FPDF
-from reportlab.pdfgen import canvas
 
-from ..models import Meal, User, Order, Subscription, Transaction, PurchaseRequest, Ingredient
+from ..models import Meal, User, Order, Subscription, Transaction
 import datetime
-from datetime import timedelta
 from .. import db
-from ..utils import role_required
+from ..utils import role_required, create_notification
 from sqlalchemy import or_
-from io import BytesIO
 
 
 bp = Blueprint('business', __name__)
@@ -115,6 +111,7 @@ def subscriptions():
     )
     db.session.add(subsc)
     user.balance -= data['price']
+    create_notification(user.id, "Новый абонемент", f"Вам поступил абонемент на {subsc.duration} {"обедов" if subsc.type == "lunch" else "завтраков"}")
     db.session.commit()
     return jsonify({"subscription": subsc.to_dict()}), 200
 
