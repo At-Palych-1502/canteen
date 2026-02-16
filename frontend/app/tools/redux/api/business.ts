@@ -21,11 +21,19 @@ export const businessApi = createApi({
 		}),
 		getBalance: builder.query<{ balance: number }, void>({
 			query: () => `/balance`
+		}),
+		addMany: builder.mutation<void, number>({
+			query: (sum: number) => ({
+				url: '/balance/topup',
+				method: "PUT",
+				body: { amount: sum }
+			})
 		})
 	}),
 });
 
 export const { 
 	useGetMenuQuery,
-	useGetBalanceQuery
+	useGetBalanceQuery,
+	useAddManyMutation
 } = businessApi;
