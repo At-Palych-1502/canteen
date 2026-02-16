@@ -22,6 +22,7 @@ export interface IDishUpdateReq extends Partial<IDishArg> {
 export interface IDish extends IDishArg {
 	id: number;
 	ingredients?: IIngredient[];
+	quantity?: number
 }
 
 export interface IGetDishRes {
