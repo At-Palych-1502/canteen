@@ -1,6 +1,10 @@
-import React from 'react';
+"use client"
+
+import React, { useState } from 'react';
 import Link from 'next/link';
 import Styles from './Header.module.css';
+import { Popup } from '../Popup/Popup';
+import { Balance } from '../balance/Balance';
 
 interface IProps {
 	role: 'admin' | 'cook' | 'student';
@@ -8,6 +12,8 @@ interface IProps {
 }
 
 const NavLinks = ({ role, orderCount = 0 }: IProps) => {
+	const [isBalance, setIsBalance] = useState(false);
+
 	if (role === 'admin') {
 		return (
 			<>
@@ -64,6 +70,18 @@ const NavLinks = ({ role, orderCount = 0 }: IProps) => {
 						Отзывы
 					</Link>
 				</li>
+				<li>
+					<Link onClick={() => setIsBalance(true)} href={'#'} className={Styles['button']}>
+						Баланс
+					</Link>
+				</li>
+
+				{isBalance && (
+					<Popup closePopup={() => setIsBalance(false)}>
+						<h1>Пополнение баланса</h1>
+						<Balance />
+					</Popup>
+				)}
 			</>
 		);
 	}
