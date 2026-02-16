@@ -1,3 +1,5 @@
+import { IDish } from "./dishes";
+
 export interface IReview {
 	comment: string;
 	score: number;
@@ -6,13 +8,15 @@ export interface IReview {
 }
 
 export interface IAddReview {
-	id: number;
-	data: IReview;
+	dishId: number,
+	score: number,
+	comment: string
 }
 
 export interface IUpdateReviewReq {
 	id: number;
-	data: Partial<IReview>;
+	score: number,
+	comment: string
 }
 
 export interface IUpdateReviewRes {
@@ -21,4 +25,11 @@ export interface IUpdateReviewRes {
 
 export interface IGetReviewsByMealIdRes {
 	reviews: IReview[];
+}
+
+export interface IGetReview extends IReview {
+	dish: IDish
+}
+export interface IGetReviewRes {
+	reviews: IGetReview[]
 }

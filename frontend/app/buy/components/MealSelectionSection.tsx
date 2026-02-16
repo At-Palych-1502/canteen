@@ -49,11 +49,11 @@ export const MealSelectionSection: React.FC<Props> = ({
 					Выберите комплексные обеды (можно несколько)
 				</p>
 			</div>
-			<ComplexMeals
+			{/* <ComplexMeals
 				meals={meals}
 				selectedMealIds={selectedMeals.map(m => m.id)}
 				onSelectMeal={onMealSelect}
-			/>
+			/> */}
 		</div>
 	);
 };

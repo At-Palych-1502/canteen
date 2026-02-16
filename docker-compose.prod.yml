@@ -15,7 +15,7 @@ services:
   backend:
     image: rmd09/canteen-backend:latest
     volumes:
-      - sqlite-data:/app/instance  # монтируем том в /app/instance внутри контейнера
+      - sqlite-data:/app/db  # монтируем том в /app/instance внутри контейнера
     environment:
       - FLASK_APP=backend.app
       - FLASK_ENV=development

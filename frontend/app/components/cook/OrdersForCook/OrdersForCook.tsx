@@ -86,32 +86,31 @@ export const OrdersForCook = () => {
                 <>
                 <h1>Количество выданных комплектов</h1>
                 <div className={Styles['orders']}>
-                {
-                    meals?.map((meal: IMeal, index) => {
-                        return (
-                            <div key={index} className={Styles['order-card']}>
-                                <div className={Styles['order-header']}>{meal.name} <span>({meal.quantity})</span></div>
-                                <div className={Styles['order-meals']}>
-                                    {meal.dishes?.map((meal: IDish, index: number) => (
-                                        <div
-                                            key={index}
-                                            className={Styles['meal-item']}
-                                        >
-                                            <span className={Styles['meal-name']}>{meal.name}</span>
-                                            <span className={Styles['meal-info']}>{meal.weight}г</span>
-                                        </div>
-                                    ))}
-                                </div>
-                                <div className={Styles["cook_panel"]}>
-                                    <h4 className={Styles["cook_panel_title"]}>Выдано:</h4>
-                                    <span onClick={() => handleOrderCountMines(index)} className={Styles["add_button"]}>–</span>
-                                    <span className={Styles["cook_panel_digit"]}>{orderCount[index]}</span>
-                                    <span onClick={() => handleOrderCountPlus(index)} className={Styles["add_button"]}>+</span>
-                                </div>
+                {meals?.length > 0 ? meals?.map((meal: IMeal, index) => {
+                    return (
+                        <div key={index} className={Styles['order-card']}>
+                            <div className={Styles['order-header']}>{meal.name} <span>({meal.quantity})</span></div>
+                            <div className={Styles['order-meals']}>
+                                {meal.dishes?.map((meal: IDish, index: number) => (
+                                    <div
+                                        key={index}
+                                        className={Styles['meal-item']}
+                                    >
+                                        <span className={Styles['meal-name']}>{meal.name}</span>
+                                        <span className={Styles['meal-info']}>{meal.weight}г</span>
+                                    </div>
+                                ))}
                             </div>
-                        )
-                    })
-                }
+                            <div className={Styles["cook_panel"]}>
+                                <h4 className={Styles["cook_panel_title"]}>Выдано:</h4>
+                                <span onClick={() => handleOrderCountMines(index)} className={Styles["add_button"]}>–</span>
+                                <span className={Styles["cook_panel_digit"]}>{orderCount[index]}</span>
+                                <span onClick={() => handleOrderCountPlus(index)} className={Styles["add_button"]}>+</span>
+                            </div>
+                        </div>
+                )}) : (
+                    <h2>Комплексов пока нет</h2>
+                )}
                 </div>
                 <button onClick={handleButton} disabled={!hasChanged} className={`${Styles["receive-button"]} ${Styles["receive-button-cook"]}`}>{hasChanged ? "Сохранить" : "Сохранено"}</button>
                 </>

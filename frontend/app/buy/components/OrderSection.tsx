@@ -6,17 +6,20 @@ interface Props {
 	summaryText: string;
 	onOrder: () => void;
 	disabled?: boolean;
+	balance: number
 }
 
 export const OrderSection: React.FC<Props> = ({
 	totalPrice,
 	summaryText,
 	onOrder,
-	disabled = false,
+	disabled,
+	balance
 }) => {
 	return (
 		<div className={Styles['order-section']}>
 			<div className={Styles['order-header']}>
+				<h2>{`Ваш баланс: ${balance} руб.`}</h2>
 				<h2>Ваш заказ</h2>
 			</div>
 			<div className={Styles['order-summary']}>

@@ -24,6 +24,7 @@ export const endpoints = {
 	},
 	ingredients: {
 		base: `${BASE_URL}/ingredients`,
+		putIngridientsRequest: `${BASE_URL}/purchase_requests`,
 	},
 	meals: {
 		base: `${BASE_URL}/meals`,
@@ -36,4 +37,8 @@ export const endpoints = {
 	reviews: {
 		base: '/reviews',
 	},
+	allergies: {
+		base: '', //У бэка ужастная логика их названия, там нет общего эндпоинта
+		addAllergy: '/add_allergic_ingredient'
+	}
 };

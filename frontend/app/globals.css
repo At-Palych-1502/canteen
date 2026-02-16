@@ -78,6 +78,9 @@ button:hover{
   background: var(--bg-secondary);
   color: var(--color-secondary);
 }
+button:active{
+  transform: scale(0.97);
+}
 
 .not-found {
   position: absolute;

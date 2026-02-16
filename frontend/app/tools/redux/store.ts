@@ -6,6 +6,9 @@ import { userSlice } from './user';
 import { mealsApi } from './api/meals';
 import { buyRequestsApi } from './api/buyRequests';
 import { reviewsApi } from './api/reviews';
+import { allergiesApi } from './api/allergies';
+import { ordersApi } from './api/orders';
+import { businessApi } from './api/business';
 
 export const store = configureStore({
 	reducer: {
@@ -16,6 +19,9 @@ export const store = configureStore({
 		[buyRequestsApi.reducerPath]: buyRequestsApi.reducer,
 		[reviewsApi.reducerPath]: reviewsApi.reducer,
 		[userSlice.name]: userSlice.reducer,
+		[allergiesApi.reducerPath]: allergiesApi.reducer,
+		[ordersApi.reducerPath]: ordersApi.reducer,
+		[businessApi.reducerPath]: businessApi.reducer
 	},
 
 	middleware: getDefaultMiddleware =>
@@ -26,6 +32,9 @@ export const store = configureStore({
 			mealsApi.middleware,
 			buyRequestsApi.middleware,
 			reviewsApi.middleware,
+			allergiesApi.middleware,
+			ordersApi.middleware,
+			businessApi.middleware
 		),
 });
 

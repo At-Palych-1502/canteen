@@ -35,7 +35,7 @@ yarn-error.log*
 .pnpm-debug.log*
 
 # env files (can opt-in for committing if needed)
-# .env*
+.env*
 
 # vercel
 .vercel
@@ -44,4 +44,4 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 .idea/
-backend/downloaded_report.pdf
+

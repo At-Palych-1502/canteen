@@ -1,9 +1,8 @@
 from app.models import Review, Dish, User
 
 def test_add_review_success(client, app):
-    """Тест успешного добавления отзыва"""
     with app.app_context():
-        # Логинимся как администратор
+
         admin_login = client.post('/api/auth/login', json={
             'username': 'admin',
             'password': 'password',
@@ -15,7 +14,7 @@ def test_add_review_success(client, app):
         assert 'user' in admin_login.json
         assert admin_login.json['user']['role'] == 'admin'
 
-        # Создаем тестовое блюдо
+
         dish_response = client.post('/api/dishes', json={
             'name': 'Test Dish for Review',
             'weight': 200,
@@ -25,7 +24,6 @@ def test_add_review_success(client, app):
         assert 'dish' in dish_response.json
         dish_id = dish_response.json['dish']['id']
 
-        # Создаем обычного пользователя для отзыва
         user_response = client.post('/api/auth/register', json={
             'username': 'review_user',
             'email': 'review@example.com',
@@ -36,7 +34,6 @@ def test_add_review_success(client, app):
         })
         assert user_response.status_code == 200
 
-        # Логинимся как обычный пользователь
         user_login = client.post('/api/auth/login', json={
             'username': 'review_user',
             'password': 'password'
@@ -45,9 +42,9 @@ def test_add_review_success(client, app):
         assert 'access_token' in user_login.json
         user_token = user_login.json['access_token']
 
-        # Добавляем отзыв
         review_response = client.post('/api/reviews', json={
             'dish_id': dish_id,
+
             'score': 5,
             'comment': 'Отличное блюдо!'
         }, headers={'Authorization': f'Bearer {user_token}'})
@@ -58,7 +55,6 @@ def test_add_review_success(client, app):
         assert review_response.json['review']['comment'] == 'Отличное блюдо!'
         assert review_response.json['review']['username'] == 'review_user'
 
-        # Проверяем, что отзыв действительно добавился
         reviews_response = client.get(f'/api/dishes/{dish_id}', headers={'Authorization': f'Bearer {admin_token}'})
         assert reviews_response.status_code == 200
         assert 'data' in reviews_response.json
@@ -70,7 +66,6 @@ def test_add_review_success(client, app):
 def test_add_review_with_invalid_score(client, app):
     """Тест добавления отзыва с некорректной оценкой"""
     with app.app_context():
-        # Логинимся как администратор
         admin_login = client.post('/api/auth/login', json={
             'username': 'admin',
             'password': 'password',
@@ -80,7 +75,6 @@ def test_add_review_with_invalid_score(client, app):
         assert 'access_token' in admin_login.json
         admin_token = admin_login.json['access_token']
 
-        # Создаем тестовое блюдо
         dish_response = client.post('/api/dishes', json={
             'name': 'Test Dish for Invalid Review',
             'weight': 200,
@@ -90,7 +84,6 @@ def test_add_review_with_invalid_score(client, app):
         assert 'dish' in dish_response.json
         dish_id = dish_response.json['dish']['id']
 
-        # Создаем обычного пользователя для отзыва
         user_response = client.post('/api/auth/register', json={
             'username': 'review_user_invalid',
             'email': 'review_invalid@example.com',
@@ -101,7 +94,6 @@ def test_add_review_with_invalid_score(client, app):
         })
         assert user_response.status_code == 200
 
-        # Логинимся как обычный пользователь
         user_login = client.post('/api/auth/login', json={
             'username': 'review_user_invalid',
             'password': 'password'
@@ -110,21 +102,18 @@ def test_add_review_with_invalid_score(client, app):
         assert 'access_token' in user_login.json
         user_token = user_login.json['access_token']
 
-        # Пытаемся добавить отзыв с некорректной оценкой (менее 1)
         review_response = client.post('/api/reviews', json={
             'dish_id': dish_id,
             'score': 0,
             'comment': 'Плохая оценка'
-        }, headers={'Authorization': f'Bearer {user_token}'})
+        }, headers={'Authorization': f'Bearer {user_token}', 'Content-Type': 'application/json'})
 
         assert review_response.status_code == 405
 
-
-        # Пытаемся добавить отзыв с некорректной оценкой (более 5)
         review_response = client.post('/api/reviews', json={
             'dish_id': dish_id,
             'score': 6,
             'comment': 'Слишком высокая оценка'
-        }, headers={'Authorization': f'Bearer {user_token}'})
+        }, headers={'Authorization': f'Bearer {user_token}', 'Content-Type': 'application/json'})
 
         assert review_response.status_code == 405
