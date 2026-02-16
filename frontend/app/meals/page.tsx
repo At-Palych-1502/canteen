@@ -47,7 +47,7 @@ export default function() {
                 </section>
                 <section>
                     <div> 
-                        <h2 className={Styles.h2}>Ингридиенты</h2>
+                        <h2 className={Styles.h2}>Блюда</h2>
                         <table className={Styles.table}>
                             <thead>
                                 <tr>
