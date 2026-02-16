@@ -45,7 +45,7 @@ def order():
         subsc = Subscription.query.filter_by(user_id=user.id, type=meal.type).first()
         if not subsc:
             return jsonify({"error": "Subscription not found"}), 400
-        if not subsc.is_active():
+        if not subsc.active:
             return jsonify({"error": "Subscription not active"}), 400
 
         order = Order(user_id=user_id, date=date, meal_id=meal.id, payment_type=payment_type)
