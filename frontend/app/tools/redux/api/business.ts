@@ -5,6 +5,7 @@ import { IMeal } from '../../types/meals';
 import { url } from 'inspector';
 import { INotice, ISubscription } from '../../types/business';
 
+
 export const businessApi = createApi({
 	reducerPath: 'businessApi',
 	baseQuery: fetchBaseQuery({
