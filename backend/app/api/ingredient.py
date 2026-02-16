@@ -38,8 +38,11 @@ def add_ingredient():
     ingredient = Ingredient(
         name=data['name']
     )
-    if data['quantity']:
-        ingredient.quantity = data['quantity']
+    try:
+        if data['quantity']:
+            ingredient.quantity = data['quantity']
+    except Exception:
+        pass
     db.session.add(ingredient)
     db.session.commit()
     return jsonify({'ingredient': ingredient.to_dict()}), 201
