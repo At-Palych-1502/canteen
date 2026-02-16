@@ -64,7 +64,7 @@ def purch_req_accept(id):
 @role_required(['admin'])
 def purch_req_reject(id):
     purch_req = PurchaseRequest.query.get_or_404(id)
-    if purch_req.is_accepted is True or purch_req.is_accepted is False:
+    if purch_req.is_accepted is not True:
         purch_req.is_accepted = False
         db.session.commit()
         return jsonify({"meal": purch_req.to_dict()}), 200
